@@ -18,7 +18,7 @@ export const Route = createFileRoute("/auth")({
       { property: "og:description", content: "Σύνδεση παραγωγού στο AgroOrders." },
     ],
   }),
-  component: AuthPage;
+  component: AuthPage,
 });
 
 type Mode = "login" | "register" | "forgot";
