@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { computeDeliveryRoute, type RouteResult } from "@/lib/routes.functions";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
@@ -54,15 +56,32 @@ function DeliveriesPage() {
     .filter((d) => (d.status === "pending" || d.status === "in_progress") && d.order.status !== "cancelled")
     .sort((a, b) => (a.route_position ?? 999) - (b.route_position ?? 999));
   const route = picked.map((id) => pending.find((d) => d.id === id)).filter(Boolean) as DeliveryWithOrder[];
+  const routeFn = useServerFn(computeDeliveryRoute);
+  const [myPos, setMyPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [info, setInfo] = useState<RouteResult | null>(null);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setInfo(null); }, [picked.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function deliver(d: DeliveryWithOrder) {
     try { await markDelivered(d.id, d.order.id); toast.success("Παραδόθηκε!"); qc.invalidateQueries(); }
     catch (e) { toast.error(e instanceof Error ? e.message : "Σφάλμα"); }
   }
 
-  function order() {
-    const run = (start: { lat: number; lng: number } | null) => setPicked(nearestFirst(route, start).map((d) => d.id));
-    navigator.geolocation?.getCurrentPosition((p) => run({ lat: p.coords.latitude, lng: p.coords.longitude }), () => run(null), { timeout: 5000 });
+  async function order() {
+    const located = route.filter(coords);
+    const start = myPos ?? (located[0] ? coords(located[0]) : null);
+    if (!start || !located.length) { setPicked(nearestFirst(route, null).map((d) => d.id)); return; }
+    setBusy(true);
+    try {
+      const r = await routeFn({ data: { origin: start, stops: located.map((d) => coords(d)!), optimize: true } });
+      let ordered = located;
+      if (r.order) ordered = r.order.map((i) => located[i]!);
+      setPicked([...ordered, ...route.filter((d) => !coords(d))].map((d) => d.id));
+      setInfo(r);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Σφάλμα");
+      setPicked(nearestFirst(route, start).map((d) => d.id));
+    } finally { setBusy(false); }
   }
 
   async function save() {
