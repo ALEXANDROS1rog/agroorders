@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { computeDeliveryRoute, type RouteResult } from "@/lib/routes.functions";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
@@ -54,15 +56,32 @@ function DeliveriesPage() {
     .filter((d) => (d.status === "pending" || d.status === "in_progress") && d.order.status !== "cancelled")
     .sort((a, b) => (a.route_position ?? 999) - (b.route_position ?? 999));
   const route = picked.map((id) => pending.find((d) => d.id === id)).filter(Boolean) as DeliveryWithOrder[];
+  const routeFn = useServerFn(computeDeliveryRoute);
+  const [myPos, setMyPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [info, setInfo] = useState<RouteResult | null>(null);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setInfo(null); }, [picked.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function deliver(d: DeliveryWithOrder) {
     try { await markDelivered(d.id, d.order.id); toast.success("Παραδόθηκε!"); qc.invalidateQueries(); }
     catch (e) { toast.error(e instanceof Error ? e.message : "Σφάλμα"); }
   }
 
-  function order() {
-    const run = (start: { lat: number; lng: number } | null) => setPicked(nearestFirst(route, start).map((d) => d.id));
-    navigator.geolocation?.getCurrentPosition((p) => run({ lat: p.coords.latitude, lng: p.coords.longitude }), () => run(null), { timeout: 5000 });
+  async function order() {
+    const located = route.filter(coords);
+    const start = myPos ?? (located[0] ? coords(located[0]) : null);
+    if (!start || !located.length) { setPicked(nearestFirst(route, null).map((d) => d.id)); return; }
+    setBusy(true);
+    try {
+      const r = await routeFn({ data: { origin: start, stops: located.map((d) => coords(d)!), optimize: true } });
+      let ordered = located;
+      if (r.order) ordered = r.order.map((i) => located[i]!);
+      setPicked([...ordered, ...route.filter((d) => !coords(d))].map((d) => d.id));
+      setInfo(r);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Σφάλμα");
+      setPicked(nearestFirst(route, start).map((d) => d.id));
+    } finally { setBusy(false); }
   }
 
   async function save() {
@@ -83,11 +102,17 @@ function DeliveriesPage() {
 
       {planning ? (
         <Card className="mb-4 space-y-3">
-          <p className="text-sm text-muted-foreground">Επίλεξε διανομές με τη σειρά που θέλεις. Η «Ταξινόμηση» βάζει πρώτα την κοντινότερη (ευθεία απόσταση, χωρίς κίνηση).</p>
-          <MapPanel className="h-[260px]" markers={route.filter(coords).map((d) => ({ id: d.id, ...coords(d)!, label: String(route.indexOf(d) + 1), tone: "accent" as const }))} route={route.map(coords).filter(Boolean).map((c) => [c!.lat, c!.lng] as [number, number])} />
+          <p className="text-sm text-muted-foreground">Επίλεξε διανομές. Η «Βέλτιστη διαδρομή» υπολογίζει πραγματικούς δρόμους με ζωντανή κίνηση από τη θέση σου.</p>
+          <MapPanel className="h-[320px]" onMyLocation={setMyPos} encodedRoute={info?.polyline ?? null} markers={route.filter(coords).map((d) => ({ id: d.id, ...coords(d)!, label: String(route.indexOf(d) + 1), tone: "accent" as const }))} route={route.map(coords).filter(Boolean).map((c) => [c!.lat, c!.lng] as [number, number])} />
+          {info ? (
+            <p className="text-[15px] font-semibold">
+              {(info.distanceMeters / 1000).toFixed(1)} χλμ · {Math.round(info.durationSeconds / 60)} λεπτά με κίνηση
+              {info.durationSeconds - info.staticDurationSeconds > 60 ? ` (+${Math.round((info.durationSeconds - info.staticDurationSeconds) / 60)}′ καθυστέρηση)` : ""}
+            </p>
+          ) : null}
           <ol className="space-y-1 text-[15px]">{route.map((d, i) => <li key={d.id}>{i + 1}. {d.order.customer?.full_name} — {d.order.address || "χωρίς διεύθυνση"}{coords(d) ? "" : " (χωρίς τοποθεσία)"}</li>)}</ol>
           <div className="grid grid-cols-2 gap-2">
-            <GhostButton disabled={route.length < 2} onClick={order}>Ταξινόμηση</GhostButton>
+            <GhostButton disabled={!route.length || busy} onClick={order}>{busy ? "Υπολογισμός…" : "Βέλτιστη διαδρομή"}</GhostButton>
             <PrimaryButton disabled={!route.length} onClick={save}>Αποθήκευση σειράς</PrimaryButton>
           </div>
           {gmaps ? <a href={gmaps} target="_blank" rel="noreferrer" className="glass press flex h-12 items-center justify-center rounded-2xl font-semibold">Άνοιγμα διαδρομής στο Google Maps</a> : null}

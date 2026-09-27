@@ -9,14 +9,16 @@ export type { MapMarker };
 export function MapPanel(props: {
   markers: MapMarker[];
   route?: [number, number][];
+  encodedRoute?: string | null;
   selectedId?: string | null;
   onSelect?: (id: string) => void;
+  showTraffic?: boolean;
+  trackMe?: boolean;
+  onMyLocation?: (p: { lat: number; lng: number }) => void;
   className?: string;
 }) {
   const fallback = (
-    <div
-      className={`glass-soft w-full animate-pulse rounded-3xl ${props.className ?? "h-[320px]"}`}
-    />
+    <div className={`glass-soft w-full animate-pulse rounded-3xl ${props.className ?? "h-[320px]"}`} />
   );
   return (
     <ClientOnly fallback={fallback}>
