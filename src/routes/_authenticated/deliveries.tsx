@@ -102,11 +102,17 @@ function DeliveriesPage() {
 
       {planning ? (
         <Card className="mb-4 space-y-3">
-          <p className="text-sm text-muted-foreground">Επίλεξε διανομές με τη σειρά που θέλεις. Η «Ταξινόμηση» βάζει πρώτα την κοντινότερη (ευθεία απόσταση, χωρίς κίνηση).</p>
-          <MapPanel className="h-[260px]" markers={route.filter(coords).map((d) => ({ id: d.id, ...coords(d)!, label: String(route.indexOf(d) + 1), tone: "accent" as const }))} route={route.map(coords).filter(Boolean).map((c) => [c!.lat, c!.lng] as [number, number])} />
+          <p className="text-sm text-muted-foreground">Επίλεξε διανομές. Η «Βέλτιστη διαδρομή» υπολογίζει πραγματικούς δρόμους με ζωντανή κίνηση από τη θέση σου.</p>
+          <MapPanel className="h-[320px]" onMyLocation={setMyPos} encodedRoute={info?.polyline} markers={route.filter(coords).map((d) => ({ id: d.id, ...coords(d)!, label: String(route.indexOf(d) + 1), tone: "accent" as const }))} route={route.map(coords).filter(Boolean).map((c) => [c!.lat, c!.lng] as [number, number])} />
+          {info ? (
+            <p className="text-[15px] font-semibold">
+              {(info.distanceMeters / 1000).toFixed(1)} χλμ · {Math.round(info.durationSeconds / 60)} λεπτά με κίνηση
+              {info.durationSeconds - info.staticDurationSeconds > 60 ? ` (+${Math.round((info.durationSeconds - info.staticDurationSeconds) / 60)}′ καθυστέρηση)` : ""}
+            </p>
+          ) : null}
           <ol className="space-y-1 text-[15px]">{route.map((d, i) => <li key={d.id}>{i + 1}. {d.order.customer?.full_name} — {d.order.address || "χωρίς διεύθυνση"}{coords(d) ? "" : " (χωρίς τοποθεσία)"}</li>)}</ol>
           <div className="grid grid-cols-2 gap-2">
-            <GhostButton disabled={route.length < 2} onClick={order}>Ταξινόμηση</GhostButton>
+            <GhostButton disabled={!route.length || busy} onClick={order}>{busy ? "Υπολογισμός…" : "Βέλτιστη διαδρομή"}</GhostButton>
             <PrimaryButton disabled={!route.length} onClick={save}>Αποθήκευση σειράς</PrimaryButton>
           </div>
           {gmaps ? <a href={gmaps} target="_blank" rel="noreferrer" className="glass press flex h-12 items-center justify-center rounded-2xl font-semibold">Άνοιγμα διαδρομής στο Google Maps</a> : null}
