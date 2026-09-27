@@ -103,7 +103,7 @@ function DeliveriesPage() {
       {planning ? (
         <Card className="mb-4 space-y-3">
           <p className="text-sm text-muted-foreground">Επίλεξε διανομές. Η «Βέλτιστη διαδρομή» υπολογίζει πραγματικούς δρόμους με ζωντανή κίνηση από τη θέση σου.</p>
-          <MapPanel className="h-[320px]" onMyLocation={setMyPos} encodedRoute={info?.polyline} markers={route.filter(coords).map((d) => ({ id: d.id, ...coords(d)!, label: String(route.indexOf(d) + 1), tone: "accent" as const }))} route={route.map(coords).filter(Boolean).map((c) => [c!.lat, c!.lng] as [number, number])} />
+          <MapPanel className="h-[320px]" onMyLocation={setMyPos} encodedRoute={info?.polyline ?? null} markers={route.filter(coords).map((d) => ({ id: d.id, ...coords(d)!, label: String(route.indexOf(d) + 1), tone: "accent" as const }))} route={route.map(coords).filter(Boolean).map((c) => [c!.lat, c!.lng] as [number, number])} />
           {info ? (
             <p className="text-[15px] font-semibold">
               {(info.distanceMeters / 1000).toFixed(1)} χλμ · {Math.round(info.durationSeconds / 60)} λεπτά με κίνηση
