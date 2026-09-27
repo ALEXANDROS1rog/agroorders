@@ -5,7 +5,7 @@ import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { Field, Select } from "@/components/Field";
 import { fetchOrders, orderTotal } from "@/lib/api";
 import { ORDER_STATUSES, ORDER_STATUS_LABEL, formatCurrency } from "@/lib/domain";
-import { OrderRow } from "./orders.index";
+import { OrderRow } from "@/components/OrderRow";
 
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({

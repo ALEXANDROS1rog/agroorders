@@ -9,7 +9,7 @@ import { CallNavButtons, StatusChip } from "@/components/ui-bits";
 import { GhostButton } from "@/components/Field";
 import { deleteCustomer, fetchCustomer, fetchCustomerOrders, orderTotal } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/domain";
-import { CustomerForm } from "./customers.index";
+import { CustomerForm } from "@/components/CustomerForm";
 
 export const Route = createFileRoute("/_authenticated/customers/$id")({
   head: () => ({
