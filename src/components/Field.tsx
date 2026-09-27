@@ -65,7 +65,7 @@ export function PrimaryButton({
   children,
   className = "",
   ...props
-}: { children: ReactNode } & InputHTMLAttributes<HTMLButtonElement>) {
+}: { children: ReactNode } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...props}
@@ -80,7 +80,7 @@ export function GhostButton({
   children,
   className = "",
   ...props
-}: { children: ReactNode } & InputHTMLAttributes<HTMLButtonElement>) {
+}: { children: ReactNode } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...props}
