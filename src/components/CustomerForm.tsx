@@ -13,11 +13,11 @@ export function CustomerForm({ initial, onDone }: { initial: CustomerInput; onDo
   const [busy, setBusy] = useState(false);
 
   async function geocode() {
-    if (!f.address.trim()) return toast.error("Γράψε πρώτα διεύθυνση.");
+    if (!f.address.trim()) { toast.error("Γράψε πρώτα διεύθυνση."); return; }
     try {
       const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=gr&q=${encodeURIComponent(f.address)}`);
       const j = (await r.json()) as { lat: string; lon: string }[];
-      if (!j[0]) return toast.error("Δεν βρέθηκε η διεύθυνση στον χάρτη.");
+      if (!j[0]) { toast.error("Δεν βρέθηκε η διεύθυνση στον χάρτη."); return; }
       setF({ ...f, latitude: Number(j[0].lat), longitude: Number(j[0].lon) });
       toast.success("Βρέθηκε η τοποθεσία.");
     } catch {
@@ -48,7 +48,7 @@ export function CustomerForm({ initial, onDone }: { initial: CustomerInput; onDo
       <PrimaryButton
         disabled={busy}
         onClick={async () => {
-          if (!f.full_name.trim()) return toast.error("Γράψε ονοματεπώνυμο.");
+          if (!f.full_name.trim()) { toast.error("Γράψε ονοματεπώνυμο."); return; }
           setBusy(true);
           try {
             await saveCustomer(f);

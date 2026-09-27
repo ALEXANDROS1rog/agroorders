@@ -11,7 +11,7 @@ import { extractOrderFromText } from "@/lib/ai.functions";
 import { formatCurrency } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/orders/new")({
-  validateSearch: (s: Record<string, unknown>): { customer?: string } => (typeof s.customer === "string" ? { customer: s.customer } : {}),
+  validateSearch: (s: Record<string, unknown>): { customer?: string } => (typeof s["customer"] === "string" ? { customer: s["customer"] } : {}),
   head: () => ({
     meta: [
       { title: "Νέα παραγγελία — AgroOrders" },
@@ -80,9 +80,9 @@ function NewOrderPage() {
   }
 
   async function confirmOrder() {
-    if (lines.length === 0) return toast.error("Πρόσθεσε τουλάχιστον ένα προϊόν.");
-    if (lines.some((l) => !l.matched || !l.product_id)) return toast.error("Αντιστοίχισε ή αφαίρεσε τα προϊόντα που δεν βρέθηκαν.");
-    if (!customerId && !name.trim()) return toast.error("Γράψε όνομα πελάτη.");
+    if (lines.length === 0) { toast.error("Πρόσθεσε τουλάχιστον ένα προϊόν."); return; }
+    if (lines.some((l) => !l.matched || !l.product_id)) { toast.error("Αντιστοίχισε ή αφαίρεσε τα προϊόντα που δεν βρέθηκαν."); return; }
+    if (!customerId && !name.trim()) { toast.error("Γράψε όνομα πελάτη."); return; }
     setBusy(true);
     try {
       let cid = customerId;

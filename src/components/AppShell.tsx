@@ -29,8 +29,8 @@ export function AppShell({
   children,
 }: {
   title: string;
-  subtitle?: string;
-  back?: LinkProps["to"];
+  subtitle?: string | undefined;
+  back?: LinkProps["to"] | undefined;
   action?: ReactNode;
   children: ReactNode;
 }) {

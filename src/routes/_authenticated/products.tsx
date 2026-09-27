@@ -66,7 +66,7 @@ function ProductsPage() {
           </label>
           <PrimaryButton
             onClick={() => {
-              if (!form.name.trim()) return toast.error("Γράψε όνομα προϊόντος.");
+              if (!form.name.trim()) { toast.error("Γράψε όνομα προϊόντος."); return; }
               run(() => saveProduct({ ...form, name: form.name.trim() }), "Αποθηκεύτηκε").then(() => setForm(null));
             }}
           >

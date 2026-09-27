@@ -27,7 +27,7 @@ export function ActionLink({ href, children, tone = "glass" }: { href: string; c
   );
 }
 
-export function CallNavButtons({ phone, address, latitude, longitude }: { phone?: string | null; address?: string | null; latitude?: number | null; longitude?: number | null }) {
+export function CallNavButtons({ phone, address, latitude, longitude }: { phone?: string | null | undefined; address?: string | null | undefined; latitude?: number | null | undefined; longitude?: number | null | undefined }) {
   return (
     <>
       {phone ? (
@@ -36,7 +36,7 @@ export function CallNavButtons({ phone, address, latitude, longitude }: { phone?
         </ActionLink>
       ) : null}
       {address || (latitude != null && longitude != null) ? (
-        <ActionLink href={navigationHref({ latitude, longitude, address })}>
+        <ActionLink href={navigationHref({ latitude: latitude ?? null, longitude: longitude ?? null, address: address ?? null })}>
           <Navigation className="h-4 w-4" /> Πλοήγηση
         </ActionLink>
       ) : null}
