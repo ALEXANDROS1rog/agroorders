@@ -1,11 +1,10 @@
 import { Link, useRouterState, type LinkProps } from "@tanstack/react-router";
-import { ChevronLeft, Home, ClipboardList, Map as MapIcon, Truck, Users } from "lucide-react";
+import { ChevronLeft, Home, ClipboardList, Truck, Users } from "lucide-react";
 import type { ReactNode } from "react";
 
 const NAV = [
   { to: "/dashboard", label: "Αρχική", icon: Home },
   { to: "/orders", label: "Παραγγελίες", icon: ClipboardList },
-  { to: "/map", label: "Χάρτης", icon: MapIcon },
   { to: "/deliveries", label: "Διανομές", icon: Truck },
   { to: "/customers", label: "Πελάτες", icon: Users },
 ] as const;

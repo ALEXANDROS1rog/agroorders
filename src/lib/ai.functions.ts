@@ -116,12 +116,56 @@ async function callGateway(system: string, user: string): Promise<string> {
   return text;
 }
 
+/** Transcribes a short voice recording (base64) into Greek text. */
+export const transcribeAudio = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { audio: string; format: string }) => {
+    const audio = String(data?.audio ?? "");
+    if (audio.length < 100) throw new Error("Η ηχογράφηση είναι πολύ μικρή.");
+    if (audio.length > 14_000_000) throw new Error("Η ηχογράφηση είναι πολύ μεγάλη (μέχρι ~5 λεπτά).");
+    const format = /^[a-z0-9]{2,5}$/.test(data?.format ?? "") ? data.format : "webm";
+    return { audio, format };
+  })
+  .handler(async ({ data }): Promise<{ text: string }> => {
+    const apiKey = process.env["LOVABLE_API_KEY"];
+    if (!apiKey) throw new Error("Η υπηρεσία AI δεν είναι διαθέσιμη.");
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: "Κάνε πιστή απομαγνητοφώνηση στα ελληνικά αυτής της ηχογράφησης (πελάτης που δίνει παραγγελία). Γράψε μόνο ό,τι ακούγεται, χωρίς σχόλια. Τα τηλέφωνα γράψ' τα με ψηφία. Αν δεν ακούγεται ομιλία, απάντησε ΚΕΝΟ.",
+              },
+              { type: "input_audio", input_audio: { data: data.audio, format: data.format } },
+            ],
+          },
+        ],
+      }),
+    });
+    if (!res.ok) {
+      console.error(`Transcription failed [${res.status}]: ${await res.text()}`);
+      if (res.status === 429) throw new Error("Πολλά αιτήματα AI. Δοκίμασε ξανά σε λίγο.");
+      if (res.status === 402) throw new Error("Τα credits για το AI εξαντλήθηκαν.");
+      throw new Error("Η απομαγνητοφώνηση απέτυχε. Δοκίμασε ξανά.");
+    }
+    const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+    const text = (json.choices?.[0]?.message?.content ?? "").trim();
+    if (!text || text === "ΚΕΝΟ") throw new Error("Δεν ακούστηκε ομιλία. Δοκίμασε ξανά πιο κοντά στο μικρόφωνο.");
+    return { text };
+  });
+
 export const extractOrderFromText = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { text: string }) => {
+  .inputValidator((data: { text: string; source?: string }) => {
     const text = (data?.text ?? "").trim();
     if (text.length < 5) throw new Error("Γράψε λίγο περισσότερο κείμενο.");
-    return { text: text.slice(0, 6000) };
+    return { text: text.slice(0, 6000), source: data?.source === "voice" ? "voice" : "text" };
   })
   .handler(async ({ data, context }): Promise<ExtractedOrder> => {
     const { supabase, userId } = context;

@@ -1,4 +1,5 @@
 import { OrderRow, matchesOrder } from "@/components/OrderRow";
+import { AutoDeliver } from "@/components/AutoDeliver";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -31,6 +32,7 @@ function OrdersPage() {
       title="Παραγγελίες"
       action={<Link to="/orders/new" aria-label="Νέα παραγγελία" className="press grid h-11 w-11 place-items-center rounded-2xl bg-brand text-brand-foreground"><Plus className="h-5 w-5" /></Link>}
     >
+      <AutoDeliver />
       <SearchBox value={q} onChange={setQ} placeholder="Πελάτης, προϊόν, αριθμός, ημερομηνία" />
       <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1">
         {["all", ...ORDER_STATUSES].map((s) => (

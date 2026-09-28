@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { AutoDeliver } from "@/components/AutoDeliver";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -96,6 +97,7 @@ function DeliveriesPage() {
 
   return (
     <AppShell title="Διανομές" subtitle={`${pending.length} εκκρεμείς`}>
+      <AutoDeliver />
       {pending.length > 1 ? (
         <GhostButton className="mb-4" onClick={() => { setPlanning(!planning); setPicked([]); }}>{planning ? "Κλείσιμο σχεδιασμού" : "Σχεδιασμός διαδρομής"}</GhostButton>
       ) : null}
