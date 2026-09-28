@@ -1,13 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Minus, Plus, Sparkles, Trash2 } from "lucide-react";
+import { Mic, Minus, Plus, Sparkles, Square, Trash2 } from "lucide-react";
 import { AppShell, Card } from "@/components/AppShell";
 import { Field, GhostButton, PrimaryButton, Select, TextArea } from "@/components/Field";
 import { availableProducts, createOrder, fetchCustomers, fetchProducts, saveCustomer, type NewOrderItem } from "@/lib/api";
-import { extractOrderFromText } from "@/lib/ai.functions";
+import { extractOrderFromText, transcribeAudio } from "@/lib/ai.functions";
 import { formatCurrency } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/orders/new")({
@@ -33,7 +33,7 @@ function NewOrderPage() {
   const products = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
   const customers = useQuery({ queryKey: ["customers"], queryFn: fetchCustomers });
 
-  const [mode, setMode] = useState<"ai" | "manual">(search.customer ? "manual" : "ai");
+  const [mode, setMode] = useState<"ai" | "voice" | "manual">(search.customer ? "manual" : "ai");
   const [text, setText] = useState("");
   const [aiBusy, setAiBusy] = useState(false);
   const [review, setReview] = useState(false);
@@ -54,10 +54,61 @@ function NewOrderPage() {
   const catalog = availableProducts(products.data ?? []);
   const total = lines.reduce((s, l) => s + l.unit_price * l.quantity, 0);
 
-  async function runAi() {
+  const transcribe = useServerFn(transcribeAudio);
+  const [recording, setRecording] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const recRef = useRef<MediaRecorder | null>(null);
+
+  async function startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mime = ["audio/webm", "audio/mp4", "audio/ogg"].find((m) => MediaRecorder.isTypeSupported(m)) ?? "";
+      const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+      const chunks: Blob[] = [];
+      rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+      rec.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const type = rec.mimeType || mime || "audio/webm";
+        const blob = new Blob(chunks, { type });
+        const buf = new Uint8Array(await blob.arrayBuffer());
+        let bin = "";
+        for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+        const format = type.includes("mp4") ? "mp4" : type.includes("ogg") ? "ogg" : "webm";
+        setAiBusy(true);
+        try {
+          const t = await transcribe({ data: { audio: btoa(bin), format } });
+          setText(t.text);
+          await runAi(t.text, "voice");
+        } catch (e) {
+          toast.error(e instanceof Error ? e.message : "Σφάλμα ηχογράφησης");
+          setAiBusy(false);
+        }
+      };
+      rec.start();
+      recRef.current = rec;
+      setSeconds(0);
+      setRecording(true);
+    } catch {
+      toast.error("Δεν δόθηκε άδεια για το μικρόφωνο.");
+    }
+  }
+
+  function stopRecording() {
+    recRef.current?.stop();
+    recRef.current = null;
+    setRecording(false);
+  }
+
+  useEffect(() => {
+    if (!recording) return;
+    const id = setInterval(() => setSeconds((s) => { if (s >= 299) stopRecording(); return s + 1; }), 1000);
+    return () => clearInterval(id);
+  }, [recording]);
+
+  async function runAi(input: string = text, source: "text" | "voice" = "text") {
     setAiBusy(true);
     try {
-      const r = await extract({ data: { text } });
+      const r = await extract({ data: { text: input, source } });
       const match = r.phone ? customers.data?.find((c) => c.phone && r.phone!.endsWith(c.phone.slice(-10))) : undefined;
       setCustomerId(match?.id ?? "");
       setName(r.customer_name ?? match?.full_name ?? "");
@@ -96,7 +147,7 @@ function NewOrderPage() {
         address,
         notes,
         status: "new",
-        source: mode === "ai" ? "ai_text" : "manual",
+        source: mode === "ai" ? "ai_text" : mode === "voice" ? "ai_voice" : "manual",
         items: lines.map(({ matched: _m, ...l }) => l),
       });
       toast.success("Η παραγγελία δημιουργήθηκε.");
@@ -114,9 +165,9 @@ function NewOrderPage() {
   return (
     <AppShell title="Νέα παραγγελία" back="/orders">
       <div className="glass-soft mb-4 flex rounded-2xl p-1">
-        {(["ai", "manual"] as const).map((m) => (
-          <button key={m} onClick={() => { setMode(m); setReview(false); }} className={`press flex-1 rounded-xl py-3 text-sm font-semibold ${mode === m ? "bg-brand/20 text-brand ring-1 ring-brand/30" : "text-muted-foreground"}`}>
-            {m === "ai" ? "Με AI από κείμενο" : "Χειροκίνητα"}
+        {(["voice", "ai", "manual"] as const).map((m) => (
+          <button key={m} disabled={recording} onClick={() => { setMode(m); setReview(false); }} className={`press flex-1 rounded-xl px-1 py-3 text-sm font-semibold ${mode === m ? "bg-brand/20 text-brand ring-1 ring-brand/30" : "text-muted-foreground"}`}>
+            {m === "voice" ? "Ηχογράφηση" : m === "ai" ? "Από κείμενο" : "Χειροκίνητα"}
           </button>
         ))}
       </div>
@@ -124,9 +175,26 @@ function NewOrderPage() {
       {mode === "ai" && !review ? (
         <Card className="space-y-3">
           <TextArea label="Επικόλλησε τη συνομιλία" rows={8} value={text} onChange={(e) => setText(e.target.value)} placeholder="π.χ. Γεια σας, θέλω 2 καρτέλες αυγά και μια μαύρη κότα, στη Λεωφ. Κηφισίας 10, τηλ 6912345678" />
-          <PrimaryButton disabled={aiBusy || text.trim().length < 5} onClick={runAi}>
+          <PrimaryButton disabled={aiBusy || text.trim().length < 5} onClick={() => runAi()}>
             <span className="inline-flex items-center gap-2"><Sparkles className="h-5 w-5" /> {aiBusy ? "Ανάλυση…" : "Ανάλυση παραγγελίας"}</span>
           </PrimaryButton>
+        </Card>
+      ) : null}
+
+      {mode === "voice" && !review ? (
+        <Card className="space-y-4 text-center">
+          <p className="text-sm text-muted-foreground">Πάτα το κουμπί και άφησε τον πελάτη να πει τι θέλει: όνομα, τηλέφωνο, διεύθυνση και προϊόντα. Ενημέρωσε τον πελάτη ότι ηχογραφείται.</p>
+          <button
+            disabled={aiBusy}
+            onClick={recording ? stopRecording : startRecording}
+            aria-label={recording ? "Διακοπή ηχογράφησης" : "Έναρξη ηχογράφησης"}
+            className={`press mx-auto grid h-32 w-32 place-items-center rounded-full ${recording ? "animate-pulse-soft bg-destructive text-destructive-foreground" : "bg-brand text-brand-foreground"} disabled:opacity-50`}
+          >
+            {recording ? <Square className="h-12 w-12" /> : <Mic className="h-14 w-14" />}
+          </button>
+          <p className="font-display text-lg font-semibold">
+            {aiBusy ? "Ανάλυση ηχογράφησης…" : recording ? `Ηχογράφηση ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")} — πάτα για τέλος` : "Πάτα για ηχογράφηση"}
+          </p>
         </Card>
       ) : null}
 
