@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Mic, Minus, Plus, Sparkles, Square, Trash2 } from "lucide-react";
 import { AppShell, Card } from "@/components/AppShell";
 import { Field, GhostButton, PrimaryButton, Select, TextArea } from "@/components/Field";
-import { availableProducts, createOrder, fetchCustomers, fetchProducts, saveCustomer, type NewOrderItem } from "@/lib/api";
+import { availableProducts, createOrder, fetchRoutes, localDateStr, fetchCustomers, fetchProducts, saveCustomer, type NewOrderItem } from "@/lib/api";
 import { extractOrderFromText, transcribeAudio } from "@/lib/ai.functions";
 import { formatCurrency } from "@/lib/domain";
 
@@ -45,6 +45,8 @@ function NewOrderPage() {
   const [notes, setNotes] = useState("");
   const [lines, setLines] = useState<Line[]>([]);
   const [busy, setBusy] = useState(false);
+  const routes = useQuery({ queryKey: ["routes"], queryFn: fetchRoutes });
+  const [routeId, setRouteId] = useState("");
 
   useEffect(() => {
     const c = customers.data?.find((x) => x.id === customerId);
@@ -134,6 +136,7 @@ function NewOrderPage() {
     if (lines.length === 0) { toast.error("Πρόσθεσε τουλάχιστον ένα προϊόν."); return; }
     if (lines.some((l) => !l.matched || !l.product_id)) { toast.error("Αντιστοίχισε ή αφαίρεσε τα προϊόντα που δεν βρέθηκαν."); return; }
     if (!customerId && !name.trim()) { toast.error("Γράψε όνομα πελάτη."); return; }
+    if (!routeId) { toast.error("Διάλεξε δρομολόγιο."); return; }
     setBusy(true);
     try {
       let cid = customerId;
@@ -147,6 +150,7 @@ function NewOrderPage() {
         address,
         notes,
         status: "new",
+        route_id: routeId,
         source: mode === "ai" ? "ai_text" : mode === "voice" ? "ai_voice" : "manual",
         items: lines.map(({ matched: _m, ...l }) => l),
       });
@@ -248,6 +252,15 @@ function NewOrderPage() {
               {catalog.map((p) => <option key={p.id} value={p.id}>{p.name} · {formatCurrency(p.price)}</option>)}
             </select>
             <div className="flex justify-between text-lg font-bold"><span>Σύνολο</span><span>{formatCurrency(total)}</span></div>
+          </Card>
+          <Card className="space-y-2">
+            <Select label="Δρομολόγιο" value={routeId} onChange={(e) => setRouteId(e.target.value)}>
+              <option value="">— Διάλεξε δρομολόγιο —</option>
+              {(routes.data ?? []).filter((r) => r.route_date >= localDateStr()).map((r) => (
+                <option key={r.id} value={r.id}>{new Date(r.route_date + "T12:00:00").toLocaleDateString("el-GR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</option>
+              ))}
+            </Select>
+            {routes.data && !routes.data.some((r) => r.route_date >= localDateStr()) ? <p className="text-sm text-warning">Δεν υπάρχει δρομολόγιο. Φτιάξε ένα από την Αρχική → «Νέο δρομολόγιο».</p> : null}
           </Card>
           <TextArea label="Σημειώσεις" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
           <PrimaryButton disabled={busy} onClick={confirmOrder}>{busy ? "Αποθήκευση…" : review ? "ΕΠΙΒΕΒΑΙΩΣΗ" : "Δημιουργία παραγγελίας"}</PrimaryButton>
