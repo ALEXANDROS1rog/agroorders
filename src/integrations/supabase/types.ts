@@ -135,42 +135,6 @@ export type Database = {
           },
         ]
       }
-      delivery_routes: {
-        Row: {
-          created_at: string
-          food: number
-          fuel: number
-          id: string
-          route_date: string
-          tolls: number
-          updated_at: string
-          user_id: string
-          wear: number
-        }
-        Insert: {
-          created_at?: string
-          food?: number
-          fuel?: number
-          id?: string
-          route_date: string
-          tolls?: number
-          updated_at?: string
-          user_id: string
-          wear?: number
-        }
-        Update: {
-          created_at?: string
-          food?: number
-          fuel?: number
-          id?: string
-          route_date?: string
-          tolls?: number
-          updated_at?: string
-          user_id?: string
-          wear?: number
-        }
-        Relationships: []
-      }
       order_items: {
         Row: {
           created_at: string
@@ -232,7 +196,6 @@ export type Database = {
           order_date: string
           order_number: number
           phone: string
-          route_id: string | null
           source: string
           status: string
           total: number
@@ -248,7 +211,6 @@ export type Database = {
           order_date?: string
           order_number?: number
           phone?: string
-          route_id?: string | null
           source?: string
           status?: string
           total?: number
@@ -264,7 +226,6 @@ export type Database = {
           order_date?: string
           order_number?: number
           phone?: string
-          route_id?: string | null
           source?: string
           status?: string
           total?: number
@@ -277,13 +238,6 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "orders_route_id_fkey"
-            columns: ["route_id"]
-            isOneToOne: false
-            referencedRelation: "delivery_routes"
             referencedColumns: ["id"]
           },
         ]
@@ -362,7 +316,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      purge_old_history: { Args: never; Returns: undefined }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

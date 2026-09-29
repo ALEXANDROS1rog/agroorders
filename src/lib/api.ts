@@ -231,7 +231,6 @@ export type NewOrderInput = {
   notes: string;
   status: OrderStatus;
   source?: string;
-  route_id?: string | null;
   items: NewOrderItem[];
 };
 
@@ -247,7 +246,6 @@ export async function createOrder(input: NewOrderInput): Promise<string> {
       notes: input.notes,
       status: input.status,
       source: input.source ?? "manual",
-      route_id: input.route_id ?? null,
     })
     .select("id")
     .single();
@@ -376,44 +374,4 @@ export function isToday(value: string | null | undefined): boolean {
 
 export function availableProducts(products: Product[]) {
   return products.filter((p) => p.available);
-}
-
-/* ---------------------------------- routes ---------------------------------- */
-
-export type DeliveryRoute = {
-  id: string;
-  route_date: string;
-  fuel: number;
-  tolls: number;
-  wear: number;
-  food: number;
-};
-
-export function localDateStr(d: Date = new Date()) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-export function routeExpenses(r: Pick<DeliveryRoute, "fuel" | "tolls" | "wear" | "food">) {
-  return Number(r.fuel) + Number(r.tolls) + Number(r.wear) + Number(r.food);
-}
-
-export async function fetchRoutes(): Promise<DeliveryRoute[]> {
-  const { data, error } = await supabase
-    .from("delivery_routes")
-    .select("id, route_date, fuel, tolls, wear, food")
-    .order("route_date", { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as DeliveryRoute[];
-}
-
-export async function createRoute(input: Omit<DeliveryRoute, "id">) {
-  const userId = await requireUserId();
-  const { error } = await supabase.from("delivery_routes").insert({ ...input, user_id: userId });
-  if (error) throw error;
-}
-
-export async function updateProfile(input: { first_name: string; last_name: string; business_name: string; phone: string }) {
-  const userId = await requireUserId();
-  const { error } = await supabase.from("profiles").update(input).eq("id", userId);
-  if (error) throw error;
 }

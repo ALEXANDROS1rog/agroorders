@@ -51,18 +51,18 @@ export function AppShell({
                 <ChevronLeft className="h-5 w-5" />
               </Link>
             ) : (
-              <Link to="/profile" aria-label="Το προφίλ μου" className="press grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40">
+              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40">
                 <span className="font-display text-lg font-bold text-brand">Α</span>
-              </Link>
+              </div>
             )}
-            <Link to={back ? "." : "/profile"} className="min-w-0">
+            <div className="min-w-0">
               <h1 className="font-display truncate text-[17px] font-semibold leading-tight">
                 {title}
               </h1>
               {subtitle ? (
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">{subtitle}</p>
               ) : null}
-            </Link>
+            </div>
           </div>
           {action}
         </header>

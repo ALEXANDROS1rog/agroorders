@@ -17,14 +17,12 @@ import { Route as AuthenticatedDeliveriesRouteImport } from './routes/_authentic
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedMapRouteImport } from './routes/_authenticated/map'
 import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
-import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthResetRouteImport } from './routes/auth.reset'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers.index'
 import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers.$id'
 import { Route as AuthenticatedOrdersIndexRouteImport } from './routes/_authenticated/orders.index'
 import { Route as AuthenticatedOrdersIdRouteImport } from './routes/_authenticated/orders.$id'
 import { Route as AuthenticatedOrdersNewRouteImport } from './routes/_authenticated/orders.new'
-import { Route as AuthenticatedRoutesNewRouteImport } from './routes/_authenticated/routes.new'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -65,11 +63,6 @@ const AuthenticatedProductsRoute = AuthenticatedProductsRouteImport.update({
   path: '/products',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthResetRoute = AuthResetRouteImport.update({
   id: '/reset',
   path: '/reset',
@@ -103,11 +96,6 @@ const AuthenticatedOrdersNewRoute = AuthenticatedOrdersNewRouteImport.update({
   path: '/orders/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedRoutesNewRoute = AuthenticatedRoutesNewRouteImport.update({
-  id: '/routes/new',
-  path: '/routes/new',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,12 +105,10 @@ export interface FileRoutesByFullPath {
   '/history': typeof AuthenticatedHistoryRoute
   '/map': typeof AuthenticatedMapRoute
   '/products': typeof AuthenticatedProductsRoute
-  '/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/orders/new': typeof AuthenticatedOrdersNewRoute
-  '/routes/new': typeof AuthenticatedRoutesNewRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
   '/orders/': typeof AuthenticatedOrdersIndexRoute
 }
@@ -134,12 +120,10 @@ export interface FileRoutesByTo {
   '/history': typeof AuthenticatedHistoryRoute
   '/map': typeof AuthenticatedMapRoute
   '/products': typeof AuthenticatedProductsRoute
-  '/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/orders/new': typeof AuthenticatedOrdersNewRoute
-  '/routes/new': typeof AuthenticatedRoutesNewRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
 }
@@ -153,12 +137,10 @@ export interface FileRoutesById {
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/map': typeof AuthenticatedMapRoute
   '/_authenticated/products': typeof AuthenticatedProductsRoute
-  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
   '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/_authenticated/orders/new': typeof AuthenticatedOrdersNewRoute
-  '/_authenticated/routes/new': typeof AuthenticatedRoutesNewRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
 }
@@ -172,12 +154,10 @@ export interface FileRouteTypes {
     | '/history'
     | '/map'
     | '/products'
-    | '/profile'
     | '/auth/reset'
     | '/customers/$id'
     | '/orders/$id'
     | '/orders/new'
-    | '/routes/new'
     | '/customers/'
     | '/orders/'
   fileRoutesByTo: FileRoutesByTo
@@ -189,12 +169,10 @@ export interface FileRouteTypes {
     | '/history'
     | '/map'
     | '/products'
-    | '/profile'
     | '/auth/reset'
     | '/customers/$id'
     | '/orders/$id'
     | '/orders/new'
-    | '/routes/new'
     | '/customers'
     | '/orders'
   id:
@@ -207,12 +185,10 @@ export interface FileRouteTypes {
     | '/_authenticated/history'
     | '/_authenticated/map'
     | '/_authenticated/products'
-    | '/_authenticated/profile'
     | '/auth/reset'
     | '/_authenticated/customers/$id'
     | '/_authenticated/orders/$id'
     | '/_authenticated/orders/new'
-    | '/_authenticated/routes/new'
     | '/_authenticated/customers/'
     | '/_authenticated/orders/'
   fileRoutesById: FileRoutesById
@@ -281,13 +257,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProductsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/profile': {
-      id: '/_authenticated/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthenticatedProfileRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/auth/reset': {
       id: '/auth/reset'
       path: '/reset'
@@ -330,13 +299,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/routes/new': {
-      id: '/_authenticated/routes/new'
-      path: '/routes/new'
-      fullPath: '/routes/new'
-      preLoaderRoute: typeof AuthenticatedRoutesNewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
   }
 }
 
@@ -346,11 +308,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedMapRoute: typeof AuthenticatedMapRoute
   AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
-  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
   AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
   AuthenticatedOrdersNewRoute: typeof AuthenticatedOrdersNewRoute
-  AuthenticatedRoutesNewRoute: typeof AuthenticatedRoutesNewRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
 }
@@ -361,11 +321,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedMapRoute: AuthenticatedMapRoute,
   AuthenticatedProductsRoute: AuthenticatedProductsRoute,
-  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
   AuthenticatedOrdersIdRoute: AuthenticatedOrdersIdRoute,
   AuthenticatedOrdersNewRoute: AuthenticatedOrdersNewRoute,
-  AuthenticatedRoutesNewRoute: AuthenticatedRoutesNewRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
 }

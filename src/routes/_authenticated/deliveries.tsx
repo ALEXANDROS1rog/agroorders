@@ -2,19 +2,22 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AutoDeliver } from "@/components/AutoDeliver";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { computeDeliveryRoute, type RouteResult } from "@/lib/routes.functions";
 import { toast } from "sonner";
 import { Check } from "lucide-react";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
-import { PrimaryButton } from "@/components/Field";
+import { MapPanel } from "@/components/MapPanel";
+import { GhostButton, PrimaryButton } from "@/components/Field";
 import { CallNavButtons, StatusChip } from "@/components/ui-bits";
-import { fetchDeliveries, markDelivered, orderTotal, type DeliveryWithOrder } from "@/lib/api";
+import { fetchDeliveries, markDelivered, orderTotal, saveRoutePositions, type DeliveryWithOrder } from "@/lib/api";
 import { distanceKm, formatCurrency } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/deliveries")({
   head: () => ({
     meta: [
       { title: "Διανομές — AgroOrders" },
-      { name: "description", content: "Εκκρεμείς διανομές, η πιο κοντινή πρώτη." },
+      { name: "description", content: "Εκκρεμείς διανομές και σχεδιασμός διαδρομής." },
       { property: "og:title", content: "Διανομές — AgroOrders" },
       { property: "og:description", content: "Διανομές και διαδρομή." },
     ],
@@ -27,45 +30,117 @@ const coords = (d: DeliveryWithOrder) => {
   return c?.latitude != null && c?.longitude != null ? { lat: c.latitude, lng: c.longitude } : null;
 };
 
+/** Simple nearest-neighbour ordering by straight-line distance. A real routing API
+ * (e.g. Google Routes / OpenRouteService) can replace this later for road distance & traffic. */
+function nearestFirst(list: DeliveryWithOrder[], start: { lat: number; lng: number } | null) {
+  const withC = list.filter(coords);
+  const without = list.filter((d) => !coords(d));
+  const out: DeliveryWithOrder[] = [];
+  let cur = start ?? (withC[0] ? coords(withC[0]) : null);
+  const rest = [...withC];
+  while (rest.length && cur) {
+    let bi = 0;
+    rest.forEach((d, i) => { if (distanceKm(cur!, coords(d)!) < distanceKm(cur!, coords(rest[bi]!)!)) bi = i; });
+    const [n] = rest.splice(bi, 1);
+    out.push(n!);
+    cur = coords(n!);
+  }
+  return [...out, ...without];
+}
+
 function DeliveriesPage() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries });
-  const [myPos, setMyPos] = useState<{ lat: number; lng: number } | null>(null);
-  useEffect(() => {
-    if (!navigator.geolocation) return;
-    const id = navigator.geolocation.watchPosition((p) => setMyPos({ lat: p.coords.latitude, lng: p.coords.longitude }), () => {}, { enableHighAccuracy: true, maximumAge: 15000 });
-    return () => navigator.geolocation.clearWatch(id);
-  }, []);
-  const dist = (d: DeliveryWithOrder) => { const c = coords(d); return c && myPos ? distanceKm(myPos, c) : Infinity; };
+  const [planning, setPlanning] = useState(false);
+  const [picked, setPicked] = useState<string[]>([]);
   const pending = (data ?? [])
     .filter((d) => (d.status === "pending" || d.status === "in_progress") && d.order.status !== "cancelled")
-    .sort((a, b) => dist(a) - dist(b));
+    .sort((a, b) => (a.route_position ?? 999) - (b.route_position ?? 999));
+  const route = picked.map((id) => pending.find((d) => d.id === id)).filter(Boolean) as DeliveryWithOrder[];
+  const routeFn = useServerFn(computeDeliveryRoute);
+  const [myPos, setMyPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [info, setInfo] = useState<RouteResult | null>(null);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setInfo(null); }, [picked.join(",")]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function deliver(d: DeliveryWithOrder) {
     try { await markDelivered(d.id, d.order.id); toast.success("Παραδόθηκε!"); qc.invalidateQueries(); }
     catch (e) { toast.error(e instanceof Error ? e.message : "Σφάλμα"); }
   }
 
+  async function order() {
+    const located = route.filter(coords);
+    const start = myPos ?? (located[0] ? coords(located[0]) : null);
+    if (!start || !located.length) { setPicked(nearestFirst(route, null).map((d) => d.id)); return; }
+    setBusy(true);
+    try {
+      const r = await routeFn({ data: { origin: start, stops: located.map((d) => coords(d)!), optimize: true } });
+      let ordered = located;
+      if (r.order) ordered = r.order.map((i) => located[i]!);
+      setPicked([...ordered, ...route.filter((d) => !coords(d))].map((d) => d.id));
+      setInfo(r);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Σφάλμα");
+      setPicked(nearestFirst(route, start).map((d) => d.id));
+    } finally { setBusy(false); }
+  }
+
+  async function save() {
+    try { await saveRoutePositions(route.map((d, i) => ({ id: d.id, position: i + 1 }))); toast.success("Η σειρά αποθηκεύτηκε."); qc.invalidateQueries(); setPlanning(false); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "Σφάλμα"); }
+  }
+
+  const stops = route.map((d) => { const c = coords(d); return c ? `${c.lat},${c.lng}` : d.order.address; }).filter(Boolean);
+  const gmaps = stops.length
+    ? `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(stops[stops.length - 1]!)}${stops.length > 1 ? `&waypoints=${encodeURIComponent(stops.slice(0, -1).join("|"))}` : ""}`
+    : "";
+
   return (
     <AppShell title="Διανομές" subtitle={`${pending.length} εκκρεμείς`}>
       <AutoDeliver />
+      {pending.length > 1 ? (
+        <GhostButton className="mb-4" onClick={() => { setPlanning(!planning); setPicked([]); }}>{planning ? "Κλείσιμο σχεδιασμού" : "Σχεδιασμός διαδρομής"}</GhostButton>
+      ) : null}
+
+      {planning ? (
+        <Card className="mb-4 space-y-3">
+          <p className="text-sm text-muted-foreground">Επίλεξε διανομές. Η «Βέλτιστη διαδρομή» υπολογίζει πραγματικούς δρόμους με ζωντανή κίνηση από τη θέση σου.</p>
+          <MapPanel className="h-[320px]" onMyLocation={setMyPos} encodedRoute={info?.polyline ?? null} markers={route.filter(coords).map((d) => ({ id: d.id, ...coords(d)!, label: String(route.indexOf(d) + 1), tone: "accent" as const }))} route={route.map(coords).filter(Boolean).map((c) => [c!.lat, c!.lng] as [number, number])} />
+          {info ? (
+            <p className="text-[15px] font-semibold">
+              {(info.distanceMeters / 1000).toFixed(1)} χλμ · {Math.round(info.durationSeconds / 60)} λεπτά με κίνηση
+              {info.durationSeconds - info.staticDurationSeconds > 60 ? ` (+${Math.round((info.durationSeconds - info.staticDurationSeconds) / 60)}′ καθυστέρηση)` : ""}
+            </p>
+          ) : null}
+          <ol className="space-y-1 text-[15px]">{route.map((d, i) => <li key={d.id}>{i + 1}. {d.order.customer?.full_name} — {d.order.address || "χωρίς διεύθυνση"}{coords(d) ? "" : " (χωρίς τοποθεσία)"}</li>)}</ol>
+          <div className="grid grid-cols-2 gap-2">
+            <GhostButton disabled={!route.length || busy} onClick={order}>{busy ? "Υπολογισμός…" : "Βέλτιστη διαδρομή"}</GhostButton>
+            <PrimaryButton disabled={!route.length} onClick={save}>Αποθήκευση σειράς</PrimaryButton>
+          </div>
+          {gmaps ? <a href={gmaps} target="_blank" rel="noreferrer" className="glass press flex h-12 items-center justify-center rounded-2xl font-semibold">Άνοιγμα διαδρομής στο Google Maps</a> : null}
+        </Card>
+      ) : null}
+
       {isLoading ? <Loading /> : !pending.length ? <EmptyState title="Δεν υπάρχουν εκκρεμείς διανομές" /> : (
         <div className="space-y-3">
           {pending.map((d) => {
             const o = d.order;
+            const sel = picked.includes(d.id);
             return (
-              <Card key={d.id}>
+              <Card key={d.id} className={sel ? "ring-2 ring-accent" : ""}>
                 <div className="flex items-start justify-between gap-2">
                   <Link to="/orders/$id" params={{ id: o.id }} className="min-w-0">
-                    <p className="text-lg font-semibold">{o.customer?.full_name ?? "Πελάτης"}</p>
+                    <p className="text-lg font-semibold">{d.route_position ? `${d.route_position}. ` : ""}{o.customer?.full_name ?? "Πελάτης"}</p>
                     <p className="text-sm">{o.phone}</p>
                     <p className="text-sm text-muted-foreground">{o.address}</p>
                   </Link>
                   <StatusChip status={o.status} />
                 </div>
                 <p className="mt-2 text-sm">{o.order_items.map((i) => `${i.quantity}× ${i.product_name}`).join(", ")}</p>
-                <p className="font-display mt-1 text-xl font-bold">{formatCurrency(orderTotal(o))}{Number.isFinite(dist(d)) ? <span className="ml-2 text-sm font-normal text-muted-foreground">{dist(d).toFixed(1)} χλμ</span> : null}</p>
-                {(
+                <p className="font-display mt-1 text-xl font-bold">{formatCurrency(orderTotal(o))}</p>
+                {planning ? (
+                  <GhostButton className="mt-3" onClick={() => setPicked(sel ? picked.filter((x) => x !== d.id) : [...picked, d.id])}>{sel ? `Στάση ${picked.indexOf(d.id) + 1} — αφαίρεση` : "Προσθήκη στη διαδρομή"}</GhostButton>
+                ) : (
                   <>
                     <div className="mt-3 flex gap-2"><CallNavButtons phone={o.phone} address={o.address} latitude={o.customer?.latitude} longitude={o.customer?.longitude} /></div>
                     <PrimaryButton className="mt-2" onClick={() => deliver(d)}><span className="inline-flex items-center gap-2"><Check className="h-5 w-5" /> Παραδόθηκε</span></PrimaryButton>
