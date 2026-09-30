@@ -96,8 +96,11 @@ export type Database = {
       }
       deliveries: {
         Row: {
+          auto_confirmed: boolean
           created_at: string
           delivered_at: string | null
+          delivered_lat: number | null
+          delivered_lng: number | null
           id: string
           order_id: string
           route_position: number | null
@@ -106,8 +109,11 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auto_confirmed?: boolean
           created_at?: string
           delivered_at?: string | null
+          delivered_lat?: number | null
+          delivered_lng?: number | null
           id?: string
           order_id: string
           route_position?: number | null
@@ -116,8 +122,11 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auto_confirmed?: boolean
           created_at?: string
           delivered_at?: string | null
+          delivered_lat?: number | null
+          delivered_lng?: number | null
           id?: string
           order_id?: string
           route_position?: number | null
@@ -141,8 +150,11 @@ export type Database = {
           food: number
           fuel: number
           id: string
+          net_route_value: number | null
           route_date: string
           tolls: number
+          total_expenses: number | null
+          total_order_value: number
           updated_at: string
           user_id: string
           wear: number
@@ -152,8 +164,11 @@ export type Database = {
           food?: number
           fuel?: number
           id?: string
+          net_route_value?: number | null
           route_date: string
           tolls?: number
+          total_expenses?: number | null
+          total_order_value?: number
           updated_at?: string
           user_id: string
           wear?: number
@@ -163,8 +178,11 @@ export type Database = {
           food?: number
           fuel?: number
           id?: string
+          net_route_value?: number | null
           route_date?: string
           tolls?: number
+          total_expenses?: number | null
+          total_order_value?: number
           updated_at?: string
           user_id?: string
           wear?: number
@@ -333,6 +351,7 @@ export type Database = {
           id: string
           last_name: string
           phone: string
+          preferred_language: string
           updated_at: string
         }
         Insert: {
@@ -343,6 +362,7 @@ export type Database = {
           id: string
           last_name?: string
           phone?: string
+          preferred_language?: string
           updated_at?: string
         }
         Update: {
@@ -353,6 +373,7 @@ export type Database = {
           id?: string
           last_name?: string
           phone?: string
+          preferred_language?: string
           updated_at?: string
         }
         Relationships: []
@@ -363,6 +384,7 @@ export type Database = {
     }
     Functions: {
       purge_old_history: { Args: never; Returns: undefined }
+      recalc_route_value: { Args: { _route: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
