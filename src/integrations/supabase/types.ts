@@ -96,8 +96,11 @@ export type Database = {
       }
       deliveries: {
         Row: {
+          auto_confirmed: boolean
           created_at: string
           delivered_at: string | null
+          delivered_lat: number | null
+          delivered_lng: number | null
           id: string
           order_id: string
           route_position: number | null
@@ -106,8 +109,11 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auto_confirmed?: boolean
           created_at?: string
           delivered_at?: string | null
+          delivered_lat?: number | null
+          delivered_lng?: number | null
           id?: string
           order_id: string
           route_position?: number | null
@@ -116,8 +122,11 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auto_confirmed?: boolean
           created_at?: string
           delivered_at?: string | null
+          delivered_lat?: number | null
+          delivered_lng?: number | null
           id?: string
           order_id?: string
           route_position?: number | null
@@ -134,6 +143,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      delivery_routes: {
+        Row: {
+          created_at: string
+          food: number
+          fuel: number
+          id: string
+          net_route_value: number | null
+          route_date: string
+          tolls: number
+          total_expenses: number | null
+          total_order_value: number
+          updated_at: string
+          user_id: string
+          wear: number
+        }
+        Insert: {
+          created_at?: string
+          food?: number
+          fuel?: number
+          id?: string
+          net_route_value?: number | null
+          route_date: string
+          tolls?: number
+          total_expenses?: number | null
+          total_order_value?: number
+          updated_at?: string
+          user_id: string
+          wear?: number
+        }
+        Update: {
+          created_at?: string
+          food?: number
+          fuel?: number
+          id?: string
+          net_route_value?: number | null
+          route_date?: string
+          tolls?: number
+          total_expenses?: number | null
+          total_order_value?: number
+          updated_at?: string
+          user_id?: string
+          wear?: number
+        }
+        Relationships: []
       }
       order_items: {
         Row: {
@@ -196,6 +250,7 @@ export type Database = {
           order_date: string
           order_number: number
           phone: string
+          route_id: string | null
           source: string
           status: string
           total: number
@@ -211,6 +266,7 @@ export type Database = {
           order_date?: string
           order_number?: number
           phone?: string
+          route_id?: string | null
           source?: string
           status?: string
           total?: number
@@ -226,6 +282,7 @@ export type Database = {
           order_date?: string
           order_number?: number
           phone?: string
+          route_id?: string | null
           source?: string
           status?: string
           total?: number
@@ -238,6 +295,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_route_id_fkey"
+            columns: ["route_id"]
+            isOneToOne: false
+            referencedRelation: "delivery_routes"
             referencedColumns: ["id"]
           },
         ]
@@ -287,6 +351,7 @@ export type Database = {
           id: string
           last_name: string
           phone: string
+          preferred_language: string
           updated_at: string
         }
         Insert: {
@@ -297,6 +362,7 @@ export type Database = {
           id: string
           last_name?: string
           phone?: string
+          preferred_language?: string
           updated_at?: string
         }
         Update: {
@@ -307,6 +373,7 @@ export type Database = {
           id?: string
           last_name?: string
           phone?: string
+          preferred_language?: string
           updated_at?: string
         }
         Relationships: []
@@ -316,7 +383,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      purge_old_history: { Args: never; Returns: undefined }
+      recalc_route_value: { Args: { _route: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
