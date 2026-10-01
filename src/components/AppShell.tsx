@@ -1,12 +1,14 @@
 import { Link, useRouterState, type LinkProps } from "@tanstack/react-router";
-import { ChevronLeft, Home, ClipboardList, Truck, Users } from "lucide-react";
+import { ChevronLeft, Home, ClipboardList, Truck, Users, Route as RouteIcon } from "lucide-react";
+import { useI18n, type TKey } from "@/lib/i18n";
 import type { ReactNode } from "react";
 
 const NAV = [
-  { to: "/dashboard", label: "Αρχική", icon: Home },
-  { to: "/orders", label: "Παραγγελίες", icon: ClipboardList },
-  { to: "/deliveries", label: "Διανομές", icon: Truck },
-  { to: "/customers", label: "Πελάτες", icon: Users },
+  { to: "/dashboard", label: "nav.home" as TKey, icon: Home },
+  { to: "/orders", label: "nav.orders" as TKey, icon: ClipboardList },
+  { to: "/deliveries", label: "nav.deliveries" as TKey, icon: Truck },
+  { to: "/customers", label: "nav.customers" as TKey, icon: Users },
+  { to: "/trips", label: "nav.routes" as TKey, icon: RouteIcon },
 ] as const;
 
 export function Ambient() {
@@ -34,6 +36,7 @@ export function AppShell({
   children: ReactNode;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { t } = useI18n();
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-background text-foreground">
@@ -45,15 +48,19 @@ export function AppShell({
             {back ? (
               <Link
                 to={back}
-                aria-label="Πίσω"
+                aria-label={t("c.back")}
                 className="glass press grid h-11 w-11 shrink-0 place-items-center rounded-2xl"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Link>
             ) : (
-              <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40">
-                <span className="font-display text-lg font-bold text-brand">Α</span>
-              </div>
+              <Link
+                to="/profile"
+                aria-label="Το προφίλ μου"
+                className="press grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40"
+              >
+                <span className="font-display text-lg font-bold text-brand">F</span>
+              </Link>
             )}
             <div className="min-w-0">
               <h1 className="font-display truncate text-[17px] font-semibold leading-tight">
@@ -79,7 +86,7 @@ export function AppShell({
               <Link
                 key={item.to}
                 to={item.to}
-                className={`press flex flex-1 flex-col items-center gap-1 rounded-2xl py-2 ${
+                className={`press flex min-w-0 flex-1 flex-col items-center gap-1 rounded-2xl px-0.5 py-2 ${
                   active ? "bg-brand/20 ring-1 ring-brand/30" : ""
                 }`}
               >
@@ -87,11 +94,11 @@ export function AppShell({
                   className={`h-5 w-5 ${active ? "text-brand" : "text-muted-foreground"}`}
                 />
                 <span
-                  className={`text-[10px] font-semibold leading-none ${
+                  className={`w-full truncate text-center text-[10px] font-semibold leading-none ${
                     active ? "text-brand" : "text-muted-foreground"
                   }`}
                 >
-                  {item.label}
+                  {t(item.label)}
                 </span>
               </Link>
             );

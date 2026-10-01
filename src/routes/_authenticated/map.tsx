@@ -10,9 +10,9 @@ import { formatCurrency, initialsOf } from "@/lib/domain";
 export const Route = createFileRoute("/_authenticated/map")({
   head: () => ({
     meta: [
-      { title: "Χάρτης — AgroOrders" },
+      { title: "Χάρτης — FarmOrders" },
       { name: "description", content: "Πελάτες και εκκρεμείς διανομές στον χάρτη." },
-      { property: "og:title", content: "Χάρτης — AgroOrders" },
+      { property: "og:title", content: "Χάρτης — FarmOrders" },
       { property: "og:description", content: "Χάρτης πελατών και διανομών." },
     ],
   }),

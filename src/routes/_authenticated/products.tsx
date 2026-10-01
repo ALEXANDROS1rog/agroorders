@@ -11,9 +11,9 @@ import { PRODUCT_CATEGORIES, UNITS, formatCurrency } from "@/lib/domain";
 export const Route = createFileRoute("/_authenticated/products")({
   head: () => ({
     meta: [
-      { title: "Προϊόντα — AgroOrders" },
+      { title: "Προϊόντα — FarmOrders" },
       { name: "description", content: "Κατάλογος προϊόντων, τιμές και διαθεσιμότητα." },
-      { property: "og:title", content: "Προϊόντα — AgroOrders" },
+      { property: "og:title", content: "Προϊόντα — FarmOrders" },
       { property: "og:description", content: "Διαχείριση καταλόγου προϊόντων." },
     ],
   }),

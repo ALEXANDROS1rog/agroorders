@@ -9,9 +9,9 @@ export const Route = createFileRoute("/auth/reset")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Νέος κωδικός — AgroOrders" },
+      { title: "Νέος κωδικός — FarmOrders" },
       { name: "description", content: "Όρισε νέο κωδικό για τον λογαριασμό σου." },
-      { property: "og:title", content: "Νέος κωδικός — AgroOrders" },
+      { property: "og:title", content: "Νέος κωδικός — FarmOrders" },
       { property: "og:description", content: "Όρισε νέο κωδικό για τον λογαριασμό σου." },
     ],
   }),
