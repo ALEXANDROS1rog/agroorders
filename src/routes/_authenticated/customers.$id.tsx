@@ -12,6 +12,7 @@ import { GhostButton } from "@/components/Field";
 import { deleteCustomer, fetchCustomer, fetchCustomerOrders, orderTotal } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/domain";
 import { CustomerForm } from "@/components/CustomerForm";
+import { speakGreek, stopSpeaking } from "@/lib/tts";
 
 export const Route = createFileRoute("/_authenticated/customers/$id")({
   head: () => ({
