@@ -14,9 +14,9 @@ export const Route = createFileRoute("/_authenticated/orders/new")({
   validateSearch: (s: Record<string, unknown>): { customer?: string } => (typeof s["customer"] === "string" ? { customer: s["customer"] } : {}),
   head: () => ({
     meta: [
-      { title: "Νέα παραγγελία — AgroOrders" },
+      { title: "Νέα παραγγελία — FarmOrders" },
       { name: "description", content: "Καταχώριση παραγγελίας χειροκίνητα ή με AI από κείμενο." },
-      { property: "og:title", content: "Νέα παραγγελία — AgroOrders" },
+      { property: "og:title", content: "Νέα παραγγελία — FarmOrders" },
       { property: "og:description", content: "Νέα παραγγελία με AI ή χειροκίνητα." },
     ],
   }),

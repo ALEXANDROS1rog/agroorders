@@ -5,12 +5,12 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "AgroOrders — Παραγγελίες & Διανομές" },
+      { title: "FarmOrders — Παραγγελίες & Διανομές" },
       {
         name: "description",
         content: "Οργάνωσε παραγγελίες, πελάτες, προϊόντα και διανομές από το κινητό σου.",
       },
-      { property: "og:title", content: "AgroOrders" },
+      { property: "og:title", content: "FarmOrders" },
       {
         property: "og:description",
         content: "Οργάνωσε παραγγελίες, πελάτες, προϊόντα και διανομές από το κινητό σου.",

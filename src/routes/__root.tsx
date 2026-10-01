@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { I18nProvider } from "@/lib/i18n";
 
 function NotFoundComponent() {
   return (
@@ -81,14 +82,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
       },
-      { title: "AgroOrders — Παραγγελίες & Διανομές" },
+      { title: "FarmOrders — Παραγγελίες & Διανομές" },
       {
         name: "description",
         content:
           "Διαχείριση παραγγελιών, πελατών, προϊόντων και διανομών για παραγωγούς.",
       },
       { name: "theme-color", content: "#0b1220" },
-      { property: "og:title", content: "AgroOrders" },
+      { property: "og:title", content: "FarmOrders" },
       { property: "og:description", content: "Παραγγελίες και διανομές για παραγωγούς." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -131,8 +132,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-      <Toaster position="top-center" />
+      <I18nProvider>
+        <Outlet />
+        <Toaster position="top-center" />
+      </I18nProvider>
     </QueryClientProvider>
   );
 }

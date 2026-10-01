@@ -13,9 +13,9 @@ import { initialsOf } from "@/lib/domain";
 export const Route = createFileRoute("/_authenticated/customers/")({
   head: () => ({
     meta: [
-      { title: "Πελάτες — AgroOrders" },
+      { title: "Πελάτες — FarmOrders" },
       { name: "description", content: "Λίστα πελατών με αναζήτηση ονόματος, τηλεφώνου, διεύθυνσης." },
-      { property: "og:title", content: "Πελάτες — AgroOrders" },
+      { property: "og:title", content: "Πελάτες — FarmOrders" },
       { property: "og:description", content: "Οι πελάτες του παραγωγού." },
     ],
   }),

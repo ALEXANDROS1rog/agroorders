@@ -231,6 +231,7 @@ export type NewOrderInput = {
   notes: string;
   status: OrderStatus;
   source?: string;
+  route_id?: string | null;
   items: NewOrderItem[];
 };
 
@@ -246,6 +247,7 @@ export async function createOrder(input: NewOrderInput): Promise<string> {
       notes: input.notes,
       status: input.status,
       source: input.source ?? "manual",
+      route_id: input.route_id ?? null,
     })
     .select("id")
     .single();
@@ -325,11 +327,21 @@ export async function fetchDeliveries(): Promise<DeliveryWithOrder[]> {
   return ((data ?? []) as unknown as DeliveryWithOrder[]).filter((d) => d.order);
 }
 
-export async function markDelivered(deliveryId: string, orderId: string) {
+export async function markDelivered(
+  deliveryId: string,
+  orderId: string,
+  gps?: { lat: number; lng: number; auto: boolean },
+) {
   const now = new Date().toISOString();
   const { error } = await supabase
     .from("deliveries")
-    .update({ status: "delivered", delivered_at: now })
+    .update({
+      status: "delivered",
+      delivered_at: now,
+      delivered_lat: gps?.lat ?? null,
+      delivered_lng: gps?.lng ?? null,
+      auto_confirmed: gps?.auto ?? false,
+    })
     .eq("id", deliveryId);
   if (error) throw error;
   const { error: orderError } = await supabase
@@ -374,4 +386,114 @@ export function isToday(value: string | null | undefined): boolean {
 
 export function availableProducts(products: Product[]) {
   return products.filter((p) => p.available);
+}
+
+/* ---------------------------------- trips ----------------------------------- */
+// "Δρομολόγια" are stored in delivery_routes. Totals are kept by database triggers.
+
+export type Trip = {
+  id: string;
+  route_date: string;
+  fuel: number;
+  tolls: number;
+  wear: number;
+  food: number;
+  total_expenses: number;
+  total_order_value: number;
+  net_route_value: number;
+  created_at: string;
+};
+
+export type TripWithOrders = Trip & { orders: OrderWithRelations[] };
+
+/** Local calendar date as YYYY-MM-DD (no timezone shift). */
+export function localDateKey(d: Date = new Date()): string {
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+export function formatTripDate(dateKey: string): string {
+  const [y, m, d] = dateKey.split("-");
+  return `${d}/${m}/${y}`;
+}
+
+export async function fetchTrips(): Promise<TripWithOrders[]> {
+  const { data, error } = await supabase
+    .from("delivery_routes")
+    .select(`*, orders(${ORDER_SELECT})`)
+    .order("route_date", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as unknown as TripWithOrders[];
+}
+
+export async function fetchTrip(id: string): Promise<TripWithOrders | null> {
+  const { data, error } = await supabase
+    .from("delivery_routes")
+    .select(`*, orders(${ORDER_SELECT})`)
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as unknown as TripWithOrders | null;
+}
+
+export type TripInput = { route_date: string; fuel: number; tolls: number; wear: number; food: number };
+
+export async function createTrip(input: TripInput): Promise<string> {
+  const userId = await requireUserId();
+  const { data, error } = await supabase
+    .from("delivery_routes")
+    .insert({ ...input, user_id: userId })
+    .select("id")
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+export async function updateTripExpenses(id: string, input: Omit<TripInput, "route_date">) {
+  const { error } = await supabase.from("delivery_routes").update(input).eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteTrip(id: string) {
+  const { error } = await supabase.from("delivery_routes").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function setOrderTrip(orderId: string, tripId: string | null) {
+  const { error } = await supabase.from("orders").update({ route_id: tripId }).eq("id", orderId);
+  if (error) throw error;
+}
+
+/** Live trip numbers computed from its (non-cancelled) orders. */
+export function tripNumbers(t: TripWithOrders) {
+  const valid = t.orders.filter((o) => o.status !== "cancelled");
+  const revenue = valid.reduce((s, o) => s + orderTotal(o), 0);
+  const expenses = Number(t.fuel) + Number(t.tolls) + Number(t.wear) + Number(t.food);
+  return { count: valid.length, revenue, expenses, net: revenue - expenses };
+}
+
+/** Groups identical products of non-cancelled orders and sums quantities. */
+export function loadingList(orders: OrderWithRelations[]) {
+  const map = new Map<string, { name: string; unit: string; qty: number }>();
+  for (const o of orders) {
+    if (o.status === "cancelled") continue;
+    for (const i of o.order_items) {
+      const k = i.product_id ?? i.product_name;
+      const cur = map.get(k) ?? { name: i.product_name, unit: i.unit, qty: 0 };
+      cur.qty += Number(i.quantity);
+      map.set(k, cur);
+    }
+  }
+  return [...map.values()].sort((a, b) => b.qty - a.qty);
+}
+
+export async function updateProfile(input: { first_name: string; last_name: string; business_name: string; phone: string; email: string; preferred_language: string }) {
+  const userId = await requireUserId();
+  const { error } = await supabase.from("profiles").update(input).eq("id", userId);
+  if (error) throw error;
+}
+
+export async function startDelivery(orderId: string) {
+  await updateOrderStatus(orderId, "delivering");
 }

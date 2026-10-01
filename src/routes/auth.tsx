@@ -9,13 +9,13 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Σύνδεση — AgroOrders" },
+      { title: "Σύνδεση — FarmOrders" },
       {
         name: "description",
-        content: "Συνδέσου ή δημιούργησε λογαριασμό παραγωγού στο AgroOrders.",
+        content: "Συνδέσου ή δημιούργησε λογαριασμό παραγωγού στο FarmOrders.",
       },
-      { property: "og:title", content: "Σύνδεση — AgroOrders" },
-      { property: "og:description", content: "Σύνδεση παραγωγού στο AgroOrders." },
+      { property: "og:title", content: "Σύνδεση — FarmOrders" },
+      { property: "og:description", content: "Σύνδεση παραγωγού στο FarmOrders." },
     ],
   }),
   component: AuthPage,
@@ -106,7 +106,7 @@ function AuthPage() {
             <span className="font-display text-xl font-bold text-brand">Α</span>
           </div>
           <div>
-            <h1 className="font-display text-xl font-semibold leading-none">AgroOrders</h1>
+            <h1 className="font-display text-xl font-semibold leading-none">FarmOrders</h1>
             <p className="mt-1 text-xs text-muted-foreground">
               Παραγγελίες & διανομές για παραγωγούς
             </p>

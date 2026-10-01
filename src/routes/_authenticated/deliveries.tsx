@@ -16,9 +16,9 @@ import { distanceKm, formatCurrency } from "@/lib/domain";
 export const Route = createFileRoute("/_authenticated/deliveries")({
   head: () => ({
     meta: [
-      { title: "Διανομές — AgroOrders" },
+      { title: "Διανομές — FarmOrders" },
       { name: "description", content: "Εκκρεμείς διανομές και σχεδιασμός διαδρομής." },
-      { property: "og:title", content: "Διανομές — AgroOrders" },
+      { property: "og:title", content: "Διανομές — FarmOrders" },
       { property: "og:description", content: "Διανομές και διαδρομή." },
     ],
   }),

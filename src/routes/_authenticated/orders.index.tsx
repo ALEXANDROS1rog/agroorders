@@ -12,9 +12,9 @@ import { ORDER_STATUSES, ORDER_STATUS_LABEL, formatCurrency, formatDate } from "
 export const Route = createFileRoute("/_authenticated/orders/")({
   head: () => ({
     meta: [
-      { title: "Παραγγελίες — AgroOrders" },
+      { title: "Παραγγελίες — FarmOrders" },
       { name: "description", content: "Όλες οι παραγγελίες με αναζήτηση και φίλτρο κατάστασης." },
-      { property: "og:title", content: "Παραγγελίες — AgroOrders" },
+      { property: "og:title", content: "Παραγγελίες — FarmOrders" },
       { property: "og:description", content: "Λίστα παραγγελιών." },
     ],
   }),
