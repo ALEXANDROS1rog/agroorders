@@ -29,8 +29,14 @@ export const Route = createFileRoute("/_authenticated/customers/$id")({
 function CustomerPage() {
   const { id } = Route.useParams();
   const navigate = useNavigate();
-  const customer = useQuery({ queryKey: ["customer", id], queryFn: () => fetchCustomer(id) });
-  const orders = useQuery({ queryKey: ["customer-orders", id], queryFn: () => fetchCustomerOrders(id) });
+  const customer = useQuery({
+    queryKey: ["customer", id],
+    queryFn: () => fetchCustomer(id),
+  });
+  const orders = useQuery({
+    queryKey: ["customer-orders", id],
+    queryFn: () => fetchCustomerOrders(id),
+  });
   const [editing, setEditing] = useState(false);
   const c = customer.data;
   const valid = (orders.data ?? []).filter((o) => o.status !== "cancelled");
