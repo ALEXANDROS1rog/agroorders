@@ -11,7 +11,10 @@ import { extractOrderFromText, transcribeAudio } from "@/lib/ai.functions";
 import { formatCurrency } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/orders/new")({
-  validateSearch: (s: Record<string, unknown>): { customer?: string } => (typeof s["customer"] === "string" ? { customer: s["customer"] } : {}),
+  validateSearch: (s: Record<string, unknown>): { customer?: string; route?: string } => ({
+    ...(typeof s["customer"] === "string" ? { customer: s["customer"] } : {}),
+    ...(typeof s["route"] === "string" ? { route: s["route"] } : {}),
+  }),
   head: () => ({
     meta: [
       { title: "Νέα παραγγελία — FarmOrders" },
