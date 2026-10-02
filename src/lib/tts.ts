@@ -1,4 +1,4 @@
-export function speakGreek(text: string) {
+export function speakGreek(text: string, onEnd?: () => void) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) {
     return false;
   }
@@ -19,6 +19,11 @@ export function speakGreek(text: string) {
 
   if (greekVoice) {
     utterance.voice = greekVoice;
+  }
+
+  if (onEnd) {
+    utterance.onend = onEnd;
+    utterance.onerror = onEnd;
   }
 
   window.speechSynthesis.speak(utterance);

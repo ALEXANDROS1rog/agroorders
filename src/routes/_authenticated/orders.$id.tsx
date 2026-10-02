@@ -1,10 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { Square, Volume2 } from "lucide-react";
+import { speakGreek, stopSpeaking } from "@/lib/tts";
+import { TripSelect } from "@/components/TripSelect";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { GhostButton, Select } from "@/components/Field";
 import { CallNavButtons, StatusChip } from "@/components/ui-bits";
-import { deleteOrder, fetchOrder, orderTotal, updateOrderStatus } from "@/lib/api";
+import { deleteOrder, fetchOrder, orderTotal, setOrderTrip, updateOrderStatus } from "@/lib/api";
 import { ORDER_STATUSES, ORDER_STATUS_LABEL, formatCurrency, formatDateTime, formatQuantity, type OrderStatus } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/orders/$id")({
@@ -25,6 +29,25 @@ function OrderPage() {
   const navigate = useNavigate();
   const { data: o, isLoading } = useQuery({ queryKey: ["order", id], queryFn: () => fetchOrder(id) });
   const refresh = () => qc.invalidateQueries();
+  const [speaking, setSpeaking] = useState(false);
+  useEffect(() => () => stopSpeaking(), []);
+
+  function readAloud() {
+    if (!o) return;
+    if (speaking) { stopSpeaking(); setSpeaking(false); return; }
+    const items = o.order_items.map((i) => `${formatQuantity(i.quantity)} ${i.unit} ${i.product_name}`).join(", ");
+    const text = [
+      `Παραγγελία ${o.order_number}.`,
+      `Πελάτης: ${o.customer?.full_name ?? "χωρίς πελάτη"}.`,
+      o.address ? `Διεύθυνση: ${o.address}.` : "",
+      items ? `Προϊόντα: ${items}.` : "",
+      `Σύνολο: ${formatCurrency(orderTotal(o))}.`,
+      o.notes ? `Σημειώσεις: ${o.notes}.` : "",
+    ].join(" ");
+    const started = speakGreek(text, () => setSpeaking(false));
+    if (started) setSpeaking(true);
+    else toast.error("Η συσκευή σας δεν υποστηρίζει εκφώνηση κειμένου.");
+  }
 
   return (
     <AppShell title={o ? `Παραγγελία #${o.order_number}` : "Παραγγελία"} back="/orders">
@@ -49,6 +72,18 @@ function OrderPage() {
             ))}
             <div className="flex justify-between pt-3 text-lg font-bold"><span>Σύνολο</span><span>{formatCurrency(orderTotal(o))}</span></div>
           </Card>
+          <GhostButton onClick={readAloud}>
+            <span className="inline-flex items-center gap-2">
+              {speaking ? <><Square className="h-5 w-5" /> Σταμάτημα εκφώνησης</> : <><Volume2 className="h-5 w-5" /> Εκφώνηση παραγγελίας</>}
+            </span>
+          </GhostButton>
+          <TripSelect
+            value={o.route_id ?? ""}
+            onChange={async (v) => {
+              try { await setOrderTrip(o.id, v || null); toast.success("Το δρομολόγιο άλλαξε."); refresh(); }
+              catch (err) { toast.error(err instanceof Error ? err.message : "Σφάλμα"); }
+            }}
+          />
           {o.notes ? <Card><p className="text-sm text-muted-foreground">Σημειώσεις</p><p>{o.notes}</p></Card> : null}
           <Select
             label="Κατάσταση"

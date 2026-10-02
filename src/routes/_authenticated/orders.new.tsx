@@ -9,6 +9,7 @@ import { Field, GhostButton, PrimaryButton, Select, TextArea } from "@/component
 import { availableProducts, createOrder, fetchCustomers, fetchProducts, saveCustomer, type NewOrderItem } from "@/lib/api";
 import { extractOrderFromText, transcribeAudio } from "@/lib/ai.functions";
 import { formatCurrency } from "@/lib/domain";
+import { TripSelect } from "@/components/TripSelect";
 
 export const Route = createFileRoute("/_authenticated/orders/new")({
   validateSearch: (s: Record<string, unknown>): { customer?: string; route?: string } => ({
@@ -46,6 +47,7 @@ function NewOrderPage() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [notes, setNotes] = useState("");
+  const [tripId, setTripId] = useState<string>(search.route ?? "");
   const [lines, setLines] = useState<Line[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -150,6 +152,7 @@ function NewOrderPage() {
         address,
         notes,
         status: "new",
+        route_id: tripId || null,
         source: mode === "ai" ? "ai_text" : mode === "voice" ? "ai_voice" : "manual",
         items: lines.map(({ matched: _m, ...l }) => l),
       });
@@ -252,6 +255,7 @@ function NewOrderPage() {
             </select>
             <div className="flex justify-between text-lg font-bold"><span>Σύνολο</span><span>{formatCurrency(total)}</span></div>
           </Card>
+          <Card><TripSelect value={tripId} onChange={setTripId} onlyUpcoming /></Card>
           <TextArea label="Σημειώσεις" rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
           <PrimaryButton disabled={busy} onClick={confirmOrder}>{busy ? "Αποθήκευση…" : review ? "ΕΠΙΒΕΒΑΙΩΣΗ" : "Δημιουργία παραγγελίας"}</PrimaryButton>
           {review ? <GhostButton onClick={() => setReview(false)}>ΔΙΟΡΘΩΣΗ κειμένου</GhostButton> : null}
