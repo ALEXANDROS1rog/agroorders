@@ -87,7 +87,7 @@ function TripPage() {
             <>
               <ul className="space-y-1">
                 {rows.map(([icon, label, v]) => (
-                  <li key={label} className="flex justify-between text-[15px]"><span>{icon} {label}</span><span className="font-semibold">{formatCurrency(v)}</span></li>
+                  <li key={label} className="flex justify-between text-[15px]"><span>{label}</span><span className="font-semibold">{formatCurrency(v)}</span></li>
                 ))}
                 <li className="flex justify-between border-t border-border pt-2 font-bold"><span>{t("r.totalExp")}</span><span className="text-destructive">{formatCurrency(n.expenses)}</span></li>
               </ul>
