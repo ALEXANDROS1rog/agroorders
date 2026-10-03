@@ -26,10 +26,10 @@ export function TripSelect({ value, onChange, onlyUpcoming = false }: { value: s
           className="glass-soft h-12 w-full rounded-2xl px-4 text-[15px] outline-none focus:ring-2 focus:ring-ring/60"
         />
       ) : null}
-      <Select label={`🚚 ${t("o.route")}`} value={value} onChange={(e) => onChange(e.target.value)}>
+      <Select label={`${t("o.route")}`} value={value} onChange={(e) => onChange(e.target.value)}>
         <option value="">{t("o.noRoute")}</option>
         {list.map((r) => (
-          <option key={r.id} value={r.id}>🚚 {formatTripDate(r.route_date)}</option>
+          <option key={r.id} value={r.id}>{formatTripDate(r.route_date)}</option>
         ))}
       </Select>
       {!all.some((r) => r.route_date >= today) ? (

@@ -62,11 +62,11 @@ function TripPage() {
   }
 
   const rows = [
-    ["⛽", t("r.fuel"), trip.fuel], ["🛣️", t("r.tolls"), trip.tolls], ["🔧", t("r.wear"), trip.wear], ["🍴", t("r.food"), trip.food],
+    ["", t("r.fuel"), trip.fuel], ["", t("r.tolls"), trip.tolls], ["", t("r.wear"), trip.wear], ["", t("r.food"), trip.food],
   ] as const;
 
   return (
-    <AppShell title={`🚚 ${formatTripDate(trip.route_date)}`} subtitle={`${n.count} ${t("c.orders")}`} back="/trips">
+    <AppShell title={`${formatTripDate(trip.route_date)}`} subtitle={`${n.count} ${t("c.orders")}`} back="/trips">
       <div className="space-y-4">
         <Card>
           <div className="grid grid-cols-3 gap-2 text-center">
@@ -97,7 +97,7 @@ function TripPage() {
         </Card>
 
         <Card className="space-y-3">
-          <h2 className="font-display text-lg font-semibold">📦 {t("r.load")}</h2>
+          <h2 className="font-display text-lg font-semibold">{t("r.load")}</h2>
           <LoadingList items={loadingList(trip.orders)} empty={t("r.noOrders")} />
         </Card>
 

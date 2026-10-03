@@ -60,7 +60,7 @@ export function AutoDeliver() {
           done.current.add(d.id);
           try {
             await markDelivered(d.id, d.order.id, { lat: me.lat, lng: me.lng, auto: true });
-            toast.success(`✔ ${t("a.done")}: ${c.full_name}`);
+            toast.success(`${t("a.done")}: ${c.full_name}`);
             qc.invalidateQueries();
           } catch {
             done.current.delete(d.id);
