@@ -3,10 +3,10 @@ import { useI18n, type TKey } from "@/lib/i18n";
 
 export type Expenses = { fuel: string; tolls: string; wear: string; food: string };
 const ROWS: { k: keyof Expenses; label: TKey; icon: string }[] = [
-  { k: "fuel", label: "r.fuel", icon: "⛽" },
-  { k: "tolls", label: "r.tolls", icon: "🛣️" },
-  { k: "wear", label: "r.wear", icon: "🔧" },
-  { k: "food", label: "r.food", icon: "🍴" },
+  { k: "fuel", label: "r.fuel", icon: "" },
+  { k: "tolls", label: "r.tolls", icon: "" },
+  { k: "wear", label: "r.wear", icon: "" },
+  { k: "food", label: "r.food", icon: "" },
 ];
 
 export const toAmount = (v: string) => {
@@ -21,7 +21,7 @@ export function ExpenseFields({ value, onChange }: { value: Expenses; onChange: 
     <div className="space-y-3">
       {ROWS.map((r) => (
         <label key={r.k} className="glass-soft flex items-center gap-3 rounded-2xl px-4 py-2">
-          <span className="text-2xl">{r.icon}</span>
+          
           <span className="flex-1 font-semibold">{t(r.label)}</span>
           <input
             inputMode="decimal"
