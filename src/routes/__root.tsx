@@ -83,14 +83,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
       },
-      { title: "FarmOrders — Παραγγελίες & Διανομές" },
+      { title: "VoiceOrders — Παραγγελίες & Διανομές" },
       {
         name: "description",
         content:
           "Διαχείριση παραγγελιών, πελατών, προϊόντων και διανομών για παραγωγούς.",
       },
       { name: "theme-color", content: "#0b1220" },
-      { property: "og:title", content: "FarmOrders" },
+      { property: "og:title", content: "VoiceOrders" },
       { property: "og:description", content: "Παραγγελίες και διανομές για παραγωγούς." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

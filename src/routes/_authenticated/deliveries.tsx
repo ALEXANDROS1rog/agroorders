@@ -9,9 +9,9 @@ import { fetchDeliveries } from "@/lib/api";
 export const Route = createFileRoute("/_authenticated/deliveries")({
   head: () => ({
     meta: [
-      { title: "Διανομές — FarmOrders" },
+      { title: "Διανομές — VoiceOrders" },
       { name: "description", content: "Εκκρεμείς διανομές ταξινομημένες με βάση την απόσταση από τη θέση σου." },
-      { property: "og:title", content: "Διανομές — FarmOrders" },
+      { property: "og:title", content: "Διανομές — VoiceOrders" },
       { property: "og:description", content: "Εκκρεμείς διανομές με GPS ταξινόμηση." },
     ],
   }),

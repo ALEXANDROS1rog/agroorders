@@ -9,9 +9,9 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/_authenticated/trips/")({
   head: () => ({
     meta: [
-      { title: "Δρομολόγια — FarmOrders" },
+      { title: "Δρομολόγια — VoiceOrders" },
       { name: "description", content: "Ενεργά, προγραμματισμένα δρομολόγια και ιστορικό με έσοδα, έξοδα και καθαρά." },
-      { property: "og:title", content: "Δρομολόγια — FarmOrders" },
+      { property: "og:title", content: "Δρομολόγια — VoiceOrders" },
       { property: "og:description", content: "Διαχείριση δρομολογίων διανομής." },
     ],
   }),

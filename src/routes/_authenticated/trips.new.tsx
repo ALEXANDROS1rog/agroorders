@@ -13,9 +13,9 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/_authenticated/trips/new")({
   head: () => ({
     meta: [
-      { title: "Νέο δρομολόγιο — FarmOrders" },
+      { title: "Νέο δρομολόγιο — VoiceOrders" },
       { name: "description", content: "Διάλεξε ημερομηνία και καταχώρισε τα έξοδα του δρομολογίου." },
-      { property: "og:title", content: "Νέο δρομολόγιο — FarmOrders" },
+      { property: "og:title", content: "Νέο δρομολόγιο — VoiceOrders" },
       { property: "og:description", content: "Δημιουργία δρομολογίου διανομής." },
     ],
   }),
