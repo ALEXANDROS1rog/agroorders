@@ -18,9 +18,9 @@ export const Route = createFileRoute("/_authenticated/orders/new")({
   }),
   head: () => ({
     meta: [
-      { title: "Νέα παραγγελία — FarmOrders" },
+      { title: "Νέα παραγγελία — VoiceOrders" },
       { name: "description", content: "Καταχώριση παραγγελίας χειροκίνητα ή με AI από κείμενο." },
-      { property: "og:title", content: "Νέα παραγγελία — FarmOrders" },
+      { property: "og:title", content: "Νέα παραγγελία — VoiceOrders" },
       { property: "og:description", content: "Νέα παραγγελία με AI ή χειροκίνητα." },
     ],
   }),

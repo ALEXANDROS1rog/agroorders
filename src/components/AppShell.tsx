@@ -59,7 +59,7 @@ export function AppShell({
                 aria-label="Το προφίλ μου"
                 className="press grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40"
               >
-                <span className="font-display text-lg font-bold text-brand">F</span>
+                <span className="font-display text-lg font-bold text-brand">V</span>
               </Link>
             )}
             <div className="min-w-0">

@@ -12,9 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
-      { title: "Το προφίλ μου — FarmOrders" },
+      { title: "Το προφίλ μου — VoiceOrders" },
       { name: "description", content: "Στοιχεία λογαριασμού, ρυθμίσεις και γλώσσα εφαρμογής." },
-      { property: "og:title", content: "Το προφίλ μου — FarmOrders" },
+      { property: "og:title", content: "Το προφίλ μου — VoiceOrders" },
       { property: "og:description", content: "Προφίλ και ρυθμίσεις." },
     ],
   }),

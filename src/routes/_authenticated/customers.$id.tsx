@@ -14,9 +14,9 @@ import { CustomerForm } from "@/components/CustomerForm";
 export const Route = createFileRoute("/_authenticated/customers/$id")({
   head: () => ({
     meta: [
-      { title: "Πελάτης — FarmOrders" },
+      { title: "Πελάτης — VoiceOrders" },
       { name: "description", content: "Στοιχεία πελάτη και ιστορικό παραγγελιών." },
-      { property: "og:title", content: "Πελάτης — FarmOrders" },
+      { property: "og:title", content: "Πελάτης — VoiceOrders" },
       { property: "og:description", content: "Στοιχεία πελάτη." },
     ],
   }),

@@ -10,9 +10,9 @@ import { OrderRow } from "@/components/OrderRow";
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
     meta: [
-      { title: "Ιστορικό — FarmOrders" },
+      { title: "Ιστορικό — VoiceOrders" },
       { name: "description", content: "Ιστορικό παραγγελιών με φίλτρα και σύνολα πωλήσεων." },
-      { property: "og:title", content: "Ιστορικό — FarmOrders" },
+      { property: "og:title", content: "Ιστορικό — VoiceOrders" },
       { property: "og:description", content: "Ιστορικό παραγγελιών." },
     ],
   }),

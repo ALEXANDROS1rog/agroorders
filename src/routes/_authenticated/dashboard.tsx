@@ -10,9 +10,9 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Αρχική — FarmOrders" },
+      { title: "Αρχική — VoiceOrders" },
       { name: "description", content: "Σύνοψη ημέρας: παραγγελίες, διανομές και αξία." },
-      { property: "og:title", content: "Αρχική — FarmOrders" },
+      { property: "og:title", content: "Αρχική — VoiceOrders" },
       { property: "og:description", content: "Σύνοψη ημέρας για τον παραγωγό." },
     ],
   }),
@@ -43,7 +43,7 @@ function Dashboard() {
 
   return (
     <AppShell
-      title={profile.data?.business_name || "FarmOrders"}
+      title={profile.data?.business_name || "VoiceOrders"}
       subtitle={profile.data ? `Καλώς ήρθες, ${profile.data.first_name}` : undefined}
       action={
         <button

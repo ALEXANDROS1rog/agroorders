@@ -9,13 +9,13 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Σύνδεση — FarmOrders" },
+      { title: "Σύνδεση — VoiceOrders" },
       {
         name: "description",
-        content: "Συνδέσου ή δημιούργησε λογαριασμό παραγωγού στο FarmOrders.",
+        content: "Συνδέσου ή δημιούργησε λογαριασμό παραγωγού στο VoiceOrders.",
       },
-      { property: "og:title", content: "Σύνδεση — FarmOrders" },
-      { property: "og:description", content: "Σύνδεση παραγωγού στο FarmOrders." },
+      { property: "og:title", content: "Σύνδεση — VoiceOrders" },
+      { property: "og:description", content: "Σύνδεση παραγωγού στο VoiceOrders." },
     ],
   }),
   component: AuthPage,
@@ -103,10 +103,10 @@ function AuthPage() {
       <div className="relative mx-auto flex min-h-screen max-w-[460px] flex-col justify-center px-4 py-10">
         <div className="mb-6 flex items-center gap-3">
           <div className="grid h-12 w-12 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40">
-            <span className="font-display text-xl font-bold text-brand">Α</span>
+            <span className="font-display text-xl font-bold text-brand">V</span>
           </div>
           <div>
-            <h1 className="font-display text-xl font-semibold leading-none">FarmOrders</h1>
+            <h1 className="font-display text-xl font-semibold leading-none">VoiceOrders</h1>
             <p className="mt-1 text-xs text-muted-foreground">
               Παραγγελίες & διανομές για παραγωγούς
             </p>
