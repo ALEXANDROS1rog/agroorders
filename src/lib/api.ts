@@ -288,6 +288,34 @@ const DELIVERY_STATUS_FOR_ORDER: Record<OrderStatus, string> = {
   cancelled: "cancelled",
 };
 
+export async function updateOrder(
+  orderId: string,
+  input: { address: string; phone: string; notes: string; items: NewOrderItem[] },
+) {
+  const userId = await requireUserId();
+  const { error } = await supabase
+    .from("orders")
+    .update({ address: input.address, phone: normalizePhone(input.phone), notes: input.notes })
+    .eq("id", orderId);
+  if (error) throw error;
+  const { error: delError } = await supabase.from("order_items").delete().eq("order_id", orderId);
+  if (delError) throw delError;
+  if (input.items.length > 0) {
+    const { error: insError } = await supabase.from("order_items").insert(
+      input.items.map((item) => ({
+        user_id: userId,
+        order_id: orderId,
+        product_id: item.product_id,
+        product_name: item.product_name,
+        unit: item.unit,
+        unit_price: item.unit_price,
+        quantity: item.quantity,
+      })),
+    );
+    if (insError) throw insError;
+  }
+}
+
 export async function updateOrderStatus(orderId: string, status: OrderStatus) {
   const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
   if (error) throw error;
