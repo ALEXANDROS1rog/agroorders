@@ -1,5 +1,6 @@
+import { installDomTranslator, LOCALE_MAPS } from "./dom-translate";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { el as dEl, sq as dSq, bg as dBg, ro as dRo, srLatn as dSr, hr as dHr, bs as dBs, mk as dMk, sl as dSl, tr as dTr, type Locale } from "date-fns/locale";
+import { el as dEl, sq as dSq, bg as dBg, ro as dRo, srLatn as dSr, hr as dHr, bs as dBs, mk as dMk, sl as dSl, tr as dTr, enUS as dEn, type Locale } from "date-fns/locale";
 
 /** Greek is the source of truth; every other language may omit keys (falls back to Greek).
  * Add a language: add an entry to LANGUAGES + a dictionary below. */
@@ -235,17 +236,18 @@ const tr: Dict = {
 };
 
 export const LANGUAGES = [
-  { code: "el", label: "🇬🇷 Ελληνικά", dict: {} as Dict, locale: dEl, intl: "el-GR" },
-  { code: "sq", label: "🇦🇱 Shqip", dict: sq, locale: dSq, intl: "sq-AL" },
-  { code: "bg", label: "🇧🇬 Български", dict: bg, locale: dBg, intl: "bg-BG" },
-  { code: "ro", label: "🇷🇴 Română", dict: ro, locale: dRo, intl: "ro-RO" },
-  { code: "sr", label: "🇷🇸 Srpski", dict: sr, locale: dSr, intl: "sr-Latn-RS" },
-  { code: "hr", label: "🇭🇷 Hrvatski", dict: hr, locale: dHr, intl: "hr-HR" },
-  { code: "bs", label: "🇧🇦 Bosanski", dict: bs, locale: dBs, intl: "bs-BA" },
-  { code: "mk", label: "🇲🇰 Македонски", dict: mk, locale: dMk, intl: "mk-MK" },
-  { code: "sl", label: "🇸🇮 Slovenščina", dict: sl, locale: dSl, intl: "sl-SI" },
-  { code: "me", label: "🇲🇪 Crnogorski", dict: me, locale: dSr, intl: "sr-Latn-ME" },
-  { code: "tr", label: "🇹🇷 Türkçe", dict: tr, locale: dTr, intl: "tr-TR" },
+  { code: "el", label: "Ελληνικά", dict: {} as Dict, locale: dEl, intl: "el-GR" },
+  { code: "en", label: "English", dict: {} as Dict, locale: dEn, intl: "en-GB" },
+  { code: "sq", label: "Shqip", dict: sq, locale: dSq, intl: "sq-AL" },
+  { code: "bg", label: "Български", dict: bg, locale: dBg, intl: "bg-BG" },
+  { code: "ro", label: "Română", dict: ro, locale: dRo, intl: "ro-RO" },
+  { code: "sr", label: "Srpski", dict: sr, locale: dSr, intl: "sr-Latn-RS" },
+  { code: "hr", label: "Hrvatski", dict: hr, locale: dHr, intl: "hr-HR" },
+  { code: "bs", label: "Bosanski", dict: bs, locale: dBs, intl: "bs-BA" },
+  { code: "mk", label: "Македонски", dict: mk, locale: dMk, intl: "mk-MK" },
+  { code: "sl", label: "Slovenščina", dict: sl, locale: dSl, intl: "sl-SI" },
+  { code: "me", label: "Crnogorski", dict: me, locale: dSr, intl: "sr-Latn-ME" },
+  { code: "tr", label: "Türkçe", dict: tr, locale: dTr, intl: "tr-TR" },
 ] as const;
 export type LangCode = (typeof LANGUAGES)[number]["code"];
 
@@ -268,7 +270,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE, l);
   }, []);
   const entry = LANGUAGES.find((l) => l.code === lang) ?? LANGUAGES[0];
-  const t = useCallback((k: TKey) => entry.dict[k] ?? elDict[k], [entry]);
+  const t = useCallback((k: TKey) => entry.dict[k] ?? LOCALE_MAPS[lang]?.[elDict[k]] ?? elDict[k], [entry, lang]);
+  useEffect(() => installDomTranslator(lang), [lang]);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);
   return <I18nCtx.Provider value={{ lang, setLang, t, locale: entry.locale, intl: entry.intl }}>{children}</I18nCtx.Provider>;
 }
