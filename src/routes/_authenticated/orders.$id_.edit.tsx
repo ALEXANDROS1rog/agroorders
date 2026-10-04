@@ -8,7 +8,7 @@ import { Field, GhostButton, PrimaryButton, Select, TextArea } from "@/component
 import { fetchOrder, fetchProducts, updateOrder, type NewOrderItem } from "@/lib/api";
 import { formatCurrency } from "@/lib/domain";
 
-export const Route = createFileRoute("/_authenticated/orders/$id/edit")({
+export const Route = createFileRoute("/_authenticated/orders/$id_/edit")({
   head: () => ({
     meta: [
       { title: "Επεξεργασία παραγγελίας — VoiceOrders" },
