@@ -3,7 +3,7 @@ import { el as dEl, sq as dSq, bg as dBg, ro as dRo, srLatn as dSr, hr as dHr, b
 
 /** Greek is the source of truth; every other language may omit keys (falls back to Greek).
  * Add a language: add an entry to LANGUAGES + a dictionary below. */
-const elDict = {
+export const elDict = {
   "nav.home": "Αρχική", "nav.orders": "Παραγγελίες", "nav.deliveries": "Διανομές", "nav.customers": "Πελάτες", "nav.routes": "Δρομολόγια",
   "c.save": "Αποθήκευση", "c.error": "Σφάλμα", "c.call": "Κλήση", "c.navigate": "Πλοήγηση", "c.orders": "παραγγελίες", "c.total": "Σύνολο", "c.back": "Πίσω",
   "d.welcome": "Καλώς ήρθες", "d.newOrder": "Νέα παραγγελία", "d.newRoute": "Νέο δρομολόγιο", "d.today": "Σήμερα",
