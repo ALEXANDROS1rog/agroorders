@@ -27,7 +27,7 @@ import { Route as AuthenticatedOrdersNewRouteImport } from './routes/_authentica
 import { Route as AuthenticatedTripsIndexRouteImport } from './routes/_authenticated/trips.index'
 import { Route as AuthenticatedTripsIdRouteImport } from './routes/_authenticated/trips.$id'
 import { Route as AuthenticatedTripsNewRouteImport } from './routes/_authenticated/trips.new'
-import { Route as AuthenticatedOrdersIdEditRouteImport } from './routes/_authenticated/orders.$id.edit'
+import { Route as AuthenticatedOrdersIdEditRouteImport } from './routes/_authenticated/orders.$id_.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -123,9 +123,9 @@ const AuthenticatedTripsNewRoute = AuthenticatedTripsNewRouteImport.update({
 } as any)
 const AuthenticatedOrdersIdEditRoute =
   AuthenticatedOrdersIdEditRouteImport.update({
-    id: '/edit',
-    path: '/edit',
-    getParentRoute: () => AuthenticatedOrdersIdRoute,
+    id: '/orders/$id_/edit',
+    path: '/orders/$id/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -139,7 +139,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
-  '/orders/$id': typeof AuthenticatedOrdersIdRouteWithChildren
+  '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/orders/new': typeof AuthenticatedOrdersNewRoute
   '/trips/$id': typeof AuthenticatedTripsIdRoute
   '/trips/new': typeof AuthenticatedTripsNewRoute
@@ -159,7 +159,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
-  '/orders/$id': typeof AuthenticatedOrdersIdRouteWithChildren
+  '/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/orders/new': typeof AuthenticatedOrdersNewRoute
   '/trips/$id': typeof AuthenticatedTripsIdRoute
   '/trips/new': typeof AuthenticatedTripsNewRoute
@@ -181,14 +181,14 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
   '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
-  '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRouteWithChildren
+  '/_authenticated/orders/$id': typeof AuthenticatedOrdersIdRoute
   '/_authenticated/orders/new': typeof AuthenticatedOrdersNewRoute
   '/_authenticated/trips/$id': typeof AuthenticatedTripsIdRoute
   '/_authenticated/trips/new': typeof AuthenticatedTripsNewRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
   '/_authenticated/trips/': typeof AuthenticatedTripsIndexRoute
-  '/_authenticated/orders/$id/edit': typeof AuthenticatedOrdersIdEditRoute
+  '/_authenticated/orders/$id_/edit': typeof AuthenticatedOrdersIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -251,7 +251,7 @@ export interface FileRouteTypes {
     | '/_authenticated/customers/'
     | '/_authenticated/orders/'
     | '/_authenticated/trips/'
-    | '/_authenticated/orders/$id/edit'
+    | '/_authenticated/orders/$id_/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -388,28 +388,15 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTripsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/orders/$id/edit': {
-      id: '/_authenticated/orders/$id/edit'
-      path: '/edit'
+    '/_authenticated/orders/$id_/edit': {
+      id: '/_authenticated/orders/$id_/edit'
+      path: '/orders/$id/edit'
       fullPath: '/orders/$id/edit'
       preLoaderRoute: typeof AuthenticatedOrdersIdEditRouteImport
-      parentRoute: typeof AuthenticatedOrdersIdRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
-
-interface AuthenticatedOrdersIdRouteChildren {
-  AuthenticatedOrdersIdEditRoute: typeof AuthenticatedOrdersIdEditRoute
-}
-
-const AuthenticatedOrdersIdRouteChildren: AuthenticatedOrdersIdRouteChildren = {
-  AuthenticatedOrdersIdEditRoute: AuthenticatedOrdersIdEditRoute,
-}
-
-const AuthenticatedOrdersIdRouteWithChildren =
-  AuthenticatedOrdersIdRoute._addFileChildren(
-    AuthenticatedOrdersIdRouteChildren,
-  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
@@ -419,13 +406,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
-  AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRouteWithChildren
+  AuthenticatedOrdersIdRoute: typeof AuthenticatedOrdersIdRoute
   AuthenticatedOrdersNewRoute: typeof AuthenticatedOrdersNewRoute
   AuthenticatedTripsIdRoute: typeof AuthenticatedTripsIdRoute
   AuthenticatedTripsNewRoute: typeof AuthenticatedTripsNewRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
   AuthenticatedOrdersIndexRoute: typeof AuthenticatedOrdersIndexRoute
   AuthenticatedTripsIndexRoute: typeof AuthenticatedTripsIndexRoute
+  AuthenticatedOrdersIdEditRoute: typeof AuthenticatedOrdersIdEditRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -436,13 +424,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProductsRoute: AuthenticatedProductsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
-  AuthenticatedOrdersIdRoute: AuthenticatedOrdersIdRouteWithChildren,
+  AuthenticatedOrdersIdRoute: AuthenticatedOrdersIdRoute,
   AuthenticatedOrdersNewRoute: AuthenticatedOrdersNewRoute,
   AuthenticatedTripsIdRoute: AuthenticatedTripsIdRoute,
   AuthenticatedTripsNewRoute: AuthenticatedTripsNewRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
   AuthenticatedOrdersIndexRoute: AuthenticatedOrdersIndexRoute,
   AuthenticatedTripsIndexRoute: AuthenticatedTripsIndexRoute,
+  AuthenticatedOrdersIdEditRoute: AuthenticatedOrdersIdEditRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
