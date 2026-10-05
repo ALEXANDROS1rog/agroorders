@@ -20,11 +20,24 @@ const GREEK = /[\u0370-\u03ff\u1f00-\u1fff]/;
 const textOrig = new WeakMap<Node, { orig: string; set: string }>();
 const attrOrig = new WeakMap<Element, Record<string, { orig: string; set: string }>>();
 
+const keyCache = new WeakMap<Record<string, string>, string[]>();
+function sortedKeys(map: Record<string, string>): string[] {
+  let keys = keyCache.get(map);
+  if (!keys) { keys = Object.keys(map).sort((a, b) => b.length - a.length); keyCache.set(map, keys); }
+  return keys;
+}
+
 function lookup(map: Record<string, string> | undefined, value: string): string {
   if (!map || !GREEK.test(value)) return value;
   const trimmed = value.trim();
-  const hit = map[trimmed];
-  if (!hit) return value;
+  let hit = map[trimmed];
+  if (!hit) {
+    // Text built from a template ("Καλώς ήρθες, Μαρία"): translate the known leading phrase.
+    const keys = sortedKeys(map);
+    const k = keys.find((key) => trimmed.startsWith(key) && /^[\s,:#·(.!?—-]/.test(trimmed.slice(key.length)));
+    if (!k) return value;
+    hit = map[k] + trimmed.slice(k.length);
+  }
   const lead = value.slice(0, value.indexOf(trimmed));
   return lead + hit + value.slice(lead.length + trimmed.length);
 }
