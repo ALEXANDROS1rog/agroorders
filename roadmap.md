@@ -1,6 +1,6 @@
 # VoiceOrders roadmap
 - [x] Trips (δρομολόγια) backend: totals, cleanup after 2 months, language on profile
-- [ ] i18n system (11 languages) + language in profile
+- [x] i18n: 12 languages incl. English, whole app translated
 - [ ] Bottom nav 5 items incl. Δρομολόγια
 - [ ] Routes pages: list (active/history), new (calendar + expenses), details (orders, loading list)
 - [ ] New order: route selector
