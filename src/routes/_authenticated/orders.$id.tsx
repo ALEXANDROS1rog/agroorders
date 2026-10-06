@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
+import { useOrg } from "@/lib/org";
 import { TripSelect } from "@/components/TripSelect";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { GhostButton, Select } from "@/components/Field";
@@ -27,6 +28,8 @@ function OrderPage() {
   const navigate = useNavigate();
   const { data: o, isLoading } = useQuery({ queryKey: ["order", id], queryFn: () => fetchOrder(id) });
   const refresh = () => qc.invalidateQueries();
+  const { can } = useOrg();
+  const manage = can("orders.manage");
 
   return (
     <AppShell title={o ? `Παραγγελία #${o.order_number}` : "Παραγγελία"} back="/orders">
@@ -51,16 +54,17 @@ function OrderPage() {
             ))}
             <div className="flex justify-between pt-3 text-lg font-bold"><span>Σύνολο</span><span>{formatCurrency(orderTotal(o))}</span></div>
           </Card>
-          <Link to="/orders/$id/edit" params={{ id: o.id }} className="press flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-brand text-[15px] font-semibold text-brand-foreground">
+          {manage ? <Link to="/orders/$id/edit" params={{ id: o.id }} className="press flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-brand text-[15px] font-semibold text-brand-foreground">
             <Pencil className="h-5 w-5" /> Επεξεργασία παραγγελίας
-          </Link>
-          <TripSelect
+          </Link> : null}
+          {manage ? <TripSelect
             value={o.route_id ?? ""}
             onChange={async (v) => {
               try { await setOrderTrip(o.id, v || null); toast.success("Το δρομολόγιο άλλαξε."); refresh(); }
               catch (err) { toast.error(err instanceof Error ? err.message : "Σφάλμα"); }
             }}
           />
+          : null}
           {o.notes ? <Card><p className="text-sm text-muted-foreground">Σημειώσεις</p><p>{o.notes}</p></Card> : null}
           <Select
             label="Κατάσταση"
@@ -72,7 +76,7 @@ function OrderPage() {
           >
             {ORDER_STATUSES.map((s) => <option key={s} value={s}>{ORDER_STATUS_LABEL[s]}</option>)}
           </Select>
-          <GhostButton
+          {manage ? <GhostButton
             className="text-destructive"
             onClick={async () => {
               if (!confirm("Διαγραφή παραγγελίας;")) return;
@@ -80,7 +84,7 @@ function OrderPage() {
             }}
           >
             Διαγραφή παραγγελίας
-          </GhostButton>
+          </GhostButton> : null}
         </div>
       )}
     </AppShell>
