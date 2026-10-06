@@ -4,6 +4,13 @@ import { toast } from "sonner";
 import { Ambient } from "@/components/AppShell";
 import { Field, GhostButton, PrimaryButton } from "@/components/Field";
 import { supabase } from "@/integrations/supabase/client";
+import { PENDING_INVITE_KEY } from "@/lib/org";
+
+function afterLogin(navigate: ReturnType<typeof useNavigate>) {
+  const token = sessionStorage.getItem(PENDING_INVITE_KEY);
+  if (token) navigate({ to: "/invite/$token", params: { token } });
+  else navigate({ to: "/dashboard" });
+}
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -49,7 +56,7 @@ function AuthPage() {
           password: form.password,
         });
         if (error) throw error;
-        navigate({ to: "/dashboard" });
+        afterLogin(navigate);
         return;
       }
 
@@ -58,7 +65,9 @@ function AuthPage() {
           email: form.email.trim(),
           password: form.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
+            emailRedirectTo: sessionStorage.getItem(PENDING_INVITE_KEY)
+              ? `${window.location.origin}/invite/${sessionStorage.getItem(PENDING_INVITE_KEY)}`
+              : `${window.location.origin}/`,
             data: {
               first_name: form.first_name.trim(),
               last_name: form.last_name.trim(),
@@ -69,7 +78,7 @@ function AuthPage() {
         });
         if (error) throw error;
         if (data.session) {
-          navigate({ to: "/dashboard" });
+          afterLogin(navigate);
         } else {
           toast.success("Στείλαμε email επιβεβαίωσης. Άνοιξέ το για να ενεργοποιηθεί ο λογαριασμός.");
           setMode("login");
