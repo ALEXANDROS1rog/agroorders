@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
+import { useOrg } from "@/lib/org";
 import { Field, GhostButton, PrimaryButton, Select } from "@/components/Field";
 import { deleteProduct, fetchProducts, saveProduct, toggleProductAvailable, type ProductInput } from "@/lib/api";
 import { PRODUCT_CATEGORIES, UNITS, formatCurrency } from "@/lib/domain";
@@ -23,6 +24,8 @@ export const Route = createFileRoute("/_authenticated/products")({
 const EMPTY: ProductInput = { name: "", category: PRODUCT_CATEGORIES[0] ?? "", price: 0, unit: UNITS[0]!, available: true };
 
 function ProductsPage() {
+  const { can } = useOrg();
+  const manage = can("products.manage");
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
   const [form, setForm] = useState<ProductInput | null>(null);
@@ -43,9 +46,9 @@ function ProductsPage() {
       title="Προϊόντα"
       back="/dashboard"
       action={
-        <button aria-label="Νέο προϊόν" onClick={() => setForm({ ...EMPTY })} className="press grid h-11 w-11 place-items-center rounded-2xl bg-brand text-brand-foreground">
+        manage ? <button aria-label="Νέο προϊόν" onClick={() => setForm({ ...EMPTY })} className="press grid h-11 w-11 place-items-center rounded-2xl bg-brand text-brand-foreground">
           <Plus className="h-5 w-5" />
-        </button>
+        </button> : null
       }
     >
       {form ? (
@@ -88,13 +91,13 @@ function ProductsPage() {
                   <p className="text-sm text-muted-foreground">{p.category} · {formatCurrency(p.price)} / {p.unit}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button aria-label="Επεξεργασία" onClick={() => setForm({ id: p.id, name: p.name, category: p.category, price: Number(p.price), unit: p.unit, available: p.available })} className="glass press grid h-11 w-11 place-items-center rounded-2xl"><Pencil className="h-4 w-4" /></button>
-                  <button aria-label="Διαγραφή" onClick={() => confirm(`Διαγραφή «${p.name}»;`) && run(() => deleteProduct(p.id), "Διαγράφηκε")} className="glass press grid h-11 w-11 place-items-center rounded-2xl text-destructive"><Trash2 className="h-4 w-4" /></button>
+                  {manage ? <><button aria-label="Επεξεργασία" onClick={() => setForm({ id: p.id, name: p.name, category: p.category, price: Number(p.price), unit: p.unit, available: p.available })} className="glass press grid h-11 w-11 place-items-center rounded-2xl"><Pencil className="h-4 w-4" /></button>
+                  <button aria-label="Διαγραφή" onClick={() => confirm(`Διαγραφή «${p.name}»;`) && run(() => deleteProduct(p.id), "Διαγράφηκε")} className="glass press grid h-11 w-11 place-items-center rounded-2xl text-destructive"><Trash2 className="h-4 w-4" /></button></> : null}
                 </div>
               </div>
-              <button onClick={() => run(() => toggleProductAvailable(p.id, !p.available), p.available ? "Απενεργοποιήθηκε" : "Ενεργοποιήθηκε")} className="glass-soft press mt-3 h-11 w-full rounded-2xl text-sm font-semibold">
+              {manage ? <button onClick={() => run(() => toggleProductAvailable(p.id, !p.available), p.available ? "Απενεργοποιήθηκε" : "Ενεργοποιήθηκε")} className="glass-soft press mt-3 h-11 w-full rounded-2xl text-sm font-semibold">
                 {p.available ? "Διαθέσιμο — πάτα για απενεργοποίηση" : "Μη διαθέσιμο — πάτα για ενεργοποίηση"}
-              </button>
+              </button> : null}
             </Card>
           ))}
         </div>
