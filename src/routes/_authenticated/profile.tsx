@@ -51,7 +51,10 @@ function ProfilePage() {
   async function changeLang(v: string) {
     if (!isLang(v)) return;
     setLang(v);
-    try { if (data) await updateProfile({ ...f, email: data.email, preferred_language: v }); } catch { /* language still applied locally */ }
+    // Use the saved profile values, not the (possibly unsaved) form edits.
+    try {
+      if (data) await updateProfile({ first_name: data.first_name, last_name: data.last_name, business_name: data.business_name, phone: data.phone, email: data.email, preferred_language: v });
+    } catch { /* language still applied locally */ }
   }
 
   return (

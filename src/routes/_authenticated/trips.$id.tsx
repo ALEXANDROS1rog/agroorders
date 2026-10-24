@@ -38,8 +38,9 @@ function TripPage() {
   const [editing, setEditing] = useState(false);
   const [exp, setExp] = useState<Expenses>({ fuel: "", tolls: "", wear: "", food: "" });
   useEffect(() => {
-    if (trip) setExp({ fuel: str(trip.fuel), tolls: str(trip.tolls), wear: str(trip.wear), food: str(trip.food) });
-  }, [trip]);
+    // Don't overwrite what the user is typing when the query refetches in the background.
+    if (trip && !editing) setExp({ fuel: str(trip.fuel), tolls: str(trip.tolls), wear: str(trip.wear), food: str(trip.food) });
+  }, [trip, editing]);
 
   if (isLoading) return <AppShell title={t("r.route")} back="/trips"><Loading /></AppShell>;
   if (!trip) return <AppShell title={t("r.route")} back="/trips"><EmptyState title={t("r.none")} /></AppShell>;

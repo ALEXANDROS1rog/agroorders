@@ -106,9 +106,14 @@ function NewOrderPage() {
 
   useEffect(() => {
     if (!recording) return;
-    const id = setInterval(() => setSeconds((s) => { if (s >= 299) stopRecording(); return s + 1; }), 1000);
+    const id = setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => clearInterval(id);
   }, [recording]);
+
+  // Auto-stop at 5 minutes (kept out of the state updater, which must be side-effect free).
+  useEffect(() => {
+    if (recording && seconds >= 300) stopRecording();
+  }, [recording, seconds]);
 
   async function runAi(input: string = text, source: "text" | "voice" = "text") {
     setAiBusy(true);

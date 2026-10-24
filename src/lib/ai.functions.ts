@@ -258,7 +258,7 @@ export const extractOrderFromText = createServerFn({ method: "POST" })
         user_id: userId,
         raw_text: data.text,
         extracted: result as unknown as never,
-        source: "text",
+        source: data.source,
         status: "extracted",
       })
       .select("id")
