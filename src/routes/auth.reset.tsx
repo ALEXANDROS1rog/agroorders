@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Ambient } from "@/components/AppShell";
 import { Field, PrimaryButton } from "@/components/Field";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -40,9 +39,8 @@ function ResetPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      <Ambient />
       <div className="relative mx-auto flex min-h-screen max-w-[460px] flex-col justify-center px-4">
-        <div className="glass rounded-3xl p-5">
+        <div className="surface rounded-3xl p-5">
           <h1 className="font-display text-lg font-semibold">Νέος κωδικός</h1>
           <p className="mt-1 text-xs text-muted-foreground">
             Άνοιξε αυτή τη σελίδα από τον σύνδεσμο του email και όρισε νέο κωδικό.

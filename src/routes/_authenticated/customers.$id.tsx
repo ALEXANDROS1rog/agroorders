@@ -73,7 +73,7 @@ function CustomerPage() {
           </div>
           <h2 className="font-display pt-2 text-base font-semibold">Ιστορικό παραγγελιών</h2>
           {(orders.data ?? []).length === 0 ? <EmptyState title="Καμία παραγγελία ακόμα" /> : (orders.data ?? []).map((o) => (
-            <Link key={o.id} to="/orders/$id" params={{ id: o.id }} className="glass press flex items-center justify-between rounded-3xl p-4">
+            <Link key={o.id} to="/orders/$id" params={{ id: o.id }} className="surface press flex items-center justify-between rounded-3xl p-4">
               <div><p className="font-semibold">#{o.order_number} · {formatDate(o.order_date)}</p><StatusChip status={o.status} /></div>
               <p className="font-display text-lg font-bold">{formatCurrency(orderTotal(o))}</p>
             </Link>

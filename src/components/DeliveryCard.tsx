@@ -28,7 +28,7 @@ export function GpsBanner({ pos }: { pos: PositionState }) {
   const { t } = useI18n();
   if (pos.status === "ok") return <p className="mb-3 rounded-2xl bg-brand/15 px-4 py-3 text-sm font-semibold text-brand">{t("del.gpsOk")}</p>;
   if (pos.status === "denied") return <p className="mb-3 rounded-2xl bg-warning/15 px-4 py-3 text-sm font-semibold text-warning">{t("del.gpsDenied")}</p>;
-  return <p className="glass-soft mb-3 rounded-2xl px-4 py-3 text-sm text-muted-foreground">{t("del.gpsWait")}</p>;
+  return <p className="surface-subtle mb-3 rounded-2xl px-4 py-3 text-sm text-muted-foreground">{t("del.gpsWait")}</p>;
 }
 
 export function DeliveryCard({ o, deliveryId, index, km }: { o: OrderWithRelations; deliveryId: string | undefined; index: number; km: number | null }) {

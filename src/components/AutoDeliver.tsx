@@ -5,7 +5,6 @@ import { MapPinCheck } from "lucide-react";
 import { fetchDeliveries, markDelivered } from "@/lib/api";
 import { distanceKm } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
-import { useIsPreviewPane } from "@/components/AppShell";
 
 /** Call to switch automatic confirmation on from anywhere (e.g. "Έναρξη διανομής"). */
 export function enableAutoDeliver() {
@@ -26,9 +25,7 @@ export function AutoDeliver() {
   const { t } = useI18n();
   const [on, setOn] = useState(false);
   const [hint, setHint] = useState("");
-  // A page previewed during a tab swipe must never confirm deliveries on its own.
-  const preview = useIsPreviewPane();
-  const { data } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries, enabled: on && !preview });
+  const { data } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries, enabled: on });
   const since = useRef<Record<string, number>>({});
   const done = useRef<Set<string>>(new Set());
   const listRef = useRef(data);
@@ -42,7 +39,7 @@ export function AutoDeliver() {
   }, []);
 
   useEffect(() => {
-    if (!on || preview) return;
+    if (!on) return;
     if (!("geolocation" in navigator)) { setHint(t("a.denied")); return; }
     setHint(t("del.gpsWait"));
     const id = navigator.geolocation.watchPosition(
@@ -74,7 +71,7 @@ export function AutoDeliver() {
       { enableHighAccuracy: true, maximumAge: 5000 },
     );
     return () => navigator.geolocation.clearWatch(id);
-  }, [on, preview, qc, t]);
+  }, [on, qc, t]);
 
   function toggle() {
     const next = !on;
@@ -84,7 +81,7 @@ export function AutoDeliver() {
   }
 
   return (
-    <button onClick={toggle} className={`press mb-4 flex w-full items-center gap-3 rounded-2xl p-4 text-left ${on ? "bg-brand/20 ring-1 ring-brand/40" : "glass-soft"}`}>
+    <button onClick={toggle} className={`press mb-4 flex w-full items-center gap-3 rounded-2xl p-4 text-left ${on ? "bg-brand/20 ring-1 ring-brand/40" : "surface-subtle"}`}>
       <MapPinCheck className={`h-6 w-6 shrink-0 ${on ? "text-brand" : "text-muted-foreground"}`} />
       <span className="min-w-0 flex-1">
         <span className="block font-semibold">{t("a.title")} {on ? t("a.on") : t("a.off")}</span>

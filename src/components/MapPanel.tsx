@@ -18,7 +18,7 @@ export function MapPanel(props: {
   className?: string;
 }) {
   const fallback = (
-    <div className={`glass-soft w-full animate-pulse rounded-3xl ${props.className ?? "h-[320px]"}`} />
+    <div className={`surface-subtle w-full animate-pulse rounded-3xl ${props.className ?? "h-[320px]"}`} />
   );
   return (
     <ClientOnly fallback={fallback}>

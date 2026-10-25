@@ -65,7 +65,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
           </button>
           <a
             href="/"
-            className="glass inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold text-foreground"
+            className="surface inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-semibold text-foreground"
           >
             Αρχική
           </a>

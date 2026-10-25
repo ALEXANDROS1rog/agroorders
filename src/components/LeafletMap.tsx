@@ -194,7 +194,7 @@ export default function LeafletMap({
     };
   }, [map, trackMe]);
 
-  const btn = "press glass rounded-xl px-3 py-2 text-xs font-semibold";
+  const btn = "press surface rounded-xl px-3 py-2 text-xs font-semibold";
   return (
     <div className={`relative w-full overflow-hidden rounded-3xl ${className}`}>
       <div ref={el} className="h-full w-full" />

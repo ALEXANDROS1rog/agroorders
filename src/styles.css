@@ -3,15 +3,9 @@
 @import "tw-animate-css";
 
 /*
- * VoiceOrders design system — "Liquid Glass" (web interpretation).
- * Dark by default; follows the system light/dark preference.
- * All colors are oklch semantic tokens. Never hardcode colors in components.
- *
- * Layers:  content layer  -> glass-soft (no blur, quiet)
- *          functional layer -> glass (regular), glass-strong (nav, toolbars, overlays),
- *                              glass-clear (selected controls over rich backgrounds)
- * Fallbacks: no backdrop-filter, reduced transparency and increased contrast all
- *            switch glass to an opaque surface (see bottom of "Liquid glass" block).
+ * VoiceOrders system interface, informed by Apple's HIG materials guidance.
+ * Liquid Glass is reserved for navigation and transient chrome.
+ * Content uses quiet, opaque grouped surfaces.
  */
 
 @theme inline {
@@ -22,8 +16,8 @@
   --radius-2xl: calc(var(--radius) + 12px);
   --radius-3xl: calc(var(--radius) + 18px);
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", "Inter", ui-sans-serif, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -54,120 +48,99 @@
 
 :root {
   --radius: 1rem;
-
-  --background: oklch(0.17 0.029 264);
-  --foreground: oklch(0.968 0.007 247.9);
-
-  --card: oklch(1 0 0 / 9%);
-  --card-foreground: oklch(0.968 0.007 247.9);
-  --popover: oklch(0.21 0.03 264);
-  --popover-foreground: oklch(0.968 0.007 247.9);
-
-  --brand: oklch(0.72 0.168 162.5);
-  --brand-foreground: oklch(0.19 0.045 160);
-  --primary: oklch(0.72 0.168 162.5);
-  --primary-foreground: oklch(0.19 0.045 160);
-
-  --secondary: oklch(1 0 0 / 10%);
-  --secondary-foreground: oklch(0.968 0.007 247.9);
-  --muted: oklch(1 0 0 / 6%);
-  --muted-foreground: oklch(0.72 0.035 256.8);
-
-  --accent: oklch(0.71 0.135 234.5);
-  --accent-foreground: oklch(0.19 0.04 235);
-
-  --warning: oklch(0.83 0.145 84.4);
+  --background: oklch(0.975 0.004 255);
+  --foreground: oklch(0.19 0.015 255);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.19 0.015 255);
+  --popover: oklch(0.99 0.002 255);
+  --popover-foreground: oklch(0.19 0.015 255);
+  --brand: oklch(0.52 0.14 162.5);
+  --brand-foreground: oklch(0.99 0.01 160);
+  --primary: oklch(0.52 0.14 162.5);
+  --primary-foreground: oklch(0.99 0.01 160);
+  --secondary: oklch(0.94 0.006 255);
+  --secondary-foreground: oklch(0.22 0.015 255);
+  --muted: oklch(0.94 0.006 255);
+  --muted-foreground: oklch(0.48 0.02 255);
+  --accent: oklch(0.52 0.14 235);
+  --accent-foreground: oklch(0.99 0.01 235);
+  --warning: oklch(0.7 0.15 75);
   --warning-foreground: oklch(0.22 0.05 70);
-  --info: oklch(0.72 0.1 275);
+  --info: oklch(0.52 0.12 275);
+  --destructive: oklch(0.55 0.21 25);
+  --destructive-foreground: oklch(0.99 0.003 247.9);
+  --border: oklch(0.87 0.01 255);
+  --input: oklch(0.87 0.01 255);
+  --ring: oklch(0.52 0.14 162.5);
+  color-scheme: light;
 
-  --destructive: oklch(0.65 0.2 22.5);
-  --destructive-foreground: oklch(0.98 0.003 247.9);
+  /* Standard grouped content surfaces */
+  --surface-bg: oklch(1 0 0);
+  --surface-bg-soft: oklch(0.95 0.006 255);
+  --surface-bg-strong: oklch(1 0 0 / 70%);
+  --surface-bg-clear: oklch(1 0 0 / 76%);
+  --surface-solid: oklch(0.99 0.002 255);
+  --surface-border: oklch(0.88 0.008 255 / 72%);
+  --surface-border-soft: oklch(0.88 0.008 255 / 48%);
+  --surface-highlight: oklch(1 0 0 / 78%);
+  --surface-lowlight: oklch(0.2 0.015 255 / 4%);
+  --surface-shadow: 0 8px 28px oklch(0.2 0.02 255 / 15%);
+  --surface-shadow-sm: 0 2px 10px oklch(0.2 0.02 255 / 7%);
+  --surface-blur: 18px;
+  --surface-blur-strong: 26px;
+  --surface-saturate: 1.4;
+  --sheen: oklch(1 0 0 / 10%);
+  --scrim: oklch(0.12 0.015 255 / 42%);
 
-  --border: oklch(1 0 0 / 14%);
-  --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.72 0.168 162.5);
-
-  color-scheme: dark;
-
-  /* Liquid glass materials */
-  --glass-bg: oklch(1 0 0 / 9%);
-  --glass-bg-soft: oklch(1 0 0 / 5%);
-  --glass-bg-strong: oklch(0.26 0.03 264 / 62%);
-  --glass-bg-clear: oklch(1 0 0 / 16%);
-  --glass-solid: oklch(0.24 0.03 264);
-  --glass-border: oklch(1 0 0 / 16%);
-  --glass-border-soft: oklch(1 0 0 / 9%);
-  --glass-highlight: oklch(1 0 0 / 26%);
-  --glass-lowlight: oklch(0 0 0 / 22%);
-  --glass-shadow: 0 10px 34px oklch(0 0 0 / 30%);
-  --glass-shadow-sm: 0 4px 14px oklch(0 0 0 / 22%);
-  --glass-blur: 22px;
-  --glass-blur-strong: 34px;
-  --glass-saturate: 1.7;
-  --sheen: oklch(1 0 0 / 24%);
-  --scrim: oklch(0.1 0.02 264 / 55%);
-
-  /* Motion */
-  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
-  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-out: cubic-bezier(0.2, 0.75, 0.25, 1);
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 140ms;
-  --dur: 260ms;
-  --dur-slow: 420ms;
+  --dur: 240ms;
+  --dur-slow: 360ms;
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    color-scheme: light;
-
-    --background: oklch(0.95 0.014 250);
-    --foreground: oklch(0.2 0.03 264);
-
-    --card: oklch(1 0 0 / 55%);
-    --card-foreground: oklch(0.2 0.03 264);
-    --popover: oklch(0.985 0.005 250);
-    --popover-foreground: oklch(0.2 0.03 264);
-
-    --brand: oklch(0.5 0.14 162.5);
-    --brand-foreground: oklch(0.99 0.01 160);
-    --primary: oklch(0.5 0.14 162.5);
-    --primary-foreground: oklch(0.99 0.01 160);
-
-    --secondary: oklch(0 0 0 / 6%);
-    --secondary-foreground: oklch(0.2 0.03 264);
-    --muted: oklch(0 0 0 / 5%);
-    --muted-foreground: oklch(0.42 0.03 257);
-
-    --accent: oklch(0.5 0.14 235);
-    --accent-foreground: oklch(0.99 0.01 235);
-
-    --warning: oklch(0.5 0.12 70);
-    --warning-foreground: oklch(0.99 0.01 80);
-    --info: oklch(0.47 0.14 275);
-
-    --destructive: oklch(0.53 0.21 25);
-    --destructive-foreground: oklch(0.99 0.003 247.9);
-
-    --border: oklch(0 0 0 / 12%);
-    --input: oklch(0 0 0 / 12%);
-    --ring: oklch(0.5 0.14 162.5);
-
-    --glass-bg: oklch(1 0 0 / 58%);
-    --glass-bg-soft: oklch(1 0 0 / 38%);
-    --glass-bg-strong: oklch(1 0 0 / 72%);
-    --glass-bg-clear: oklch(1 0 0 / 80%);
-    --glass-solid: oklch(0.985 0.005 250);
-    --glass-border: oklch(0 0 0 / 9%);
-    --glass-border-soft: oklch(0 0 0 / 6%);
-    --glass-highlight: oklch(1 0 0 / 95%);
-    --glass-lowlight: oklch(0 0 0 / 6%);
-    --glass-shadow: 0 10px 30px oklch(0.3 0.03 264 / 14%);
-    --glass-shadow-sm: 0 3px 12px oklch(0.3 0.03 264 / 10%);
-    --glass-saturate: 1.5;
-    --sheen: oklch(1 0 0 / 30%);
-    --scrim: oklch(0.2 0.03 264 / 32%);
+    color-scheme: dark;
+    --background: oklch(0.17 0.012 255);
+    --foreground: oklch(0.96 0.004 255);
+    --card: oklch(0.23 0.014 255);
+    --card-foreground: oklch(0.96 0.004 255);
+    --popover: oklch(0.24 0.014 255);
+    --popover-foreground: oklch(0.96 0.004 255);
+    --brand: oklch(0.72 0.15 162.5);
+    --brand-foreground: oklch(0.19 0.045 160);
+    --primary: oklch(0.72 0.15 162.5);
+    --primary-foreground: oklch(0.19 0.045 160);
+    --secondary: oklch(0.28 0.014 255);
+    --secondary-foreground: oklch(0.93 0.005 255);
+    --muted: oklch(0.26 0.012 255);
+    --muted-foreground: oklch(0.72 0.015 255);
+    --accent: oklch(0.72 0.1 235);
+    --accent-foreground: oklch(0.19 0.04 235);
+    --warning: oklch(0.83 0.145 84.4);
+    --warning-foreground: oklch(0.22 0.05 70);
+    --info: oklch(0.72 0.1 275);
+    --destructive: oklch(0.68 0.19 22.5);
+    --destructive-foreground: oklch(0.98 0.003 247.9);
+    --border: oklch(0.4 0.012 255 / 60%);
+    --input: oklch(0.4 0.012 255 / 70%);
+    --ring: oklch(0.72 0.15 162.5);
+    --surface-bg: oklch(0.23 0.014 255);
+    --surface-bg-soft: oklch(0.27 0.014 255);
+    --surface-bg-strong: oklch(0.2 0.014 255 / 72%);
+    --surface-bg-clear: oklch(0.32 0.016 255 / 74%);
+    --surface-solid: oklch(0.23 0.014 255);
+    --surface-border: oklch(0.42 0.014 255 / 68%);
+    --surface-border-soft: oklch(0.42 0.014 255 / 42%);
+    --surface-highlight: oklch(1 0 0 / 22%);
+    --surface-lowlight: oklch(0 0 0 / 12%);
+    --surface-shadow: 0 8px 28px oklch(0 0 0 / 28%);
+    --surface-shadow-sm: 0 2px 10px oklch(0 0 0 / 20%);
+    --sheen: oklch(1 0 0 / 8%);
+    --scrim: oklch(0.08 0.01 255 / 58%);
   }
 }
-
 @layer base {
   * {
     border-color: var(--color-border);
@@ -203,72 +176,56 @@
   }
 }
 
-/* ------------------------------ Liquid glass ------------------------------ */
-
-/* Regular glass: floating controls, cards that need to separate from the backdrop. */
-@utility glass {
-  background-color: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 var(--glass-lowlight),
-    var(--glass-shadow-sm);
+/* Standard surfaces for content, and adaptive Liquid Glass for the floating chrome. */
+@utility surface {
+  background-color: var(--surface-bg);
+  border: 1px solid var(--surface-border-soft);
+  box-shadow: var(--surface-shadow-sm);
   transition:
     background-color var(--dur) var(--ease-out),
     border-color var(--dur) var(--ease-out),
     box-shadow var(--dur) var(--ease-out);
 }
 
-/* Strong glass: navigation, toolbars, popovers, dialogs — must stay readable over content. */
-@utility glass-strong {
-  background-color: var(--glass-bg-strong);
-  border: 1px solid var(--glass-border);
-  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+@utility liquid-glass {
+  background-color: var(--surface-bg-strong);
+  border: 1px solid var(--surface-border);
+  -webkit-backdrop-filter: blur(var(--surface-blur-strong)) saturate(var(--surface-saturate));
+  backdrop-filter: blur(var(--surface-blur-strong)) saturate(var(--surface-saturate));
   box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    inset 0 -1px 0 var(--glass-lowlight),
-    var(--glass-shadow);
+    inset 0 1px 0 var(--surface-highlight),
+    inset 0 -1px 0 var(--surface-lowlight),
+    var(--surface-shadow);
 }
 
-/* Clear glass: selected / active controls sitting on top of other glass. */
-@utility glass-clear {
-  background-color: var(--glass-bg-clear);
-  border: 1px solid var(--glass-border);
+@utility liquid-glass-clear {
+  background-color: var(--surface-bg-clear);
+  border: 1px solid var(--surface-border);
+  -webkit-backdrop-filter: blur(var(--surface-blur)) saturate(var(--surface-saturate));
+  backdrop-filter: blur(var(--surface-blur)) saturate(var(--surface-saturate));
   box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    var(--glass-shadow-sm);
+    inset 0 1px 0 var(--surface-highlight),
+    var(--surface-shadow-sm);
 }
 
-/* Content layer: quiet inset surface, no blur (inputs, nested tiles, empty states). */
-@utility glass-soft {
-  background-color: var(--glass-bg-soft);
-  border: 1px solid var(--glass-border-soft);
-  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--glass-highlight) 40%, transparent);
+@utility surface-subtle {
+  background-color: var(--surface-bg-soft);
+  border: 1px solid var(--surface-border-soft);
   transition:
     background-color var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
     box-shadow var(--dur-fast) var(--ease-out);
 }
 
-/* Native <select> needs an opaque popup; keep it on-token. */
 @utility field-select {
-  background-color: var(--glass-solid);
+  background-color: var(--surface-solid);
   color: var(--foreground);
   & option {
-    background-color: var(--glass-solid);
+    background-color: var(--surface-solid);
     color: var(--foreground);
   }
 }
 
-@utility dotted-field {
-  background-image: radial-gradient(color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px);
-  background-size: 22px 22px;
-}
-
-/* Tactile press feedback, plus a gentle lift on real hover devices only. */
 @utility press {
   transition:
     transform var(--dur-fast) var(--ease-out),
@@ -280,81 +237,58 @@
   }
   @media (hover: hover) and (pointer: fine) {
     &:hover {
-      filter: brightness(1.08);
+      filter: brightness(1.04);
     }
   }
 }
 
 @layer components {
-  /* Tab bar item colour follows the live tab position (--pos, set per frame while swiping):
-     fully brand-coloured on its own tab, fading to muted as the indicator moves away. */
   .tab-tone {
     color: var(--muted-foreground);
+    transition: color var(--dur) var(--ease-out);
+  }
+  .tab-tone svg {
+    transition: transform var(--dur) var(--ease-spring);
   }
   .tab-tone[aria-current="page"] {
     color: var(--brand);
   }
-  @supports (color: color-mix(in oklab, red 50%, blue)) {
-    /* [aria-current] is listed too: its fixed brand colour above has higher specificity and
-       would otherwise keep the tab being left fully lit while the next one fades in. */
-    .tab-tone,
-    .tab-tone[aria-current="page"] {
-      color: color-mix(
-        in oklab,
-        var(--brand) calc(max(0, 1 - max(var(--i) - var(--pos), var(--pos) - var(--i))) * 100%),
-        var(--muted-foreground)
-      );
-    }
+  .tab-tone[aria-current="page"] svg {
+    transform: scale(1.06);
   }
-
-  /* Solid brand buttons/links get a specular sheen so they read as glossy glass. */
   a.bg-brand,
   button.bg-brand {
-    background-image: linear-gradient(180deg, var(--sheen), transparent 60%);
-    box-shadow:
-      inset 0 1px 0 var(--sheen),
-      0 6px 18px color-mix(in oklab, var(--brand) 32%, transparent);
+    box-shadow: 0 2px 6px color-mix(in oklab, var(--brand) 22%, transparent);
   }
   button:disabled {
     cursor: not-allowed;
   }
-  .glass:is(a, button):hover,
-  .glass-strong:is(a, button):hover {
+  .surface:is(a, button):hover,
+  .liquid-glass:is(a, button):hover {
     border-color: color-mix(in oklab, var(--foreground) 22%, transparent);
   }
 }
 
-/* Fallbacks: opaque surfaces when blur is unsupported or the user asks for less transparency. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass,
-  .glass-strong {
-    background-color: var(--glass-solid);
+  .liquid-glass,
+  .liquid-glass-clear {
+    background-color: var(--surface-solid);
   }
 }
+
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .glass,
-  .glass-strong {
-    background-color: var(--glass-solid);
+  .liquid-glass,
+  .liquid-glass-clear {
+    background-color: var(--surface-solid);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     border-color: color-mix(in oklab, var(--foreground) 35%, transparent);
   }
-  .glass-soft {
-    background-color: color-mix(in oklab, var(--glass-solid) 70%, transparent);
-    border-color: color-mix(in oklab, var(--foreground) 30%, transparent);
+  .surface-subtle {
+    background-color: var(--surface-bg-soft);
+    border-color: color-mix(in oklab, var(--foreground) 22%, transparent);
   }
 }
-
-@keyframes drift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(22px, -16px) scale(1.06);
-  }
-}
-
 @keyframes pulse-soft {
   0%,
   100% {
@@ -365,43 +299,24 @@
   }
 }
 
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@utility animate-drift {
-  animation: drift 15s ease-in-out infinite;
-}
-
 @utility animate-pulse-soft {
   animation: pulse-soft 1.6s ease-in-out infinite;
 }
 
-@utility animate-fade-up {
-  animation: fade-up 0.4s cubic-bezier(0.32, 0.72, 0, 1) both;
-}
-
-/* Leaflet dark tuning */
+/* Map controls use the active appearance tokens. */
 .leaflet-container {
   background: var(--background);
   font-family: var(--font-sans);
 }
 .leaflet-control-attribution {
-  background: oklch(0 0 0 / 45%) !important;
-  color: oklch(0.72 0.035 256.8) !important;
+  background: var(--surface-bg) !important;
+  color: var(--muted-foreground) !important;
 }
 .leaflet-control-attribution a {
-  color: oklch(0.72 0.168 162.5) !important;
+  color: var(--brand) !important;
 }
 
-/* Respect reduced motion: no drifting blobs, no pulsing, near-instant transitions. */
+/* Respect reduced motion preferences. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

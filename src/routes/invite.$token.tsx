@@ -2,7 +2,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Ambient } from "@/components/AppShell";
 import { PrimaryButton } from "@/components/Field";
 import { supabase } from "@/integrations/supabase/client";
 import { PENDING_INVITE_KEY, ROLE_LABEL, acceptInvitation, getInvitation, type OrgRole } from "@/lib/org";
@@ -53,9 +52,8 @@ function InvitePage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      <Ambient />
       <div className="relative mx-auto flex min-h-screen max-w-[460px] flex-col justify-center px-4 py-10">
-        <div className="glass space-y-4 rounded-3xl p-5">
+        <div className="surface space-y-4 rounded-3xl p-5">
           <h1 className="font-display text-xl font-semibold">Αποδοχή πρόσκλησης</h1>
           {inv.isLoading || email === undefined ? <p className="text-muted-foreground">Περίμενε…</p> : !i ? (
             <p>Η πρόσκληση δεν βρέθηκε.</p>

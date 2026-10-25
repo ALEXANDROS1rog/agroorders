@@ -77,7 +77,7 @@ function ProfilePage() {
           </Card>
           <button
             onClick={async () => { await supabase.auth.signOut(); window.location.href = "/auth"; }}
-            className="glass press flex h-14 w-full items-center justify-center gap-2 rounded-2xl font-semibold text-destructive"
+            className="surface press flex h-14 w-full items-center justify-center gap-2 rounded-2xl font-semibold text-destructive"
           >
             <LogOut className="h-5 w-5" /> {t("p.logout")}
           </button>
