@@ -245,27 +245,16 @@
 @layer components {
   .tab-tone {
     color: var(--muted-foreground);
+    transition: color var(--dur) var(--ease-out);
   }
   .tab-tone svg {
-    transform: scale(
-      calc(1 + max(0, 1 - max(var(--i) - var(--pos), var(--pos) - var(--i))) * 0.055)
-    );
-  }
-  .tab-tone span {
-    opacity: calc(0.72 + max(0, 1 - max(var(--i) - var(--pos), var(--pos) - var(--i))) * 0.28);
+    transition: transform var(--dur) var(--ease-spring);
   }
   .tab-tone[aria-current="page"] {
     color: var(--brand);
   }
-  @supports (color: color-mix(in oklab, red 50%, blue)) {
-    .tab-tone,
-    .tab-tone[aria-current="page"] {
-      color: color-mix(
-        in oklab,
-        var(--brand) calc(max(0, 1 - max(var(--i) - var(--pos), var(--pos) - var(--i))) * 100%),
-        var(--muted-foreground)
-      );
-    }
+  .tab-tone[aria-current="page"] svg {
+    transform: scale(1.06);
   }
   a.bg-brand,
   button.bg-brand {
