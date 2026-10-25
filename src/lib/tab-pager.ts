@@ -39,6 +39,8 @@ const DIRECTION_RATIO = 1.4; // |dx| must beat |dy| by this factor to count as h
 const EDGE_GUARD = 20; // px; leave the screen edges to the browser's own back/forward swipe
 const PROJECT_MS = 180; // how far ahead the release velocity is projected
 const COMMIT_FRACTION = 0.5; // projected distance (as a share of the width) needed to switch
+const FLICK_VELOCITY = 0.4; // px/ms: a quick flick switches page even over a short distance
+const FLICK_MIN_DISTANCE = 28; // px the page must already have moved for a flick to count
 const MIN_SETTLE_MS = 170;
 const MAX_SETTLE_MS = 380;
 const STUCK_MS = 4000; // if navigation never replaces us, return to rest
@@ -272,8 +274,11 @@ export function createTabPager(opts: TabPagerOptions): { destroy: () => void } {
     const current = index();
     let target = current;
     if (!cancelled) {
-      if (projected < -width * COMMIT_FRACTION && hasNext()) target = current + 1;
-      else if (projected > width * COMMIT_FRACTION && hasPrev()) target = current - 1;
+      // A flick must also point the way the page was dragged (a quick pull-back cancels).
+      const flickNext = v <= -FLICK_VELOCITY && offset <= -FLICK_MIN_DISTANCE;
+      const flickPrev = v >= FLICK_VELOCITY && offset >= FLICK_MIN_DISTANCE;
+      if ((projected < -width * COMMIT_FRACTION || flickNext) && hasNext()) target = current + 1;
+      else if ((projected > width * COMMIT_FRACTION || flickPrev) && hasPrev()) target = current - 1;
     }
     settle(target, v);
   }
