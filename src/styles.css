@@ -286,6 +286,24 @@
 }
 
 @layer components {
+  /* Tab bar item colour follows the live tab position (--pos, set per frame while swiping):
+     fully brand-coloured on its own tab, fading to muted as the indicator moves away. */
+  .tab-tone {
+    color: var(--muted-foreground);
+  }
+  .tab-tone[aria-current="page"] {
+    color: var(--brand);
+  }
+  @supports (color: color-mix(in oklab, red 50%, blue)) {
+    .tab-tone {
+      color: color-mix(
+        in oklab,
+        var(--brand) calc(max(0, 1 - max(var(--i) - var(--pos), var(--pos) - var(--i))) * 100%),
+        var(--muted-foreground)
+      );
+    }
+  }
+
   /* Solid brand buttons/links get a specular sheen so they read as glossy glass. */
   a.bg-brand,
   button.bg-brand {
