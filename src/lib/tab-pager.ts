@@ -10,7 +10,7 @@
  * `touch-action: pan-y pinch-zoom`. A vertical pan makes the browser scroll and
  * fire `pointercancel` (we back off); horizontal moves are delivered to us.
  *
- * Only touch/pen pointers drive the pager. Mouse and keyboard navigation are untouched.
+ * Touch, pen, and primary mouse pointers can drag; keyboard and link activation are untouched.
  */
 
 export type TabPagerOptions = {
@@ -47,6 +47,12 @@ const STUCK_MS = 4000; // if navigation never replaces us, return to rest
 
 /** Controls that must keep their own touch behaviour. */
 const SKIP_SELECTOR = [
+  "a",
+  "button",
+  "[role=button]",
+  "[role=combobox]",
+  "[role=checkbox]",
+  "[role=radio]",
   "input",
   "textarea",
   "select",
@@ -190,7 +196,8 @@ export function createTabPager(opts: TabPagerOptions): { destroy: () => void } {
   }
 
   function onPointerDown(e: PointerEvent) {
-    if (e.pointerType === "mouse" || e.button > 0) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (e.pointerType !== "mouse" && e.button > 0) return;
     if (!e.isPrimary) {
       // A second finger means pinch-zoom: abandon any gesture we were tracking.
       if (mode === "pending" || mode === "drag") endGesture(true);

@@ -62,7 +62,7 @@ function NewTripPage() {
             weekStartsOn={1}
             className="pointer-events-auto mx-auto w-full rounded-2xl bg-transparent p-0 [--cell-size:2.75rem]"
           />
-          <div className={`mt-3 rounded-2xl px-4 py-3 text-center ${date ? "bg-brand/15" : "glass-soft"}`}>
+          <div className={`mt-3 rounded-2xl px-4 py-3 text-center ${date ? "bg-brand/15" : "surface-subtle"}`}>
             <p className="text-xs text-muted-foreground">{t("r.selected")}</p>
             <p className="font-display text-xl font-bold capitalize">{date ? format(date, "EEEE dd/MM/yyyy", { locale }) : "—"}</p>
           </div>

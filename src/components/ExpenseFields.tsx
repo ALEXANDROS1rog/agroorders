@@ -20,7 +20,7 @@ export function ExpenseFields({ value, onChange }: { value: Expenses; onChange: 
   return (
     <div className="space-y-3">
       {ROWS.map((r) => (
-        <label key={r.k} className="glass-soft flex items-center gap-3 rounded-2xl px-4 py-2">
+        <label key={r.k} className="surface-subtle flex items-center gap-3 rounded-2xl px-4 py-2">
           
           <span className="flex-1 font-semibold">{t(r.label)}</span>
           <input

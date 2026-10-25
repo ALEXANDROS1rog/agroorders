@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Ambient } from "@/components/AppShell";
 import { Field, GhostButton, PrimaryButton } from "@/components/Field";
 import { supabase } from "@/integrations/supabase/client";
 import { PENDING_INVITE_KEY } from "@/lib/org";
@@ -108,7 +107,6 @@ function AuthPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
-      <Ambient />
       <div className="relative mx-auto flex min-h-screen max-w-[460px] flex-col justify-center px-4 py-10">
         <div className="mb-6 flex items-center gap-3">
           <div className="grid h-12 w-12 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40">
@@ -122,8 +120,8 @@ function AuthPage() {
           </div>
         </div>
 
-        <div className="glass rounded-3xl p-5">
-          <div className="glass-soft mb-5 flex rounded-2xl p-1">
+        <div className="surface rounded-3xl p-5">
+          <div className="surface-subtle mb-5 flex rounded-2xl p-1">
             {(["login", "register"] as Mode[]).map((m) => (
               <button
                 key={m}

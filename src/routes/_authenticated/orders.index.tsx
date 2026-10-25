@@ -36,7 +36,7 @@ function OrdersPage() {
       <SearchBox value={q} onChange={setQ} placeholder="Πελάτης, προϊόν, αριθμός, ημερομηνία" />
       <div className="-mx-4 mb-4 flex gap-2 overflow-x-auto px-4 pb-1">
         {["all", ...ORDER_STATUSES].map((s) => (
-          <button key={s} onClick={() => setStatus(s)} className={`press h-10 shrink-0 rounded-full px-4 text-sm font-semibold ${status === s ? "bg-brand text-brand-foreground" : "glass-soft"}`}>
+          <button key={s} onClick={() => setStatus(s)} className={`press h-10 shrink-0 rounded-full px-4 text-sm font-semibold ${status === s ? "bg-brand text-brand-foreground" : "surface-subtle"}`}>
             {s === "all" ? "Όλες" : ORDER_STATUS_LABEL[s as keyof typeof ORDER_STATUS_LABEL]}
           </button>
         ))}

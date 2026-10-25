@@ -8,7 +8,7 @@ import type {
 
 const base =
   // text-base (16px) also stops iOS from zooming into the page on focus.
-  "glass-soft w-full rounded-2xl px-4 text-base text-foreground placeholder:text-muted-foreground/70 outline-none transition-shadow focus-visible:border-ring/60 focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-60";
+  "surface-subtle w-full rounded-2xl px-4 text-base text-foreground placeholder:text-muted-foreground/70 outline-none transition-shadow focus-visible:border-ring/60 focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-60";
 
 export function Label({ children }: { children: ReactNode }) {
   return (
@@ -85,7 +85,7 @@ export function GhostButton({
   return (
     <button
       {...props}
-      className={`glass press h-14 w-full rounded-2xl text-[15px] font-semibold text-foreground disabled:opacity-60 ${className}`}
+      className={`surface press h-14 w-full rounded-2xl text-[15px] font-semibold text-foreground disabled:opacity-60 ${className}`}
     >
       {children}
     </button>

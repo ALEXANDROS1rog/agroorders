@@ -70,7 +70,7 @@ function EditOrderPage() {
               <div key={idx} className="space-y-2 border-b border-border/40 pb-3 last:border-0">
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-semibold">{it.product_name} <span className="text-sm text-muted-foreground">({it.unit})</span></p>
-                  <button type="button" aria-label="Αφαίρεση" onClick={() => setItems((l) => l.filter((_, i) => i !== idx))} className="press grid h-11 w-11 place-items-center rounded-2xl text-destructive glass-soft">
+                  <button type="button" aria-label="Αφαίρεση" onClick={() => setItems((l) => l.filter((_, i) => i !== idx))} className="press grid h-11 w-11 place-items-center rounded-2xl text-destructive surface-subtle">
                     <Trash2 className="h-5 w-5" />
                   </button>
                 </div>

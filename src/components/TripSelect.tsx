@@ -23,7 +23,7 @@ export function TripSelect({ value, onChange, onlyUpcoming = false }: { value: s
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={t("o.searchRoute")}
-          className="glass-soft h-12 w-full rounded-2xl px-4 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          className="surface-subtle h-12 w-full rounded-2xl px-4 text-base outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
         />
       ) : null}
       <Select label={`${t("o.route")}`} value={value} onChange={(e) => onChange(e.target.value)}>

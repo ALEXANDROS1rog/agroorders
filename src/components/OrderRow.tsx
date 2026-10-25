@@ -13,7 +13,7 @@ export function matchesOrder(o: OrderWithRelations, term: string) {
 
 export function OrderRow({ o }: { o: OrderWithRelations }) {
   return (
-    <Link to="/orders/$id" params={{ id: o.id }} className="glass press block rounded-3xl p-4">
+    <Link to="/orders/$id" params={{ id: o.id }} className="surface press block rounded-3xl p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-[16px] font-semibold">#{o.order_number} · {o.customer?.full_name ?? "Χωρίς πελάτη"}</p>

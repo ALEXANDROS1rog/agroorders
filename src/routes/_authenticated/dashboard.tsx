@@ -52,7 +52,7 @@ function Dashboard() {
             await supabase.auth.signOut();
             window.location.href = "/auth";
           }}
-          className="glass press grid h-11 w-11 place-items-center rounded-2xl"
+          className="surface press grid h-11 w-11 place-items-center rounded-2xl"
         >
           <LogOut className="h-5 w-5" />
         </button>
@@ -100,10 +100,10 @@ function Dashboard() {
             </div>
           ) : null}
           <div className="grid grid-cols-2 gap-3">
-            <Link to="/products" className="glass press flex h-16 items-center justify-center gap-2 rounded-2xl font-semibold">
+            <Link to="/products" className="surface press flex h-16 items-center justify-center gap-2 rounded-2xl font-semibold">
               <Package className="h-5 w-5" /> Προϊόντα
             </Link>
-            <Link to="/history" className="glass press flex h-16 items-center justify-center gap-2 rounded-2xl font-semibold">
+            <Link to="/history" className="surface press flex h-16 items-center justify-center gap-2 rounded-2xl font-semibold">
               <History className="h-5 w-5" /> Ιστορικό
             </Link>
           </div>

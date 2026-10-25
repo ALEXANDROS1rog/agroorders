@@ -13,7 +13,7 @@ export function StatusChip({ status }: { status: string }) {
   );
 }
 
-export function ActionLink({ href, children, tone = "glass" }: { href: string; children: ReactNode; tone?: "glass" | "brand" }) {
+export function ActionLink({ href, children, tone = "surface" }: { href: string; children: ReactNode; tone?: "surface" | "brand" }) {
   const external = href.startsWith("http");
   return (
     <a
@@ -21,7 +21,7 @@ export function ActionLink({ href, children, tone = "glass" }: { href: string; c
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
       className={`press flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl text-sm font-semibold ${
-        tone === "brand" ? "bg-brand text-brand-foreground" : "glass text-foreground"
+        tone === "brand" ? "bg-brand text-brand-foreground" : "surface text-foreground"
       }`}
     >
       {children}
@@ -53,7 +53,7 @@ export function SearchBox({ value, onChange, placeholder }: { value: string; onC
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="glass-soft mb-4 h-14 w-full rounded-2xl px-4 text-base outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/50"
+      className="surface-subtle mb-4 h-14 w-full rounded-2xl px-4 text-base outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/50"
     />
   );
 }

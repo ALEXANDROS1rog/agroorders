@@ -93,11 +93,11 @@ function ProductsPage() {
                   <p className="text-sm text-muted-foreground">{p.category} · {formatCurrency(p.price)} / {p.unit}</p>
                 </div>
                 <div className="flex gap-2">
-                  {manage ? <><button aria-label="Επεξεργασία" onClick={() => setForm({ id: p.id, name: p.name, category: p.category, price: Number(p.price), unit: p.unit, available: p.available })} className="glass press grid h-11 w-11 place-items-center rounded-2xl"><Pencil className="h-4 w-4" /></button>
-                  <button aria-label="Διαγραφή" onClick={() => confirm(`Διαγραφή «${p.name}»;`) && run(() => deleteProduct(p.id), "Διαγράφηκε")} className="glass press grid h-11 w-11 place-items-center rounded-2xl text-destructive"><Trash2 className="h-4 w-4" /></button></> : null}
+                  {manage ? <><button aria-label="Επεξεργασία" onClick={() => setForm({ id: p.id, name: p.name, category: p.category, price: Number(p.price), unit: p.unit, available: p.available })} className="surface press grid h-11 w-11 place-items-center rounded-2xl"><Pencil className="h-4 w-4" /></button>
+                  <button aria-label="Διαγραφή" onClick={() => confirm(`Διαγραφή «${p.name}»;`) && run(() => deleteProduct(p.id), "Διαγράφηκε")} className="surface press grid h-11 w-11 place-items-center rounded-2xl text-destructive"><Trash2 className="h-4 w-4" /></button></> : null}
                 </div>
               </div>
-              {manage ? <button onClick={() => run(() => toggleProductAvailable(p.id, !p.available), p.available ? "Απενεργοποιήθηκε" : "Ενεργοποιήθηκε")} className="glass-soft press mt-3 h-11 w-full rounded-2xl text-sm font-semibold">
+              {manage ? <button onClick={() => run(() => toggleProductAvailable(p.id, !p.available), p.available ? "Απενεργοποιήθηκε" : "Ενεργοποιήθηκε")} className="surface-subtle press mt-3 h-11 w-full rounded-2xl text-sm font-semibold">
                 {p.available ? "Διαθέσιμο — πάτα για απενεργοποίηση" : "Μη διαθέσιμο — πάτα για ενεργοποίηση"}
               </button> : null}
             </Card>

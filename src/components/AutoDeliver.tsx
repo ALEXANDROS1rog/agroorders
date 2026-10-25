@@ -84,7 +84,7 @@ export function AutoDeliver() {
   }
 
   return (
-    <button onClick={toggle} className={`press mb-4 flex w-full items-center gap-3 rounded-2xl p-4 text-left ${on ? "bg-brand/20 ring-1 ring-brand/40" : "glass-soft"}`}>
+    <button onClick={toggle} className={`press mb-4 flex w-full items-center gap-3 rounded-2xl p-4 text-left ${on ? "bg-brand/20 ring-1 ring-brand/40" : "surface-subtle"}`}>
       <MapPinCheck className={`h-6 w-6 shrink-0 ${on ? "text-brand" : "text-muted-foreground"}`} />
       <span className="min-w-0 flex-1">
         <span className="block font-semibold">{t("a.title")} {on ? t("a.on") : t("a.off")}</span>

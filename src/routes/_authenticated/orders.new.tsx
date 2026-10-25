@@ -175,7 +175,7 @@ function NewOrderPage() {
 
   return (
     <AppShell title="Νέα παραγγελία" back="/orders">
-      <div className="glass-soft mb-4 flex rounded-2xl p-1">
+      <div className="surface-subtle mb-4 flex rounded-2xl p-1">
         {(["voice", "ai", "manual"] as const).map((m) => (
           <button key={m} disabled={recording} onClick={() => { setMode(m); setReview(false); }} className={`press flex-1 rounded-xl px-1 py-3 text-sm font-semibold ${mode === m ? "bg-brand/20 text-brand ring-1 ring-brand/30" : "text-muted-foreground"}`}>
             {m === "voice" ? "Ηχογράφηση" : m === "ai" ? "Από κείμενο" : "Χειροκίνητα"}
@@ -229,7 +229,7 @@ function NewOrderPage() {
           </Card>
           <Card className="space-y-3">
             {lines.map((l, idx) => (
-              <div key={idx} className={`rounded-2xl p-3 ${l.matched ? "glass-soft" : "border border-warning/50"}`}>
+              <div key={idx} className={`rounded-2xl p-3 ${l.matched ? "surface-subtle" : "border border-warning/50"}`}>
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <p className="truncate font-semibold">{l.product_name}</p>
@@ -238,7 +238,7 @@ function NewOrderPage() {
                   <button aria-label="Αφαίρεση" onClick={() => setLines(lines.filter((_, i) => i !== idx))} className="grid h-10 w-10 place-items-center rounded-xl text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </div>
                 {!l.matched ? (
-                  <select className="glass-soft mt-2 h-12 w-full rounded-xl field-select px-3" value="" onChange={(e) => {
+                  <select className="surface-subtle mt-2 h-12 w-full rounded-xl field-select px-3" value="" onChange={(e) => {
                     const p = catalog.find((x) => x.id === e.target.value);
                     if (p) setLines(lines.map((x, i) => (i === idx ? { ...x, product_id: p.id, product_name: p.name, unit: p.unit, unit_price: Number(p.price), matched: true } : x)));
                   }}>
@@ -247,14 +247,14 @@ function NewOrderPage() {
                   </select>
                 ) : null}
                 <div className="mt-2 flex items-center gap-3">
-                  <button aria-label="Λιγότερο" onClick={() => setLines(lines.map((x, i) => (i === idx ? { ...x, quantity: Math.max(1, x.quantity - 1) } : x)))} className="glass press grid h-11 w-11 place-items-center rounded-xl"><Minus className="h-4 w-4" /></button>
+                  <button aria-label="Λιγότερο" onClick={() => setLines(lines.map((x, i) => (i === idx ? { ...x, quantity: Math.max(1, x.quantity - 1) } : x)))} className="surface press grid h-11 w-11 place-items-center rounded-xl"><Minus className="h-4 w-4" /></button>
                   <span className="font-display w-10 text-center text-xl font-bold">{l.quantity}</span>
-                  <button aria-label="Περισσότερο" onClick={() => setLines(lines.map((x, i) => (i === idx ? { ...x, quantity: x.quantity + 1 } : x)))} className="glass press grid h-11 w-11 place-items-center rounded-xl"><Plus className="h-4 w-4" /></button>
+                  <button aria-label="Περισσότερο" onClick={() => setLines(lines.map((x, i) => (i === idx ? { ...x, quantity: x.quantity + 1 } : x)))} className="surface press grid h-11 w-11 place-items-center rounded-xl"><Plus className="h-4 w-4" /></button>
                   <span className="ml-auto font-semibold">{formatCurrency(l.unit_price * l.quantity)}</span>
                 </div>
               </div>
             ))}
-            <select className="glass-soft h-14 w-full rounded-2xl field-select px-4" value="" onChange={(e) => addProduct(e.target.value)}>
+            <select className="surface-subtle h-14 w-full rounded-2xl field-select px-4" value="" onChange={(e) => addProduct(e.target.value)}>
               <option value="">+ Προσθήκη προϊόντος</option>
               {catalog.map((p) => <option key={p.id} value={p.id}>{p.name} · {formatCurrency(p.price)}</option>)}
             </select>
