@@ -53,7 +53,7 @@ export function SearchBox({ value, onChange, placeholder }: { value: string; onC
       value={value}
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
-      className="glass-soft mb-4 h-14 w-full rounded-2xl px-4 text-[15px] outline-none placeholder:text-muted-foreground/70 focus:ring-2 focus:ring-ring/60"
+      className="glass-soft mb-4 h-14 w-full rounded-2xl px-4 text-base outline-none placeholder:text-muted-foreground/70 focus-visible:ring-2 focus-visible:ring-ring/50"
     />
   );
 }
