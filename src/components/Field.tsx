@@ -7,7 +7,8 @@ import type {
 } from "react";
 
 const base =
-  "glass-soft w-full rounded-2xl px-4 text-[15px] text-foreground placeholder:text-muted-foreground/70 outline-none focus:ring-2 focus:ring-ring/60";
+  // text-base (16px) also stops iOS from zooming into the page on focus.
+  "glass-soft w-full rounded-2xl px-4 text-base text-foreground placeholder:text-muted-foreground/70 outline-none transition-shadow focus-visible:border-ring/60 focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-60";
 
 export function Label({ children }: { children: ReactNode }) {
   return (
@@ -53,7 +54,7 @@ export function Select({
       {label ? <Label>{label}</Label> : null}
       <select
         {...props}
-        className={`${base} h-14 appearance-none bg-[oklch(0.21_0.03_264)] [&>option]:bg-[oklch(0.21_0.03_264)]`}
+        className={`${base} field-select h-14 appearance-none`}
       >
         {children}
       </select>

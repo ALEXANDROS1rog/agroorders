@@ -1,7 +1,7 @@
 import { Link, useRouterState, type LinkProps } from "@tanstack/react-router";
 import { ChevronLeft, Home, ClipboardList, Truck, Users, Route as RouteIcon } from "lucide-react";
 import { useI18n, type TKey } from "@/lib/i18n";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 const NAV = [
   { to: "/dashboard", label: "nav.home" as TKey, icon: Home },
@@ -37,13 +37,26 @@ export function AppShell({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t } = useI18n();
+  // The toolbar turns into frosted glass once content scrolls underneath it.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-background text-foreground">
+    // overflow-clip (not hidden) keeps the ambient blobs contained without breaking the sticky toolbar.
+    <div className="relative min-h-screen w-full overflow-clip bg-background text-foreground">
       <Ambient />
 
-      <div className="relative mx-auto max-w-[460px] px-4 pb-32 pt-6">
-        <header className="mb-5 flex items-center justify-between gap-3">
+      <div className="relative mx-auto max-w-[460px] px-4 pb-[calc(8rem+env(safe-area-inset-bottom))]">
+        <header
+          className={`sticky top-0 z-30 -mx-4 mb-4 flex items-center justify-between gap-3 px-4 pb-3 pt-[calc(1.5rem+env(safe-area-inset-top))] transition-[background-color,box-shadow,border-color,backdrop-filter] duration-300 ${
+            scrolled ? "glass-strong rounded-b-3xl border-t-0" : "border border-transparent"
+          }`}
+        >
           <div className="flex min-w-0 items-center gap-3">
             {back ? (
               <Link
@@ -57,7 +70,7 @@ export function AppShell({
               <Link
                 to="/profile"
                 aria-label="Το προφίλ μου"
-                className="press grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40"
+                className="glass-clear press grid h-11 w-11 shrink-0 place-items-center rounded-2xl"
               >
                 <span className="font-display text-lg font-bold text-brand">V</span>
               </Link>
@@ -77,8 +90,8 @@ export function AppShell({
         {children}
       </div>
 
-      <nav className="fixed bottom-3 left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[420px] -translate-x-1/2">
-        <div className="glass flex justify-between gap-1 rounded-3xl px-1.5 py-1.5">
+      <nav className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[420px] -translate-x-1/2">
+        <div className="glass-strong flex justify-between gap-1 rounded-[1.75rem] px-1.5 py-1.5">
           {NAV.map((item) => {
             const active = pathname.startsWith(item.to);
             const Icon = item.icon;
@@ -86,8 +99,9 @@ export function AppShell({
               <Link
                 key={item.to}
                 to={item.to}
-                className={`press flex min-w-0 flex-1 flex-col items-center gap-1 rounded-2xl px-0.5 py-2 ${
-                  active ? "bg-brand/20 ring-1 ring-brand/30" : ""
+                aria-current={active ? "page" : undefined}
+                className={`press flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.375rem] px-0.5 py-2 transition-colors duration-300 ${
+                  active ? "glass-clear" : "border border-transparent"
                 }`}
               >
                 <Icon

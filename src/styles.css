@@ -3,9 +3,15 @@
 @import "tw-animate-css";
 
 /*
- * VoiceOrders design system — "Frosted orchard glass".
- * Dark, frosted-glass mobile business UI. Single theme (no light/dark toggle).
+ * VoiceOrders design system — "Liquid Glass" (web interpretation).
+ * Dark by default; follows the system light/dark preference.
  * All colors are oklch semantic tokens. Never hardcode colors in components.
+ *
+ * Layers:  content layer  -> glass-soft (no blur, quiet)
+ *          functional layer -> glass (regular), glass-strong (nav, toolbars, overlays),
+ *                              glass-clear (selected controls over rich backgrounds)
+ * Fallbacks: no backdrop-filter, reduced transparency and increased contrast all
+ *            switch glass to an opaque surface (see bottom of "Liquid glass" block).
  */
 
 @theme inline {
@@ -80,6 +86,86 @@
   --border: oklch(1 0 0 / 14%);
   --input: oklch(1 0 0 / 14%);
   --ring: oklch(0.72 0.168 162.5);
+
+  color-scheme: dark;
+
+  /* Liquid glass materials */
+  --glass-bg: oklch(1 0 0 / 9%);
+  --glass-bg-soft: oklch(1 0 0 / 5%);
+  --glass-bg-strong: oklch(0.26 0.03 264 / 62%);
+  --glass-bg-clear: oklch(1 0 0 / 16%);
+  --glass-solid: oklch(0.24 0.03 264);
+  --glass-border: oklch(1 0 0 / 16%);
+  --glass-border-soft: oklch(1 0 0 / 9%);
+  --glass-highlight: oklch(1 0 0 / 26%);
+  --glass-lowlight: oklch(0 0 0 / 22%);
+  --glass-shadow: 0 10px 34px oklch(0 0 0 / 30%);
+  --glass-shadow-sm: 0 4px 14px oklch(0 0 0 / 22%);
+  --glass-blur: 22px;
+  --glass-blur-strong: 34px;
+  --glass-saturate: 1.7;
+  --sheen: oklch(1 0 0 / 24%);
+  --scrim: oklch(0.1 0.02 264 / 55%);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --dur-fast: 140ms;
+  --dur: 260ms;
+  --dur-slow: 420ms;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+
+    --background: oklch(0.95 0.014 250);
+    --foreground: oklch(0.2 0.03 264);
+
+    --card: oklch(1 0 0 / 55%);
+    --card-foreground: oklch(0.2 0.03 264);
+    --popover: oklch(0.985 0.005 250);
+    --popover-foreground: oklch(0.2 0.03 264);
+
+    --brand: oklch(0.5 0.14 162.5);
+    --brand-foreground: oklch(0.99 0.01 160);
+    --primary: oklch(0.5 0.14 162.5);
+    --primary-foreground: oklch(0.99 0.01 160);
+
+    --secondary: oklch(0 0 0 / 6%);
+    --secondary-foreground: oklch(0.2 0.03 264);
+    --muted: oklch(0 0 0 / 5%);
+    --muted-foreground: oklch(0.42 0.03 257);
+
+    --accent: oklch(0.5 0.14 235);
+    --accent-foreground: oklch(0.99 0.01 235);
+
+    --warning: oklch(0.5 0.12 70);
+    --warning-foreground: oklch(0.99 0.01 80);
+    --info: oklch(0.47 0.14 275);
+
+    --destructive: oklch(0.53 0.21 25);
+    --destructive-foreground: oklch(0.99 0.003 247.9);
+
+    --border: oklch(0 0 0 / 12%);
+    --input: oklch(0 0 0 / 12%);
+    --ring: oklch(0.5 0.14 162.5);
+
+    --glass-bg: oklch(1 0 0 / 58%);
+    --glass-bg-soft: oklch(1 0 0 / 38%);
+    --glass-bg-strong: oklch(1 0 0 / 72%);
+    --glass-bg-clear: oklch(1 0 0 / 80%);
+    --glass-solid: oklch(0.985 0.005 250);
+    --glass-border: oklch(0 0 0 / 9%);
+    --glass-border-soft: oklch(0 0 0 / 6%);
+    --glass-highlight: oklch(1 0 0 / 95%);
+    --glass-lowlight: oklch(0 0 0 / 6%);
+    --glass-shadow: 0 10px 30px oklch(0.3 0.03 264 / 14%);
+    --glass-shadow-sm: 0 3px 12px oklch(0.3 0.03 264 / 10%);
+    --glass-saturate: 1.5;
+    --sheen: oklch(1 0 0 / 30%);
+    --scrim: oklch(0.2 0.03 264 / 32%);
+  }
 }
 
 @layer base {
@@ -89,6 +175,17 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+
+  /* One consistent, visible keyboard focus indicator. */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--brand) 35%, transparent);
   }
 
   body {
@@ -106,29 +203,124 @@
   }
 }
 
-/* Frosted surfaces */
+/* ------------------------------ Liquid glass ------------------------------ */
+
+/* Regular glass: floating controls, cards that need to separate from the backdrop. */
 @utility glass {
-  background-color: oklch(1 0 0 / 10%);
-  border: 1px solid oklch(1 0 0 / 15%);
-  backdrop-filter: blur(20px);
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-lowlight),
+    var(--glass-shadow-sm);
+  transition:
+    background-color var(--dur) var(--ease-out),
+    border-color var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
 }
 
+/* Strong glass: navigation, toolbars, popovers, dialogs — must stay readable over content. */
+@utility glass-strong {
+  background-color: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    inset 0 -1px 0 var(--glass-lowlight),
+    var(--glass-shadow);
+}
+
+/* Clear glass: selected / active controls sitting on top of other glass. */
+@utility glass-clear {
+  background-color: var(--glass-bg-clear);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow-sm);
+}
+
+/* Content layer: quiet inset surface, no blur (inputs, nested tiles, empty states). */
 @utility glass-soft {
-  background-color: oklch(1 0 0 / 5%);
-  border: 1px solid oklch(1 0 0 / 10%);
+  background-color: var(--glass-bg-soft);
+  border: 1px solid var(--glass-border-soft);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, var(--glass-highlight) 40%, transparent);
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* Native <select> needs an opaque popup; keep it on-token. */
+@utility field-select {
+  background-color: var(--glass-solid);
+  color: var(--foreground);
+  & option {
+    background-color: var(--glass-solid);
+    color: var(--foreground);
+  }
 }
 
 @utility dotted-field {
-  background-image: radial-gradient(oklch(1 0 0 / 4%) 1px, transparent 1px);
+  background-image: radial-gradient(color-mix(in oklab, var(--foreground) 6%, transparent) 1px, transparent 1px);
   background-size: 22px 22px;
 }
 
+/* Tactile press feedback, plus a gentle lift on real hover devices only. */
 @utility press {
   transition:
-    transform 120ms ease,
-    filter 120ms ease;
+    transform var(--dur-fast) var(--ease-out),
+    filter var(--dur-fast) var(--ease-out),
+    background-color var(--dur) var(--ease-out),
+    box-shadow var(--dur) var(--ease-out);
   &:active {
     transform: scale(0.97);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      filter: brightness(1.08);
+    }
+  }
+}
+
+@layer components {
+  /* Solid brand buttons/links get a specular sheen so they read as glossy glass. */
+  a.bg-brand,
+  button.bg-brand {
+    background-image: linear-gradient(180deg, var(--sheen), transparent 60%);
+    box-shadow:
+      inset 0 1px 0 var(--sheen),
+      0 6px 18px color-mix(in oklab, var(--brand) 32%, transparent);
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  .glass:is(a, button):hover,
+  .glass-strong:is(a, button):hover {
+    border-color: color-mix(in oklab, var(--foreground) 22%, transparent);
+  }
+}
+
+/* Fallbacks: opaque surfaces when blur is unsupported or the user asks for less transparency. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass-strong {
+    background-color: var(--glass-solid);
+  }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass,
+  .glass-strong {
+    background-color: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: color-mix(in oklab, var(--foreground) 35%, transparent);
+  }
+  .glass-soft {
+    background-color: color-mix(in oklab, var(--glass-solid) 70%, transparent);
+    border-color: color-mix(in oklab, var(--foreground) 30%, transparent);
   }
 }
 
@@ -177,7 +369,7 @@
 
 /* Leaflet dark tuning */
 .leaflet-container {
-  background: oklch(0.17 0.029 264);
+  background: var(--background);
   font-family: var(--font-sans);
 }
 .leaflet-control-attribution {
@@ -186,4 +378,16 @@
 }
 .leaflet-control-attribution a {
   color: oklch(0.72 0.168 162.5) !important;
+}
+
+/* Respect reduced motion: no drifting blobs, no pulsing, near-instant transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

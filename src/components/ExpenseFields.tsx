@@ -29,7 +29,7 @@ export function ExpenseFields({ value, onChange }: { value: Expenses; onChange: 
             value={value[r.k]}
             onChange={(e) => onChange({ ...value, [r.k]: e.target.value.replace(/[^\d.,]/g, "") })}
             placeholder="0,00"
-            className="h-12 w-28 rounded-xl bg-background/60 px-3 text-right text-lg font-semibold outline-none focus:ring-2 focus:ring-ring/60"
+            className="h-12 w-28 rounded-xl bg-background/60 px-3 text-right text-lg font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           />
           <span className="font-semibold">€</span>
         </label>
