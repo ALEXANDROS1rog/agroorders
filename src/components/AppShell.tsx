@@ -205,6 +205,10 @@ function ShellFrame(props: ShellProps) {
   const tabIndex = NAV.findIndex((n) => pathname === n.to || pathname === `${n.to}/`);
   const pagerOn = tabIndex >= 0 && !props.back;
 
+  // Read through a ref so a changing `navigate` identity can never tear down a swipe in progress.
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
+
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
@@ -235,13 +239,13 @@ function ShellFrame(props: ShellProps) {
           el.style.top = "0px";
         });
         window.scrollTo(0, 0);
-        void navigate({ to: NAV[target]!.to });
+        void navigateRef.current({ to: NAV[target]!.to });
       },
       onRest: () => setReveal(null),
       reducedMotion: () => reduceMotion.matches,
     });
     return () => pager.destroy();
-  }, [pagerOn, tabIndex, navigate, paintNav]);
+  }, [pagerOn, tabIndex, paintNav]);
 
   // Warm up the neighbours' code so the first swipe doesn't wait for a download.
   useEffect(() => {
