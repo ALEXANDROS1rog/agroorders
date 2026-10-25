@@ -5,6 +5,7 @@ import { MapPinCheck } from "lucide-react";
 import { fetchDeliveries, markDelivered } from "@/lib/api";
 import { distanceKm } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
+import { useIsPreviewPane } from "@/components/AppShell";
 
 /** Call to switch automatic confirmation on from anywhere (e.g. "Έναρξη διανομής"). */
 export function enableAutoDeliver() {
@@ -25,7 +26,9 @@ export function AutoDeliver() {
   const { t } = useI18n();
   const [on, setOn] = useState(false);
   const [hint, setHint] = useState("");
-  const { data } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries, enabled: on });
+  // A page previewed during a tab swipe must never confirm deliveries on its own.
+  const preview = useIsPreviewPane();
+  const { data } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries, enabled: on && !preview });
   const since = useRef<Record<string, number>>({});
   const done = useRef<Set<string>>(new Set());
   const listRef = useRef(data);
@@ -39,7 +42,7 @@ export function AutoDeliver() {
   }, []);
 
   useEffect(() => {
-    if (!on) return;
+    if (!on || preview) return;
     if (!("geolocation" in navigator)) { setHint(t("a.denied")); return; }
     setHint(t("del.gpsWait"));
     const id = navigator.geolocation.watchPosition(
@@ -71,7 +74,7 @@ export function AutoDeliver() {
       { enableHighAccuracy: true, maximumAge: 5000 },
     );
     return () => navigator.geolocation.clearWatch(id);
-  }, [on, qc, t]);
+  }, [on, preview, qc, t]);
 
   function toggle() {
     const next = !on;
