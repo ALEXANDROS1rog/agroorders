@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AutoDeliver } from "@/components/AutoDeliver";
-import { AppShell, EmptyState, Loading, useIsPreviewPane } from "@/components/AppShell";
+import { AppShell, EmptyState, Loading } from "@/components/AppShell";
 import { DeliveryCard, GpsBanner, sortByDistance } from "@/components/DeliveryCard";
 import { useMyPosition } from "@/hooks/use-position";
 import { fetchDeliveries } from "@/lib/api";
@@ -20,8 +20,7 @@ export const Route = createFileRoute("/_authenticated/deliveries")({
 
 function DeliveriesPage() {
   const { data, isLoading } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries });
-  const preview = useIsPreviewPane();
-  const pos = useMyPosition(!preview);
+  const pos = useMyPosition();
   const pending = (data ?? []).filter(
     (d) => (d.status === "pending" || d.status === "in_progress") && d.order.status !== "cancelled",
   );
