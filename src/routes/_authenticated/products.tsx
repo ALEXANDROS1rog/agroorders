@@ -31,13 +31,15 @@ function ProductsPage() {
   const [form, setForm] = useState<ProductInput | null>(null);
   const refresh = () => qc.invalidateQueries({ queryKey: ["products"] });
 
-  async function run(fn: () => Promise<unknown>, ok: string) {
+  async function run(fn: () => Promise<unknown>, ok: string): Promise<boolean> {
     try {
       await fn();
       toast.success(ok);
       refresh();
+      return true;
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Σφάλμα");
+      return false;
     }
   }
 
@@ -70,7 +72,7 @@ function ProductsPage() {
           <PrimaryButton
             onClick={() => {
               if (!form.name.trim()) { toast.error("Γράψε όνομα προϊόντος."); return; }
-              run(() => saveProduct({ ...form, name: form.name.trim() }), "Αποθηκεύτηκε").then(() => setForm(null));
+              run(() => saveProduct({ ...form, name: form.name.trim() }), "Αποθηκεύτηκε").then((ok) => { if (ok) setForm(null); });
             }}
           >
             Αποθήκευση

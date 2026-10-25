@@ -106,6 +106,8 @@ export async function findCustomerByPhone(phone: string): Promise<Customer | nul
     .from("customers")
     .select("*")
     .eq("phone", normalized)
+    .order("created_at", { ascending: true })
+    .limit(1)
     .maybeSingle();
   if (error) throw error;
   return data;
@@ -266,7 +268,11 @@ export async function createOrder(input: NewOrderInput): Promise<string> {
         quantity: item.quantity,
       })),
     );
-    if (itemsError) throw itemsError;
+    if (itemsError) {
+      // Don't leave an empty order behind if the items could not be saved.
+      await supabase.from("orders").delete().eq("id", order.id);
+      throw itemsError;
+    }
   }
 
   const { error: deliveryError } = await supabase.from("deliveries").insert({
@@ -274,7 +280,10 @@ export async function createOrder(input: NewOrderInput): Promise<string> {
     order_id: order.id,
     status: "pending",
   });
-  if (deliveryError) throw deliveryError;
+  if (deliveryError) {
+    await supabase.from("orders").delete().eq("id", order.id);
+    throw deliveryError;
+  }
 
   return order.id;
 }
@@ -298,8 +307,16 @@ export async function updateOrder(
     .update({ address: input.address, phone: normalizePhone(input.phone), notes: input.notes })
     .eq("id", orderId);
   if (error) throw error;
-  const { error: delError } = await supabase.from("order_items").delete().eq("order_id", orderId);
-  if (delError) throw delError;
+
+  // Insert the new lines first and only then remove the old ones, so a failed
+  // insert can never leave the order without products.
+  const { data: oldItems, error: oldError } = await supabase
+    .from("order_items")
+    .select("id")
+    .eq("order_id", orderId);
+  if (oldError) throw oldError;
+  const oldIds = (oldItems ?? []).map((i) => i.id);
+
   if (input.items.length > 0) {
     const { error: insError } = await supabase.from("order_items").insert(
       input.items.map((item) => ({
@@ -314,6 +331,11 @@ export async function updateOrder(
     );
     if (insError) throw insError;
   }
+
+  if (oldIds.length > 0) {
+    const { error: delError } = await supabase.from("order_items").delete().in("id", oldIds);
+    if (delError) throw delError;
+  }
 }
 
 export async function updateOrderStatus(orderId: string, status: OrderStatus) {
@@ -326,6 +348,10 @@ export async function updateOrderStatus(orderId: string, status: OrderStatus) {
     .update({
       status: deliveryStatus,
       delivered_at: status === "delivered" ? new Date().toISOString() : null,
+      // Leaving "delivered" must also clear the GPS proof of the old delivery.
+      ...(status === "delivered"
+        ? {}
+        : { delivered_lat: null, delivered_lng: null, auto_confirmed: false }),
     })
     .eq("order_id", orderId);
   if (deliveryError) throw deliveryError;

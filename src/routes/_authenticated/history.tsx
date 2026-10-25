@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { Field, Select } from "@/components/Field";
-import { fetchOrders, orderTotal } from "@/lib/api";
+import { fetchOrders, localDateKey, orderTotal } from "@/lib/api";
 import { ORDER_STATUSES, ORDER_STATUS_LABEL, formatCurrency } from "@/lib/domain";
 import { OrderRow } from "@/components/OrderRow";
 
@@ -31,7 +31,8 @@ function HistoryPage() {
   const products = [...new Set(all.flatMap((o) => o.order_items.map((i) => i.product_name)))];
 
   const list = all.filter((o) => {
-    const d = o.order_date.slice(0, 10);
+    // Local calendar day (slice(0, 10) would be the UTC day and shift late-night orders).
+    const d = localDateKey(new Date(o.order_date));
     return (!from || d >= from) && (!to || d <= to) && (!customer || o.customer_id === customer) && (!status || o.status === status) && (!product || o.order_items.some((i) => i.product_name === product));
   });
   const sales = list.filter((o) => o.status !== "cancelled").reduce((s, o) => s + orderTotal(o), 0);

@@ -125,8 +125,11 @@ export function navigationHref(opts: {
   const destination = hasCoords
     ? `${opts.latitude},${opts.longitude}`
     : (opts.address ?? "");
+  // iPadOS reports itself as "Macintosh", so tell it apart from a desktop Mac by touch support.
   const isApple =
-    typeof navigator !== "undefined" && /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+    typeof navigator !== "undefined" &&
+    (/iPhone|iPad|iPod/.test(navigator.userAgent) ||
+      (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1));
   if (isApple) {
     return `https://maps.apple.com/?daddr=${encodeURIComponent(destination)}&dirflg=d`;
   }
