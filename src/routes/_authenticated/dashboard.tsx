@@ -83,9 +83,9 @@ function Dashboard() {
             <Link to="/orders/new" className="press flex h-16 items-center justify-center gap-2 rounded-2xl bg-brand text-base font-semibold text-brand-foreground">
               <Plus className="h-6 w-6" /> Νέα παραγγελία
             </Link>
-            <Link to="/trips/new" className="press flex h-16 items-center justify-center gap-2 rounded-2xl bg-brand text-base font-semibold text-brand-foreground">
+            {can("routes.manage") ? <Link to="/trips/new" className="press flex h-16 items-center justify-center gap-2 rounded-2xl bg-brand text-base font-semibold text-brand-foreground">
               <Plus className="h-6 w-6" /> Νέο δρομολόγιο
-            </Link>
+            </Link> : null}
           </div>
           {finance ? <div className="grid grid-cols-3 gap-2">
             <Card className="!p-3"><p className="text-xs text-muted-foreground">Έσοδα</p><p className="font-display mt-1 text-lg font-bold">{formatCurrency(tripTotals.revenue)}</p></Card>
