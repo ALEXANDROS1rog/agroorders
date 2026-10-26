@@ -9,7 +9,7 @@ export type PositionState =
 export function useMyPosition(enabled = true): PositionState {
   const [state, setState] = useState<PositionState>({ status: "waiting" });
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) { setState({ status: "waiting" }); return; }
     if (!("geolocation" in navigator)) { setState({ status: "denied" }); return; }
     const id = navigator.geolocation.watchPosition(
       (p) => setState({ status: "ok", lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy }),

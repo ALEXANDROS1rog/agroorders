@@ -14,6 +14,7 @@ import { deleteTrip, fetchTrip, formatTripDate, loadingList, tripNumbers, update
 import { formatCurrency } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
 import { useOrg } from "@/lib/org";
+import { useDeliveryTracking } from "@/lib/delivery-tracking";
 
 export const Route = createFileRoute("/_authenticated/trips/$id")({
   head: () => ({
@@ -39,7 +40,8 @@ function TripPage() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { data: trip, isLoading } = useQuery({ queryKey: ["trip", id], queryFn: () => fetchTrip(id) });
-  const pos = useMyPosition(hasFeature("gps_delivery"));
+  const tracking = useDeliveryTracking();
+  const pos = useMyPosition(hasFeature("gps_delivery") && tracking.status === "active");
   const [editing, setEditing] = useState(false);
   const [exp, setExp] = useState<Expenses>({ fuel: "", tolls: "", wear: "", food: "" });
   useEffect(() => {

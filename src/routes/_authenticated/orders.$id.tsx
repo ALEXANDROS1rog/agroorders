@@ -7,7 +7,8 @@ import { TripSelect } from "@/components/TripSelect";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { GhostButton, Select } from "@/components/Field";
 import { CallNavButtons, StatusChip } from "@/components/ui-bits";
-import { deleteOrder, fetchOrder, orderTotal, setOrderTrip, updateOrderStatus } from "@/lib/api";
+import { assignDelivery, deleteOrder, fetchOrder, orderTotal, setOrderTrip, updateOrderStatus } from "@/lib/api";
+import { fetchMembers } from "@/lib/org";
 import { ORDER_STATUSES, ORDER_STATUS_LABEL, formatCurrency, formatDateTime, formatQuantity, type OrderStatus } from "@/lib/domain";
 
 export const Route = createFileRoute("/_authenticated/orders/$id")({
@@ -30,8 +31,9 @@ function OrderPage() {
   const navigate = useNavigate();
   const { data: o, isLoading } = useQuery({ queryKey: ["order", id], queryFn: () => fetchOrder(id) });
   const refresh = () => qc.invalidateQueries();
-  const { can } = useOrg();
+  const { can, org } = useOrg();
   const manage = can("orders.manage");
+  const members = useQuery({ queryKey: ["members"], queryFn: fetchMembers, enabled: manage });
 
   return (
     <AppShell title={o ? `Παραγγελία #${o.order_number}` : "Παραγγελία"} back="/orders">
@@ -68,6 +70,7 @@ function OrderPage() {
           />
           : null}
           {o.notes ? <Card><p className="text-sm text-muted-foreground">Σημειώσεις</p><p>{o.notes}</p></Card> : null}
+          {manage && o.deliveries[0] ? <Select label="Ανάθεση διανομέα" value={o.deliveries[0].assigned_driver_id ?? ""} onChange={async e => { const d = o.deliveries[0]; if (!d) return; try { await assignDelivery(d.id, e.target.value || null); refresh(); } catch (err) { toast.error(err instanceof Error ? err.message : "Σφάλμα"); } }}><option value="">Χωρίς ανάθεση</option>{members.data?.filter(m => m.status === "active").map(m => <option key={m.user_id} value={m.user_id}>{m.full_name}</option>)}</Select> : null}
           <Select
             label="Κατάσταση"
             value={o.status}
@@ -76,7 +79,7 @@ function OrderPage() {
               catch (err) { toast.error(err instanceof Error ? err.message : "Σφάλμα"); }
             }}
           >
-            {ORDER_STATUSES.map((s) => <option key={s} value={s}>{ORDER_STATUS_LABEL[s]}</option>)}
+            {ORDER_STATUSES.filter(s => org?.role !== "driver" || s === "delivering" || s === "delivered" || s === o.status).map((s) => <option key={s} value={s}>{ORDER_STATUS_LABEL[s]}</option>)}
           </Select>
           {manage ? <GhostButton
             className="text-destructive"

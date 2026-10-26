@@ -117,6 +117,7 @@ export type Database = {
       }
       deliveries: {
         Row: {
+          assigned_driver_id: string | null
           auto_confirmed: boolean
           created_at: string
           delivered_at: string | null
@@ -131,6 +132,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          assigned_driver_id?: string | null
           auto_confirmed?: boolean
           created_at?: string
           delivered_at?: string | null
@@ -145,6 +147,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          assigned_driver_id?: string | null
           auto_confirmed?: boolean
           created_at?: string
           delivered_at?: string | null
@@ -177,6 +180,7 @@ export type Database = {
       }
       delivery_routes: {
         Row: {
+          assigned_driver_id: string | null
           created_at: string
           food: number
           fuel: number
@@ -192,6 +196,7 @@ export type Database = {
           wear: number
         }
         Insert: {
+          assigned_driver_id?: string | null
           created_at?: string
           food?: number
           fuel?: number
@@ -207,6 +212,7 @@ export type Database = {
           wear?: number
         }
         Update: {
+          assigned_driver_id?: string | null
           created_at?: string
           food?: number
           fuel?: number
@@ -490,11 +496,14 @@ export type Database = {
       }
       organization_subscriptions: {
         Row: {
+          cancel_at_period_end: boolean
           created_at: string
           current_period_end: string | null
           current_period_start: string | null
           id: string
           organization_id: string
+          paid_confirmed: boolean
+          payment_states: Json
           plan_id: string
           status: string
           stripe_price_id: string | null
@@ -502,11 +511,14 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cancel_at_period_end?: boolean
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
           organization_id: string
+          paid_confirmed?: boolean
+          payment_states?: Json
           plan_id: string
           status?: string
           stripe_price_id?: string | null
@@ -514,11 +526,14 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cancel_at_period_end?: boolean
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
           organization_id?: string
+          paid_confirmed?: boolean
+          payment_states?: Json
           plan_id?: string
           status?: string
           stripe_price_id?: string | null
@@ -566,6 +581,24 @@ export type Database = {
           owner_id?: string
           stripe_customer_id?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      payment_events: {
+        Row: {
+          created_at: string
+          environment: string
+          event_id: string
+        }
+        Insert: {
+          created_at?: string
+          environment: string
+          event_id: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          event_id?: string
         }
         Relationships: []
       }
@@ -729,6 +762,11 @@ export type Database = {
     }
     Functions: {
       accept_invitation: { Args: { _token: string }; Returns: string }
+      apply_company_payment: {
+        Args: { _env: string; _event: string; _org: string; _state: Json }
+        Returns: undefined
+      }
+      can_access_order: { Args: { _order: string }; Returns: boolean }
       change_member_role: {
         Args: { _member: string; _role: string }
         Returns: undefined
@@ -792,9 +830,24 @@ export type Database = {
       }
       org_role: { Args: { _org: string }; Returns: string }
       org_seats_used: { Args: { _org: string }; Returns: number }
+      org_subscription_access: { Args: { _org: string }; Returns: boolean }
       purge_old_history: { Args: never; Returns: undefined }
       recalc_route_value: { Args: { _route: string }; Returns: undefined }
       remove_member: { Args: { _member: string }; Returns: undefined }
+      save_company_order: {
+        Args: { _id?: string; _input: Json }
+        Returns: string
+      }
+      set_delivery_state: {
+        Args: {
+          _auto?: boolean
+          _lat?: number
+          _lng?: number
+          _order: string
+          _status: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

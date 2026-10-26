@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { Field, GhostButton, PrimaryButton } from "@/components/Field";
 import { supabase } from "@/integrations/supabase/client";
 import { PENDING_INVITE_KEY } from "@/lib/org";
+import { Select } from "@/components/Field";
+import { ANNUAL_PLANS, isPlanSlug, type PlanSlug } from "@/lib/subscription-rules";
 
 function afterLogin(navigate: ReturnType<typeof useNavigate>) {
   const token = sessionStorage.getItem(PENDING_INVITE_KEY);
@@ -35,6 +37,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<Mode>("login");
   const [busy, setBusy] = useState(false);
+  const [plan, setPlan] = useState<PlanSlug>("basic");
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -74,12 +77,14 @@ function AuthPage() {
               last_name: form.last_name.trim(),
               business_name: form.business_name.trim(),
               phone: form.phone.trim(),
+              selected_plan: plan,
             },
           },
         });
         if (error) throw error;
         if (data.session) {
-          afterLogin(navigate);
+          if (sessionStorage.getItem(PENDING_INVITE_KEY)) afterLogin(navigate);
+          else navigate({ to: "/plans" });
         } else {
           toast.success("Στείλαμε email επιβεβαίωσης. Άνοιξέ το για να ενεργοποιηθεί ο λογαριασμός.");
           setMode("login");
@@ -141,6 +146,9 @@ function AuthPage() {
           <form onSubmit={onSubmit} className="space-y-3">
             {mode === "register" ? (
               <>
+                <Select label="Επιλογή πλάνου" value={plan} onChange={e => { if (isPlanSlug(e.target.value)) setPlan(e.target.value); }}>
+                  {Object.entries(ANNUAL_PLANS).map(([slug, p]) => <option key={slug} value={slug}>{slug.toUpperCase()} — {p.price} € / έτος — {p.seats} χρήστες</option>)}
+                </Select>
                 <Field label="Όνομα" value={form.first_name} onChange={set("first_name")} required />
                 <Field label="Επώνυμο" value={form.last_name} onChange={set("last_name")} required />
                 <Field

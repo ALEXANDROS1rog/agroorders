@@ -6,6 +6,7 @@ import { DeliveryCard, GpsBanner, sortByDistance } from "@/components/DeliveryCa
 import { useMyPosition } from "@/hooks/use-position";
 import { fetchDeliveries } from "@/lib/api";
 import { useOrg } from "@/lib/org";
+import { useDeliveryTracking } from "@/lib/delivery-tracking";
 
 export const Route = createFileRoute("/_authenticated/deliveries")({
   head: () => ({
@@ -24,7 +25,8 @@ export const Route = createFileRoute("/_authenticated/deliveries")({
 function DeliveriesPage() {
   const { hasFeature } = useOrg();
   const { data, isLoading } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries });
-  const pos = useMyPosition(hasFeature("gps_delivery"));
+  const tracking = useDeliveryTracking();
+  const pos = useMyPosition(hasFeature("gps_delivery") && tracking.status === "active");
   const pending = (data ?? []).filter(
     (d) => (d.status === "pending" || d.status === "in_progress") && d.order.status !== "cancelled",
   );

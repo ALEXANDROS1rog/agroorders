@@ -52,7 +52,7 @@ export function useOrg() {
   return {
     ...q,
     org,
-    can: (perm: string) => !!org?.permissions.includes(perm),
+    can: (perm: string) => !!org?.permissions.includes(perm) && !(org.role === "driver" && ["orders.create", "customers.create"].includes(perm)),
     hasFeature: (feature: string) => !!org?.features.includes(feature),
     canAddMember: () => !!org && canReserveMember(org.permissions, org.active_users, org.pending_invites, org.max_users),
   };

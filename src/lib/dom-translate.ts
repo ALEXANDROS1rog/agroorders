@@ -20,9 +20,20 @@ import orgMk from "./locales/organization/mk.json";
 import orgSl from "./locales/organization/sl.json";
 import orgMe from "./locales/organization/me.json";
 import orgTr from "./locales/organization/tr.json";
+import payEn from "./locales/payments/en.json";
+import paySq from "./locales/payments/sq.json";
+import payBg from "./locales/payments/bg.json";
+import payRo from "./locales/payments/ro.json";
+import paySr from "./locales/payments/sr.json";
+import payHr from "./locales/payments/hr.json";
+import payBs from "./locales/payments/bs.json";
+import payMk from "./locales/payments/mk.json";
+import paySl from "./locales/payments/sl.json";
+import payMe from "./locales/payments/me.json";
+import payTr from "./locales/payments/tr.json";
 
 /** Greek source text -> translated text, per language. Greek ("el") needs no map. */
-export const LOCALE_MAPS: Record<string, Record<string, string>> = { en: { ...en, ...orgEn }, sq: { ...sq, ...orgSq }, bg: { ...bg, ...orgBg }, ro: { ...ro, ...orgRo }, sr: { ...sr, ...orgSr }, hr: { ...hr, ...orgHr }, bs: { ...bs, ...orgBs }, mk: { ...mk, ...orgMk }, sl: { ...sl, ...orgSl }, me: { ...me, ...orgMe }, tr: { ...tr, ...orgTr } };
+export const LOCALE_MAPS: Record<string, Record<string, string>> = { en: { ...en, ...orgEn, ...payEn }, sq: { ...sq, ...orgSq, ...paySq }, bg: { ...bg, ...orgBg, ...payBg }, ro: { ...ro, ...orgRo, ...payRo }, sr: { ...sr, ...orgSr, ...paySr }, hr: { ...hr, ...orgHr, ...payHr }, bs: { ...bs, ...orgBs, ...payBs }, mk: { ...mk, ...orgMk, ...payMk }, sl: { ...sl, ...orgSl, ...paySl }, me: { ...me, ...orgMe, ...payMe }, tr: { ...tr, ...orgTr, ...payTr } };
 
 const ATTRS = ["placeholder", "aria-label", "title"];
 const GREEK = /[\u0370-\u03ff\u1f00-\u1fff]/;

@@ -1,0 +1,21 @@
+{
+  "Δοκιμαστικές πληρωμές — δεν χρεώνονται πραγματικά χρήματα.": "Test payments — no real money is charged.",
+  "Οι πραγματικές πληρωμές δεν έχουν ενεργοποιηθεί ακόμα.": "Real payments are not yet enabled.",
+  "Η πληρωμή επιβεβαιώθηκε.": "Payment confirmed.",
+  "Η πληρωμή ακυρώθηκε ή έληξε.": "Payment cancelled or expired.",
+  "Η πληρωμή εκκρεμεί ή δεν ολοκληρώθηκε.": "Payment is pending or incomplete.",
+  "Αναμονή επιβεβαίωσης πληρωμής.": "Waiting for payment confirmation.",
+  "Διαχείριση συνδρομής": "Manage subscription",
+  "Ακύρωση πληρωμής": "Cancel payment",
+  "Επιλογή πλάνου": "Select plan",
+  "Ανάθεση διανομέα": "Assign delivery driver",
+  "Χωρίς ανάθεση": "Unassigned",
+  "Παύση παρακολούθησης": "Stop tracking",
+  "Συνέχιση παρακολούθησης": "Resume tracking",
+  "Δεν υπάρχει τοποθεσία προορισμού. Χρησιμοποιήστε χειροκίνητη επιβεβαίωση.": "No destination location found. Use manual confirmation.",
+  "Ανακριβές σήμα GPS — αναμονή καλύτερης θέσης.": "Inaccurate GPS signal — waiting for a better location.",
+  "Αυτόματο «Παραδόθηκε»": "Automatic \"Delivered\"",
+  "Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.": "The plan does not accommodate the active members and pending invitations.",
+  "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "A subscription already exists. Manage the existing subscription.",
+  "χρήστες": "users"
+}
