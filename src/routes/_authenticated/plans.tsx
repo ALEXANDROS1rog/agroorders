@@ -19,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/plans")({
     { title: "Πλάνα και συνδρομή — VoiceOrders" }, { name: "description", content: "Πλάνα, όρια μελών και δυνατότητες της επιχείρησής σας στο VoiceOrders." },
     { property: "og:title", content: "Πλάνα και συνδρομή — VoiceOrders" }, { property: "og:description", content: "Πλάνα και συνδρομή επιχείρησης στο VoiceOrders." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
-  ] }), validateSearch: (search: Record<string, unknown>): { session_id?: string } => ({ session_id: typeof search.session_id === "string" ? search.session_id : undefined }), component: PlansPage,
+  ] }), validateSearch: (search: Record<string, unknown>): { session_id?: string } => typeof search['session_id'] === "string" ? { session_id: search['session_id'] } : {}, component: PlansPage,
 });
 function PlansPage() { return <OrgAccess permission="billing.manage" title="Πλάνα και συνδρομή"><PlansBody /></OrgAccess>; }
 function PlansBody() {
@@ -30,9 +30,9 @@ function PlansBody() {
   const [error, setError] = useState("");
   const billing = useServerFn(companyBillingState);
   const portal = useServerFn(createCompanyPortal);
-  const configured = !!import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN;
+  const configured = !!import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'];
   const state = useQuery({ queryKey: ["billing-state", session_id], enabled: configured, queryFn: async () => {
-    const result = await billing({ data: { environment: getStripeEnvironment(), sessionId: session_id } });
+    const result = await billing({ data: { environment: getStripeEnvironment(), ...(session_id ? { sessionId: session_id } : {}) } });
     if ("error" in result) throw new Error(result.error);
     return result;
   }, refetchInterval: session_id ? 3000 : 15000 });

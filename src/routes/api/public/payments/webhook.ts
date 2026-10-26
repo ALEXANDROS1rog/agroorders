@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/public/payments/webhook")({
 async function synchronizeSubscription(stripe: ReturnType<typeof createStripeClient>, id: string, env: StripeEnv, eventId: string) {
   // Retrieve current provider state instead of trusting potentially out-of-order payloads.
   const sub = await stripe.subscriptions.retrieve(id, { expand: ["latest_invoice", "items.data.price"] });
-  const org = sub.metadata.organizationId;
+  const org = sub.metadata['organizationId'];
   if (!org || !/^[0-9a-f-]{36}$/i.test(org)) throw new Error("Missing organization metadata");
   const item = sub.items.data[0];
   if (!item?.price.lookup_key) throw new Error("Unknown subscription price");

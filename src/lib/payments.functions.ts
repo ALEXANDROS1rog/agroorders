@@ -10,13 +10,14 @@ async function resolveOrCreateCustomer(
   if (options.userId && !/^[a-zA-Z0-9_-]+$/.test(options.userId)) throw new Error("Invalid userId");
   if (options.userId) {
     const found = await stripe.customers.search({ query: `metadata['userId']:'${options.userId}'`, limit: 1 });
-    if (found.data.length) return found.data[0].id;
+    const match = found.data[0];
+    if (match) return match.id;
   }
   if (options.email) {
     const existing = await stripe.customers.list({ email: options.email, limit: 1 });
-    if (existing.data.length) {
-      const customer = existing.data[0];
-      if (options.userId && customer.metadata?.userId !== options.userId) {
+    const customer = existing.data[0];
+    if (customer) {
+      if (options.userId && customer.metadata?.['userId'] !== options.userId) {
         await stripe.customers.update(customer.id, { metadata: { ...customer.metadata, userId: options.userId } });
       }
       return customer.id;
@@ -52,9 +53,9 @@ export const createCompanyCheckout = createServerFn({ method: "POST" })
       if (org.active_users + org.pending_invites > plan.seats) throw new Error("Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.");
       const stripe = createStripeClient(data.environment);
       const { data: { user } } = await context.supabase.auth.getUser();
-      const customer = await resolveOrCreateCustomer(stripe, { userId: context.userId, email: user?.email });
+      const customer = await resolveOrCreateCustomer(stripe, { userId: context.userId, ...(user?.email ? { email: user.email } : {}) });
       const subscriptions = await stripe.subscriptions.list({ customer, status: "all", limit: 100 });
-      if (subscriptions.data.some(s => s.metadata.organizationId === org.organization_id && ["active", "trialing", "past_due", "incomplete"].includes(s.status))) throw new Error("Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.");
+      if (subscriptions.data.some(s => s.metadata['organizationId'] === org.organization_id && ["active", "trialing", "past_due", "incomplete"].includes(s.status))) throw new Error("Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.");
       const prices = await stripe.prices.list({ lookup_keys: [plan.lookupKey], active: true, limit: 1 });
       const price = prices.data[0];
       if (!price || price.unit_amount !== plan.price * 100 || price.currency !== "eur" || price.recurring?.interval !== "year") throw new Error("Η τιμή συνδρομής δεν είναι διαθέσιμη.");
@@ -83,7 +84,7 @@ export const companyBillingState = createServerFn({ method: "POST" })
       let paymentStatus: string | null = null;
       if (data.sessionId) {
         const session = await createStripeClient(data.environment).checkout.sessions.retrieve(data.sessionId);
-        if (session.metadata?.organizationId !== org.organization_id || session.metadata?.userId !== context.userId) throw new Error("Forbidden session");
+        if (session.metadata?.['organizationId'] !== org.organization_id || session.metadata?.['userId'] !== context.userId) throw new Error("Forbidden session");
         paymentStatus = session.status === "expired" ? "expired" : session.payment_status;
       }
       return { state: states[data.environment] ?? null, paymentStatus };

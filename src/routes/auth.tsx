@@ -10,7 +10,7 @@ import { ANNUAL_PLANS, isPlanSlug, type PlanSlug } from "@/lib/subscription-rule
 function afterLogin(navigate: ReturnType<typeof useNavigate>) {
   const token = sessionStorage.getItem(PENDING_INVITE_KEY);
   if (token) navigate({ to: "/invite/$token", params: { token } });
-  else navigate({ to: "/plans" });
+  else navigate({ to: "/dashboard" });
 }
 
 export const Route = createFileRoute("/auth")({
@@ -83,7 +83,8 @@ function AuthPage() {
         });
         if (error) throw error;
         if (data.session) {
-          afterLogin(navigate);
+          if (sessionStorage.getItem(PENDING_INVITE_KEY)) afterLogin(navigate);
+          else navigate({ to: "/plans" });
         } else {
           toast.success("Στείλαμε email επιβεβαίωσης. Άνοιξέ το για να ενεργοποιηθεί ο λογαριασμός.");
           setMode("login");
