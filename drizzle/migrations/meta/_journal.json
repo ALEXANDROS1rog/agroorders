@@ -15,6 +15,13 @@
       "when": 1792995617346,
       "tag": "0001_serialize_invitation_seats",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792999010424,
+      "tag": "0002_trusted_company_billing_and_references",
+      "breakpoints": true
     }
   ]
 }

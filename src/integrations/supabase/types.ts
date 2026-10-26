@@ -490,11 +490,14 @@ export type Database = {
       }
       organization_subscriptions: {
         Row: {
+          cancel_at_period_end: boolean
           created_at: string
           current_period_end: string | null
           current_period_start: string | null
           id: string
           organization_id: string
+          paid_confirmed: boolean
+          payment_states: Json
           plan_id: string
           status: string
           stripe_price_id: string | null
@@ -502,11 +505,14 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          cancel_at_period_end?: boolean
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
           organization_id: string
+          paid_confirmed?: boolean
+          payment_states?: Json
           plan_id: string
           status?: string
           stripe_price_id?: string | null
@@ -514,11 +520,14 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          cancel_at_period_end?: boolean
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
           organization_id?: string
+          paid_confirmed?: boolean
+          payment_states?: Json
           plan_id?: string
           status?: string
           stripe_price_id?: string | null
@@ -566,6 +575,24 @@ export type Database = {
           owner_id?: string
           stripe_customer_id?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      payment_events: {
+        Row: {
+          created_at: string
+          environment: string
+          event_id: string
+        }
+        Insert: {
+          created_at?: string
+          environment: string
+          event_id: string
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          event_id?: string
         }
         Relationships: []
       }
@@ -729,6 +756,10 @@ export type Database = {
     }
     Functions: {
       accept_invitation: { Args: { _token: string }; Returns: string }
+      apply_company_payment: {
+        Args: { _env: string; _event: string; _org: string; _state: Json }
+        Returns: undefined
+      }
       change_member_role: {
         Args: { _member: string; _role: string }
         Returns: undefined
@@ -792,6 +823,7 @@ export type Database = {
       }
       org_role: { Args: { _org: string }; Returns: string }
       org_seats_used: { Args: { _org: string }; Returns: number }
+      org_subscription_access: { Args: { _org: string }; Returns: boolean }
       purge_old_history: { Args: never; Returns: undefined }
       recalc_route_value: { Args: { _route: string }; Returns: undefined }
       remove_member: { Args: { _member: string }; Returns: undefined }
