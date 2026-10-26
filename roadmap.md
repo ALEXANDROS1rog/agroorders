@@ -1,4 +1,5 @@
 # VoiceOrders roadmap
+- [ ] Narrow signup flow: free registration, existing plan selection, verified checkout and app entry; preserve data/design/permissions
 - [x] Audit and repair company isolation, delivery assignments and subscription write enforcement; preserve legacy access and data
 - [x] Set annual prices Basic €350, Pro €420, Business €550; provider and database values verified
 - [x] Registration plan selection, embedded test checkout, trusted signature-checked/idempotent billing lifecycle and owner portal
