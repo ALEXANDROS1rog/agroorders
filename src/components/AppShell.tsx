@@ -2,6 +2,7 @@ import { Link, useRouterState, type LinkProps } from "@tanstack/react-router";
 import { ChevronLeft, Home, ClipboardList, Truck, Users, Route as RouteIcon } from "lucide-react";
 import { useI18n, type TKey } from "@/lib/i18n";
 import { useEffect, useState, type ReactNode } from "react";
+import { useOrg } from "@/lib/org";
 
 const NAV = [
   { to: "/dashboard", label: "nav.home" as TKey, icon: Home },
@@ -85,6 +86,9 @@ function PageBody({ title, subtitle, back, action, children }: ShellProps) {
 function ShellFrame(props: ShellProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t } = useI18n();
+  const { can, hasFeature } = useOrg();
+  const permissions = [null, "orders.view", "deliveries.view", "customers.view", "routes.view"];
+  const features = [null, "orders", "deliveries", "customers", "routes"];
 
   // Highlighted tab (also for detail pages such as /orders/123) ...
   const activeIndex = NAV.findIndex((n) => pathname.startsWith(n.to));
@@ -98,6 +102,9 @@ function ShellFrame(props: ShellProps) {
           className="liquid-glass relative flex rounded-[1.75rem] p-1.5"
         >
           {NAV.map((item, i) => {
+            const permission = permissions[i];
+            const feature = features[i];
+            if ((permission && !can(permission)) || (feature && !hasFeature(feature))) return null;
             const active = i === activeIndex;
             const Icon = item.icon;
             return (

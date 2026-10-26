@@ -126,7 +126,11 @@ export const transcribeAudio = createServerFn({ method: "POST" })
     const format = /^[a-z0-9]{2,5}$/.test(data?.format ?? "") ? data.format : "webm";
     return { audio, format };
   })
-  .handler(async ({ data }): Promise<{ text: string }> => {
+  .handler(async ({ data, context }): Promise<{ text: string }> => {
+    const { data: orgs, error: orgError } = await context.supabase.rpc("my_org_context");
+    if (orgError) throw orgError;
+    const org = orgs?.[0];
+    if (!org?.permissions?.includes("orders.create") || !Array.isArray(org.features) || !org.features.includes("voice_ai")) throw new Error("Δεν έχετε πρόσβαση σε αυτή τη λειτουργία.");
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("Η υπηρεσία AI δεν είναι διαθέσιμη.");
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -169,6 +173,10 @@ export const extractOrderFromText = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }): Promise<ExtractedOrder> => {
     const { supabase, userId } = context;
+    const { data: orgs, error: orgError } = await supabase.rpc("my_org_context");
+    if (orgError) throw orgError;
+    const org = orgs?.[0];
+    if (!org?.permissions?.includes("orders.create") || !Array.isArray(org.features) || !org.features.includes("voice_ai")) throw new Error("Δεν έχετε πρόσβαση σε αυτή τη λειτουργία.");
 
     const { data: products, error } = await supabase
       .from("products")

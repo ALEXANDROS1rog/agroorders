@@ -7,6 +7,7 @@ import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { Field, GhostButton, PrimaryButton, Select, TextArea } from "@/components/Field";
 import { fetchOrder, fetchProducts, updateOrder, type NewOrderItem } from "@/lib/api";
 import { formatCurrency } from "@/lib/domain";
+import { OrgAccess } from "@/components/OrgAccess";
 
 export const Route = createFileRoute("/_authenticated/orders/$id_/edit")({
   head: () => ({
@@ -21,6 +22,9 @@ export const Route = createFileRoute("/_authenticated/orders/$id_/edit")({
 });
 
 function EditOrderPage() {
+  return <OrgAccess permission="orders.manage" title="Επεξεργασία παραγγελίας"><EditOrderBody /></OrgAccess>;
+}
+function EditOrderBody() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
   const navigate = useNavigate();

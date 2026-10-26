@@ -9,6 +9,7 @@ import { PrimaryButton } from "@/components/Field";
 import { ExpenseFields, toAmount, type Expenses } from "@/components/ExpenseFields";
 import { createTrip, localDateKey } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
+import { OrgAccess } from "@/components/OrgAccess";
 
 export const Route = createFileRoute("/_authenticated/trips/new")({
   head: () => ({
@@ -23,6 +24,9 @@ export const Route = createFileRoute("/_authenticated/trips/new")({
 });
 
 function NewTripPage() {
+  return <OrgAccess permission="routes.manage" feature="routes" title="Νέο δρομολόγιο"><NewTripBody /></OrgAccess>;
+}
+function NewTripBody() {
   const { t, locale } = useI18n();
   const navigate = useNavigate();
   const qc = useQueryClient();

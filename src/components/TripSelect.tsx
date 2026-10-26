@@ -4,10 +4,12 @@ import { useState } from "react";
 import { Select } from "@/components/Field";
 import { fetchTrips, formatTripDate, localDateKey } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
+import { useOrg } from "@/lib/org";
 
 /** Dropdown to attach an order to a trip ("Δρομολόγιο"), with date search. */
 export function TripSelect({ value, onChange, onlyUpcoming = false }: { value: string; onChange: (id: string) => void; onlyUpcoming?: boolean }) {
   const { t } = useI18n();
+  const { can } = useOrg();
   const { data } = useQuery({ queryKey: ["trips"], queryFn: fetchTrips });
   const [q, setQ] = useState("");
   const today = localDateKey();
@@ -32,7 +34,7 @@ export function TripSelect({ value, onChange, onlyUpcoming = false }: { value: s
           <option key={r.id} value={r.id}>{formatTripDate(r.route_date)}</option>
         ))}
       </Select>
-      {!all.some((r) => r.route_date >= today) ? (
+      {can("routes.manage") && !all.some((r) => r.route_date >= today) ? (
         <Link to="/trips/new" className="block text-sm font-semibold text-brand underline">{t("o.createRoute")}</Link>
       ) : null}
     </div>
