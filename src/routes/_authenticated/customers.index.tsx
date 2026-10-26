@@ -9,6 +9,7 @@ import { Field, GhostButton, PrimaryButton, TextArea } from "@/components/Field"
 import { SearchBox } from "@/components/ui-bits";
 import { fetchCustomers, saveCustomer, type CustomerInput } from "@/lib/api";
 import { initialsOf } from "@/lib/domain";
+import { useOrg } from "@/lib/org";
 
 export const Route = createFileRoute("/_authenticated/customers/")({
   head: () => ({
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/customers/")({
 });
 
 function CustomersPage() {
+  const { can } = useOrg();
   const { data, isLoading } = useQuery({ queryKey: ["customers"], queryFn: fetchCustomers });
   const [q, setQ] = useState("");
   const [adding, setAdding] = useState(false);
@@ -35,13 +37,13 @@ function CustomersPage() {
     <AppShell
       title="Πελάτες"
       subtitle={data ? `${data.length} πελάτες` : undefined}
-      action={
-        <button aria-label="Νέος πελάτης" onClick={() => setAdding(true)} className="press grid h-11 w-11 place-items-center rounded-2xl bg-brand text-brand-foreground">
+      action={can("customers.manage") ?
+        <GhostButton aria-label="Νέος πελάτης" onClick={() => setAdding(true)} className="!h-11 !w-11 !p-0">
           <Plus className="h-5 w-5" />
-        </button>
+        </GhostButton> : null
       }
     >
-      {adding ? <CustomerForm initial={EMPTY_CUSTOMER} onDone={() => setAdding(false)} /> : null}
+      {adding && can("customers.manage") ? <CustomerForm initial={EMPTY_CUSTOMER} onDone={() => setAdding(false)} /> : null}
       <SearchBox value={q} onChange={setQ} placeholder="Αναζήτηση: όνομα, τηλέφωνο, διεύθυνση" />
       {isLoading ? <Loading /> : !list.length ? (
         <EmptyState title="Δεν βρέθηκαν πελάτες" />
