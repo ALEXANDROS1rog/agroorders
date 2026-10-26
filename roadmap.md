@@ -1,5 +1,5 @@
 # VoiceOrders roadmap
-- [ ] Complete own-account Stripe migration in test mode only — connected account IBTLab Mavroeidis Georgios has no recurring prices visible; existing app still uses managed gateway credentials/client token/webhook secret, and no supported own-account runtime gateway mapping is available. Do not change the client token alone or enable live billing.
+- [ ] Complete authorized own-account LIVE Stripe migration — live connection/webhook credentials are not provisioned; connected account catalog returns no recurring prices and its live mode is not verified. Unify checkout/portal/webhooks only after supported runtime account linkage. Never create duplicate plans or real test charges; confirm irreversible actions first.
 - [x] Prevent replacement subscriptions/customers inheriting previous paid periods; five regression tests plus existing payment/delivery tests pass (23 total)
 - [x] Narrow signup changes: free account-only form, email confirmation returns to plans, unpaid-owner sign-in returns to plans, actual implemented feature list, verified-payment entry and same-plan incomplete-checkout retry; no data/permission/provider catalog changes
 - [ ] Verify complete new signup → email confirmation → payment → usable app entry — email inbox confirmation unavailable; existing sandbox entitlement policy deliberately does not unlock live app access
