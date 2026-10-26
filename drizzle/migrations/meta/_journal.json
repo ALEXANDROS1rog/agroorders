@@ -8,6 +8,13 @@
       "when": 1792995175871,
       "tag": "0000_lock_role_permissions_access",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792995617346,
+      "tag": "0001_serialize_invitation_seats",
+      "breakpoints": true
     }
   ]
 }
