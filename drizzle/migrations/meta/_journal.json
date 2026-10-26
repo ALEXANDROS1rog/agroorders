@@ -29,6 +29,13 @@
       "when": 1792999082881,
       "tag": "0003_assigned_work_and_atomic_delivery",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792999161964,
+      "tag": "0004_preserve_legacy_access_atomic_orders",
+      "breakpoints": true
     }
   ]
 }

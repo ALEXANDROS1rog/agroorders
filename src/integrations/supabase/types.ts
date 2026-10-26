@@ -834,6 +834,10 @@ export type Database = {
       purge_old_history: { Args: never; Returns: undefined }
       recalc_route_value: { Args: { _route: string }; Returns: undefined }
       remove_member: { Args: { _member: string }; Returns: undefined }
+      save_company_order: {
+        Args: { _id?: string; _input: Json }
+        Returns: string
+      }
       set_delivery_state: {
         Args: {
           _auto?: boolean
