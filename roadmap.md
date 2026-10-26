@@ -1,4 +1,9 @@
 # VoiceOrders roadmap
+- [ ] Audit and repair company isolation, driver assignments and subscription enforcement without data loss
+- [ ] Set Basic €350 and modestly reduce Pro/Business while preserving annual billing
+- [ ] Add registration plan selection and trusted Stripe subscription lifecycle — waiting for payment setup confirmation
+- [ ] Implement and test delivery tracking pause/resume, accuracy/dwell and stop-on-completion
+- [ ] Verify realistic role/account and payment scenarios; report unexecuted checks explicitly
 - [x] Secure role_permissions without unrelated design changes; live write denial verified
 - [x] Complete organization, members and subscription screens with existing Liquid Glass elements
 - [x] Wire organization/plan access, create/edit guards, AI feature enforcement and invitation sign-in continuity
