@@ -285,6 +285,9 @@ export async function markDelivered(
   orderId: string,
   gps?: { lat: number; lng: number; auto: boolean },
 ) {
+  const { data: delivery, error: lookupError } = await supabase.from("deliveries").select("order_id").eq("id", deliveryId).single();
+  if (lookupError) throw lookupError;
+  if (delivery.order_id !== orderId) throw new Error("Delivery does not match order");
   const { error } = await supabase.rpc("set_delivery_state", { _order: orderId, _status: "delivered", _auto: gps?.auto ?? false, ...(gps ? { _lat: gps.lat, _lng: gps.lng } : {}) });
   if (error) throw error;
 }

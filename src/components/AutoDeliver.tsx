@@ -7,7 +7,7 @@ import { distanceKm } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
 import { useOrg } from "@/lib/org";
 import { GhostButton } from "@/components/Field";
-import { arrivalSample, stopTracking, setTracking, useDeliveryTracking, type Dwell } from "@/lib/delivery-tracking";
+import { arrivalSample, stopTracking, setTracking, getTracking, useDeliveryTracking, type Dwell } from "@/lib/delivery-tracking";
 
 /** Call to switch automatic confirmation on from anywhere (e.g. "Έναρξη διανομής"). */
 export function enableAutoDeliver(deliveryId: string) { setTracking(deliveryId, "active"); }
@@ -32,7 +32,7 @@ export function AutoDeliver() {
     if (!allowed) stopTracking();
     if (!data || !on) return;
     const delivery = data.find(d => d.id === tracking.deliveryId);
-    if (!delivery || delivery.status !== "in_progress" || delivery.order.status === "cancelled" || delivery.order.status === "delivered") stopTracking();
+    if (!delivery || delivery.order.status === "cancelled" || delivery.order.status === "delivered") stopTracking();
   }, [data, on, allowed, tracking.deliveryId]);
 
   useEffect(() => {
@@ -42,6 +42,7 @@ export function AutoDeliver() {
     setHint(t("del.gpsWait"));
     const id = navigator.geolocation.watchPosition(
       async (pos) => {
+        if (getTracking().status !== "active" || getTracking().deliveryId !== tracking.deliveryId) return;
         const me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setHint(t("a.active"));
         const pending = (listRef.current ?? []).filter(d => d.id === tracking.deliveryId && d.status === "in_progress" && d.order.status === "delivering");
