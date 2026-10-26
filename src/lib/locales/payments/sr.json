@@ -17,5 +17,7 @@
   "Αυτόματο «Παραδόθηκε»": "Automatsko „Isporučeno“",
   "Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.": "Plan ne obuhvata trenutni broj aktivnih članova i pozivnica na čekanju.",
   "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Pretplata već postoji. Upravljajte postojećom pretplatom.",
-  "χρήστες": "korisnici"
+  "χρήστες": "korisnici",
+  "Η εγγραφή είναι δωρεάν. Δεν απαιτείται κάρτα.": "Registracija je besplatna. Kartica nije potrebna.",
+  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Test uplata je potvrđena. Ne aktivira stvarnu pretplatu."
 }

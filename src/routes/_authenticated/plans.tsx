@@ -50,6 +50,7 @@ function PlansBody() {
   }, [confirmed, navigate]);
   return <AppShell title="Πλάνα και συνδρομή" back="/organization"><div className="space-y-4">
     <PaymentTestModeBanner />
+    {state.data?.state?.paid && getStripeEnvironment() === "sandbox" ? <p role="status" className="surface-subtle p-3 text-sm">Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.</p> : null}
     <div className="flex items-start gap-3"><CreditCard className="h-6 w-6 shrink-0 text-brand" /><div><p className="font-semibold">{org?.plan_name ?? "—"}</p><p className="text-sm text-muted-foreground">Κατάσταση συνδρομής: {status[org?.subscription_status ?? ""] ?? "—"}</p></div></div>
     {session_id ? <p role="status" className="surface-subtle p-3 text-sm">{state.data?.state?.paid && state.data.paymentStatus === "paid" ? "Η πληρωμή επιβεβαιώθηκε." : state.data?.paymentStatus === "expired" ? "Η πληρωμή ακυρώθηκε ή έληξε." : state.data?.paymentStatus === "unpaid" ? "Η πληρωμή εκκρεμεί ή δεν ολοκληρώθηκε." : "Αναμονή επιβεβαίωσης πληρωμής."}</p> : null}
     {state.error || error ? <p role="alert" className="text-sm text-destructive" data-no-translate>{error || state.error?.message}</p> : null}

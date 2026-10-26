@@ -17,5 +17,7 @@
   "Αυτόματο «Παραδόθηκε»": "Automatic \"Delivered\"",
   "Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.": "The plan does not accommodate the active members and pending invitations.",
   "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "A subscription already exists. Manage the existing subscription.",
-  "χρήστες": "users"
+  "χρήστες": "users",
+  "Η εγγραφή είναι δωρεάν. Δεν απαιτείται κάρτα.": "Registration is free. No card required.",
+  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Test payment confirmed. It does not activate a real subscription."
 }
