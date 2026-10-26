@@ -183,11 +183,11 @@ export async function deleteCustomer(id: string) {
 export type OrderWithRelations = Order & {
   customer: Customer | null;
   order_items: OrderItem[];
-  deliveries: { id: string; status: string; delivered_at: string | null }[];
+  deliveries: { id: string; status: string; delivered_at: string | null; assigned_driver_id: string | null }[];
 };
 
 const ORDER_SELECT =
-  "*, customer:customers(*), order_items(*), deliveries(id, status, delivered_at)";
+  "*, customer:customers(*), order_items(*), deliveries(id, status, delivered_at, assigned_driver_id)";
 
 export async function fetchOrders(): Promise<OrderWithRelations[]> {
   const { data, error } = await supabase
@@ -238,123 +238,22 @@ export type NewOrderInput = {
 };
 
 export async function createOrder(input: NewOrderInput): Promise<string> {
-  const userId = await requireUserId();
-  const { data: order, error } = await supabase
-    .from("orders")
-    .insert({
-      user_id: userId,
-      customer_id: input.customer_id,
-      address: input.address,
-      phone: normalizePhone(input.phone),
-      notes: input.notes,
-      status: input.status,
-      source: input.source ?? "manual",
-      route_id: input.route_id ?? null,
-    })
-    .select("id")
-    .single();
+  const { data, error } = await supabase.rpc("save_company_order", { _input: { ...input, phone: normalizePhone(input.phone) } });
   if (error) throw error;
-
-  if (input.items.length > 0) {
-    // Unit prices are copied into the order, so historical totals never change.
-    const { error: itemsError } = await supabase.from("order_items").insert(
-      input.items.map((item) => ({
-        user_id: userId,
-        order_id: order.id,
-        product_id: item.product_id,
-        product_name: item.product_name,
-        unit: item.unit,
-        unit_price: item.unit_price,
-        quantity: item.quantity,
-      })),
-    );
-    if (itemsError) {
-      // Don't leave an empty order behind if the items could not be saved.
-      await supabase.from("orders").delete().eq("id", order.id);
-      throw itemsError;
-    }
-  }
-
-  const { error: deliveryError } = await supabase.from("deliveries").insert({
-    user_id: userId,
-    order_id: order.id,
-    status: "pending",
-  });
-  if (deliveryError) {
-    await supabase.from("orders").delete().eq("id", order.id);
-    throw deliveryError;
-  }
-
-  return order.id;
+  return data;
 }
-
-const DELIVERY_STATUS_FOR_ORDER: Record<OrderStatus, string> = {
-  new: "pending",
-  preparing: "pending",
-  ready: "pending",
-  delivering: "in_progress",
-  delivered: "delivered",
-  cancelled: "cancelled",
-};
 
 export async function updateOrder(
   orderId: string,
   input: { address: string; phone: string; notes: string; items: NewOrderItem[] },
 ) {
-  const userId = await requireUserId();
-  const { error } = await supabase
-    .from("orders")
-    .update({ address: input.address, phone: normalizePhone(input.phone), notes: input.notes })
-    .eq("id", orderId);
+  const { error } = await supabase.rpc("save_company_order", { _id: orderId, _input: { ...input, phone: normalizePhone(input.phone) } });
   if (error) throw error;
-
-  // Insert the new lines first and only then remove the old ones, so a failed
-  // insert can never leave the order without products.
-  const { data: oldItems, error: oldError } = await supabase
-    .from("order_items")
-    .select("id")
-    .eq("order_id", orderId);
-  if (oldError) throw oldError;
-  const oldIds = (oldItems ?? []).map((i) => i.id);
-
-  if (input.items.length > 0) {
-    const { error: insError } = await supabase.from("order_items").insert(
-      input.items.map((item) => ({
-        user_id: userId,
-        order_id: orderId,
-        product_id: item.product_id,
-        product_name: item.product_name,
-        unit: item.unit,
-        unit_price: item.unit_price,
-        quantity: item.quantity,
-      })),
-    );
-    if (insError) throw insError;
-  }
-
-  if (oldIds.length > 0) {
-    const { error: delError } = await supabase.from("order_items").delete().in("id", oldIds);
-    if (delError) throw delError;
-  }
 }
 
 export async function updateOrderStatus(orderId: string, status: OrderStatus) {
-  const { error } = await supabase.from("orders").update({ status }).eq("id", orderId);
+  const { error } = await supabase.rpc("set_delivery_state", { _order: orderId, _status: status });
   if (error) throw error;
-
-  const deliveryStatus = DELIVERY_STATUS_FOR_ORDER[status];
-  const { error: deliveryError } = await supabase
-    .from("deliveries")
-    .update({
-      status: deliveryStatus,
-      delivered_at: status === "delivered" ? new Date().toISOString() : null,
-      // Leaving "delivered" must also clear the GPS proof of the old delivery.
-      ...(status === "delivered"
-        ? {}
-        : { delivered_lat: null, delivered_lng: null, auto_confirmed: false }),
-    })
-    .eq("order_id", orderId);
-  if (deliveryError) throw deliveryError;
 }
 
 export async function deleteOrder(orderId: string) {
@@ -386,23 +285,13 @@ export async function markDelivered(
   orderId: string,
   gps?: { lat: number; lng: number; auto: boolean },
 ) {
-  const now = new Date().toISOString();
-  const { error } = await supabase
-    .from("deliveries")
-    .update({
-      status: "delivered",
-      delivered_at: now,
-      delivered_lat: gps?.lat ?? null,
-      delivered_lng: gps?.lng ?? null,
-      auto_confirmed: gps?.auto ?? false,
-    })
-    .eq("id", deliveryId);
+  const { error } = await supabase.rpc("set_delivery_state", { _order: orderId, _status: "delivered", _auto: gps?.auto ?? false, ...(gps ? { _lat: gps.lat, _lng: gps.lng } : {}) });
   if (error) throw error;
-  const { error: orderError } = await supabase
-    .from("orders")
-    .update({ status: "delivered" })
-    .eq("id", orderId);
-  if (orderError) throw orderError;
+}
+
+export async function assignDelivery(deliveryId: string, driverId: string | null) {
+  const { error } = await supabase.from("deliveries").update({ assigned_driver_id: driverId }).eq("id", deliveryId).select("id").single();
+  if (error) throw error;
 }
 
 export async function saveRoutePositions(entries: { id: string; position: number }[]) {
