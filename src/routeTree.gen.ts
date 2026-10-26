@@ -16,6 +16,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedDeliveriesRouteImport } from './routes/_authenticated/deliveries'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
 import { Route as AuthenticatedMapRouteImport } from './routes/_authenticated/map'
+import { Route as AuthenticatedOrganizationRouteImport } from './routes/_authenticated/organization'
+import { Route as AuthenticatedPlansRouteImport } from './routes/_authenticated/plans'
 import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthResetRouteImport } from './routes/auth.reset'
@@ -62,6 +64,17 @@ const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
 const AuthenticatedMapRoute = AuthenticatedMapRouteImport.update({
   id: '/map',
   path: '/map',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOrganizationRoute =
+  AuthenticatedOrganizationRouteImport.update({
+    id: '/organization',
+    path: '/organization',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPlansRoute = AuthenticatedPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProductsRoute = AuthenticatedProductsRouteImport.update({
@@ -141,6 +154,8 @@ export interface FileRoutesByFullPath {
   '/deliveries': typeof AuthenticatedDeliveriesRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/map': typeof AuthenticatedMapRoute
+  '/organization': typeof AuthenticatedOrganizationRoute
+  '/plans': typeof AuthenticatedPlansRoute
   '/products': typeof AuthenticatedProductsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
@@ -162,6 +177,8 @@ export interface FileRoutesByTo {
   '/deliveries': typeof AuthenticatedDeliveriesRoute
   '/history': typeof AuthenticatedHistoryRoute
   '/map': typeof AuthenticatedMapRoute
+  '/organization': typeof AuthenticatedOrganizationRoute
+  '/plans': typeof AuthenticatedPlansRoute
   '/products': typeof AuthenticatedProductsRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
@@ -185,6 +202,8 @@ export interface FileRoutesById {
   '/_authenticated/deliveries': typeof AuthenticatedDeliveriesRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
   '/_authenticated/map': typeof AuthenticatedMapRoute
+  '/_authenticated/organization': typeof AuthenticatedOrganizationRoute
+  '/_authenticated/plans': typeof AuthenticatedPlansRoute
   '/_authenticated/products': typeof AuthenticatedProductsRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/auth/reset': typeof AuthResetRoute
@@ -208,6 +227,8 @@ export interface FileRouteTypes {
     | '/deliveries'
     | '/history'
     | '/map'
+    | '/organization'
+    | '/plans'
     | '/products'
     | '/profile'
     | '/auth/reset'
@@ -229,6 +250,8 @@ export interface FileRouteTypes {
     | '/deliveries'
     | '/history'
     | '/map'
+    | '/organization'
+    | '/plans'
     | '/products'
     | '/profile'
     | '/auth/reset'
@@ -251,6 +274,8 @@ export interface FileRouteTypes {
     | '/_authenticated/deliveries'
     | '/_authenticated/history'
     | '/_authenticated/map'
+    | '/_authenticated/organization'
+    | '/_authenticated/plans'
     | '/_authenticated/products'
     | '/_authenticated/profile'
     | '/auth/reset'
@@ -322,6 +347,20 @@ declare module '@tanstack/react-router' {
       path: '/map'
       fullPath: '/map'
       preLoaderRoute: typeof AuthenticatedMapRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/organization': {
+      id: '/_authenticated/organization'
+      path: '/organization'
+      fullPath: '/organization'
+      preLoaderRoute: typeof AuthenticatedOrganizationRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/plans': {
+      id: '/_authenticated/plans'
+      path: '/plans'
+      fullPath: '/plans'
+      preLoaderRoute: typeof AuthenticatedPlansRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/products': {
@@ -423,6 +462,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDeliveriesRoute: typeof AuthenticatedDeliveriesRoute
   AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
   AuthenticatedMapRoute: typeof AuthenticatedMapRoute
+  AuthenticatedOrganizationRoute: typeof AuthenticatedOrganizationRoute
+  AuthenticatedPlansRoute: typeof AuthenticatedPlansRoute
   AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
@@ -441,6 +482,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDeliveriesRoute: AuthenticatedDeliveriesRoute,
   AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
   AuthenticatedMapRoute: AuthenticatedMapRoute,
+  AuthenticatedOrganizationRoute: AuthenticatedOrganizationRoute,
+  AuthenticatedPlansRoute: AuthenticatedPlansRoute,
   AuthenticatedProductsRoute: AuthenticatedProductsRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
