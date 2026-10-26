@@ -10,6 +10,7 @@ import { GhostButton } from "@/components/Field";
 import { deleteCustomer, fetchCustomer, fetchCustomerOrders, orderTotal } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/domain";
 import { CustomerForm } from "@/components/CustomerForm";
+import { useOrg } from "@/lib/org";
 
 export const Route = createFileRoute("/_authenticated/customers/$id")({
   head: () => ({
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/_authenticated/customers/$id")({
 });
 
 function CustomerPage() {
+  const { can } = useOrg();
   const { id } = Route.useParams();
   const navigate = useNavigate();
   const customer = useQuery({ queryKey: ["customer", id], queryFn: () => fetchCustomer(id) });
@@ -37,7 +39,7 @@ function CustomerPage() {
     <AppShell title={c?.full_name ?? "Πελάτης"} back="/customers">
       {customer.isLoading ? <Loading /> : !c ? <EmptyState title="Ο πελάτης δεν βρέθηκε" /> : (
         <div className="space-y-3">
-          {editing ? (
+          {editing && can("customers.manage") ? (
             <CustomerForm initial={{ id: c.id, full_name: c.full_name, phone: c.phone, address: c.address, latitude: c.latitude, longitude: c.longitude, notes: c.notes }} onDone={() => setEditing(false)} />
           ) : (
             <Card className="space-y-2">
@@ -50,7 +52,7 @@ function CustomerPage() {
               <Link to="/orders/new" search={{ customer: c.id }} className="press flex h-12 items-center justify-center gap-2 rounded-2xl bg-brand text-sm font-semibold text-brand-foreground">
                 <Plus className="h-4 w-4" /> Νέα παραγγελία
               </Link>
-              <div className="grid grid-cols-2 gap-2">
+              {can("customers.manage") ? <div className="grid grid-cols-2 gap-2">
                 <GhostButton onClick={() => setEditing(true)}>Επεξεργασία</GhostButton>
                 <GhostButton
                   className="text-destructive"
@@ -61,7 +63,7 @@ function CustomerPage() {
                 >
                   Διαγραφή
                 </GhostButton>
-              </div>
+              </div> : null}
             </Card>
           )}
           {c.latitude != null && c.longitude != null ? (

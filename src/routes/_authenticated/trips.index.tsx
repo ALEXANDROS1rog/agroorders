@@ -5,6 +5,7 @@ import { AppShell, EmptyState, Loading } from "@/components/AppShell";
 import { TripCard } from "@/components/TripCard";
 import { fetchTrips, localDateKey } from "@/lib/api";
 import { useI18n } from "@/lib/i18n";
+import { useOrg } from "@/lib/org";
 
 export const Route = createFileRoute("/_authenticated/trips/")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_authenticated/trips/")({
 
 function TripsPage() {
   const { t } = useI18n();
+  const { can } = useOrg();
   const { data, isLoading } = useQuery({ queryKey: ["trips"], queryFn: fetchTrips });
   const today = localDateKey();
   const active = (data ?? []).filter((r) => r.route_date >= today);
@@ -28,16 +30,16 @@ function TripsPage() {
   return (
     <AppShell
       title={t("r.title")}
-      action={<Link to="/trips/new" aria-label={t("d.newRoute")} className="press grid h-11 w-11 place-items-center rounded-2xl bg-brand text-brand-foreground"><Plus className="h-5 w-5" /></Link>}
+      action={can("routes.manage") ? <Link to="/trips/new" aria-label={t("d.newRoute")} className="press grid h-11 w-11 place-items-center rounded-2xl bg-brand text-brand-foreground"><Plus className="h-5 w-5" /></Link> : null}
     >
       {isLoading ? <Loading /> : (
         <div className="space-y-6">
           <section className="space-y-3">
             <h2 className="font-display text-lg font-semibold">{t("r.active")}</h2>
             {active.length ? active.map((r) => <TripCard key={r.id} trip={r} />) : <EmptyState title={t("r.none")} />}
-            <Link to="/trips/new" className="press flex h-14 items-center justify-center gap-2 rounded-2xl bg-brand font-semibold text-brand-foreground">
+            {can("routes.manage") ? <Link to="/trips/new" className="press flex h-14 items-center justify-center gap-2 rounded-2xl bg-brand font-semibold text-brand-foreground">
               <Plus className="h-5 w-5" /> {t("d.newRoute")}
-            </Link>
+            </Link> : null}
           </section>
           <section className="space-y-3">
             <h2 className="font-display text-lg font-semibold">{t("r.history")}</h2>

@@ -13,6 +13,7 @@ import { useMyPosition } from "@/hooks/use-position";
 import { deleteTrip, fetchTrip, formatTripDate, loadingList, tripNumbers, updateTripExpenses } from "@/lib/api";
 import { formatCurrency } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
+import { useOrg } from "@/lib/org";
 
 export const Route = createFileRoute("/_authenticated/trips/$id")({
   head: () => ({
@@ -29,12 +30,14 @@ export const Route = createFileRoute("/_authenticated/trips/$id")({
 const str = (n: number) => (Number(n) ? String(Number(n)).replace(".", ",") : "");
 
 function TripPage() {
+  const { can, hasFeature } = useOrg();
+  const finance = can("finance.view") && hasFeature("advanced_finance");
   const { id } = Route.useParams();
   const { t } = useI18n();
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { data: trip, isLoading } = useQuery({ queryKey: ["trip", id], queryFn: () => fetchTrip(id) });
-  const pos = useMyPosition();
+  const pos = useMyPosition(hasFeature("gps_delivery"));
   const [editing, setEditing] = useState(false);
   const [exp, setExp] = useState<Expenses>({ fuel: "", tolls: "", wear: "", food: "" });
   useEffect(() => {
@@ -69,15 +72,15 @@ function TripPage() {
   return (
     <AppShell title={`${formatTripDate(trip.route_date)}`} subtitle={`${n.count} ${t("c.orders")}`} back="/trips">
       <div className="space-y-4">
-        <Card>
+        {finance ? <Card>
           <div className="grid grid-cols-3 gap-2 text-center">
             <div><p className="text-xs text-muted-foreground">{t("r.revenue")}</p><p className="font-display text-xl font-bold">{formatCurrency(n.revenue)}</p></div>
             <div><p className="text-xs text-muted-foreground">{t("r.expenses")}</p><p className="font-display text-xl font-bold text-destructive">{formatCurrency(n.expenses)}</p></div>
             <div><p className="text-xs text-muted-foreground">{t("r.net")}</p><p className="font-display text-xl font-bold text-brand">{formatCurrency(n.net)}</p></div>
           </div>
-        </Card>
+        </Card> : null}
 
-        <Card className="space-y-3">
+        {can("routes.manage") ? <Card className="space-y-3">
           <h2 className="font-display text-lg font-semibold">{t("r.expTitle")}</h2>
           {editing ? (
             <>
@@ -95,7 +98,7 @@ function TripPage() {
               <GhostButton onClick={() => setEditing(true)}>{t("r.editExp")}</GhostButton>
             </>
           )}
-        </Card>
+        </Card> : null}
 
         <Card className="space-y-3">
           <h2 className="font-display text-lg font-semibold">{t("r.load")}</h2>
@@ -105,9 +108,9 @@ function TripPage() {
         <section>
           <div className="mb-3 flex items-center justify-between">
             <h2 className="font-display text-lg font-semibold">{t("r.ordersOf")}</h2>
-            <Link to="/orders/new" search={{ route: trip.id }} aria-label={t("d.newOrder")} className="press grid h-11 w-11 place-items-center rounded-2xl bg-brand text-brand-foreground"><Plus className="h-5 w-5" /></Link>
+            {can("orders.create") ? <Link to="/orders/new" search={{ route: trip.id }} aria-label={t("d.newOrder")} className="press grid h-11 w-11 place-items-center rounded-2xl bg-brand text-brand-foreground"><Plus className="h-5 w-5" /></Link> : null}
           </div>
-          {open.length ? <><GpsBanner pos={pos} /><AutoDeliver /></> : null}
+          {open.length ? <>{hasFeature("gps_delivery") ? <GpsBanner pos={pos} /> : null}<AutoDeliver /></> : null}
           {!trip.orders.length ? <EmptyState title={t("r.noOrders")} /> : (
             <div className="space-y-3">
               {sorted.map(({ item: o, km }, i) => <DeliveryCard key={o.id} o={o} deliveryId={o.deliveries[0]?.id} index={i + 1} km={km} />)}
@@ -116,9 +119,9 @@ function TripPage() {
           )}
         </section>
 
-        <button onClick={remove} className="press flex h-12 w-full items-center justify-center gap-2 rounded-2xl text-sm font-semibold text-destructive">
+        {can("routes.manage") ? <GhostButton onClick={remove} className="flex items-center justify-center gap-2 text-sm text-destructive">
           <Trash2 className="h-4 w-4" /> {t("r.delete")}
-        </button>
+        </GhostButton> : null}
       </div>
     </AppShell>
   );
