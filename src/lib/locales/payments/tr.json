@@ -17,5 +17,7 @@
   "Αυτόματο «Παραδόθηκε»": "Otomatik \"Teslim Edildi\"",
   "Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.": "Plan, aktif üyeler ve bekleyen davetler için yeterli kapasiteye sahip değil.",
   "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Zaten bir abonelik mevcut. Mevcut aboneliği yönetin.",
-  "χρήστες": "kullanıcılar"
+  "χρήστες": "kullanıcılar",
+  "Η εγγραφή είναι δωρεάν. Δεν απαιτείται κάρτα.": "Kayıt ücretsizdir. Kart gerekmez.",
+  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Test ödemesi onaylandı. Gerçek bir abonelik etkinleştirmez."
 }

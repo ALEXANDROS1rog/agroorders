@@ -86,6 +86,15 @@ export const createCompanyCheckout = createServerFn({ method: "POST" })
         status: "all",
         limit: 100,
       });
+      const incomplete = subscriptions.data.find(s =>
+        s.metadata["organizationId"] === org.organization_id && s.status === "incomplete",
+      );
+      if (incomplete) {
+        const sessions = await stripe.checkout.sessions.list({ subscription: incomplete.id, limit: 100 });
+        const open = sessions.data.find(s => s.status === "open" && s.client_secret);
+        const samePlan = incomplete.items.data.some(item => item.price.lookup_key === plan.lookupKey);
+        if (open?.client_secret && samePlan) return { clientSecret: open.client_secret };
+      }
       if (
         subscriptions.data.some(
           (s) =>
