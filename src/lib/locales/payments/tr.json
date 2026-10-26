@@ -1,0 +1,21 @@
+{
+  "Δοκιμαστικές πληρωμές — δεν χρεώνονται πραγματικά χρήματα.": "Test ödemeleri — gerçek para tahsil edilmez.",
+  "Οι πραγματικές πληρωμές δεν έχουν ενεργοποιηθεί ακόμα.": "Gerçek ödemeler henüz etkinleştirilmedi.",
+  "Η πληρωμή επιβεβαιώθηκε.": "Ödeme onaylandı.",
+  "Η πληρωμή ακυρώθηκε ή έληξε.": "Ödeme iptal edildi veya süresi doldu.",
+  "Η πληρωμή εκκρεμεί ή δεν ολοκληρώθηκε.": "Ödeme beklemede veya tamamlanmadı.",
+  "Αναμονή επιβεβαίωσης πληρωμής.": "Ödeme onayı bekleniyor.",
+  "Διαχείριση συνδρομής": "Aboneliği yönet",
+  "Ακύρωση πληρωμής": "Ödemeyi iptal et",
+  "Επιλογή πλάνου": "Plan seçin",
+  "Ανάθεση διανομέα": "Kurye ata",
+  "Χωρίς ανάθεση": "Atanmamış",
+  "Παύση παρακολούθησης": "Takibi duraklat",
+  "Συνέχιση παρακολούθησης": "Takibi devam ettir",
+  "Δεν υπάρχει τοποθεσία προορισμού. Χρησιμοποιήστε χειροκίνητη επιβεβαίωση.": "Varış konumu yok. Lütfen manuel onay kullanın.",
+  "Ανακριβές σήμα GPS — αναμονή καλύτερης θέσης.": "Hatalı GPS sinyali — daha iyi bir konum bekleniyor.",
+  "Αυτόματο «Παραδόθηκε»": "Otomatik \"Teslim Edildi\"",
+  "Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.": "Plan, aktif üyeler ve bekleyen davetler için yeterli kapasiteye sahip değil.",
+  "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Zaten bir abonelik mevcut. Mevcut aboneliği yönetin.",
+  "χρήστες": "kullanıcılar"
+}

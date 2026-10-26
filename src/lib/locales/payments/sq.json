@@ -1,0 +1,21 @@
+{
+  "Δοκιμαστικές πληρωμές — δεν χρεώνονται πραγματικά χρήματα.": "Pagesat e provës — nuk tarifohen para të vërteta.",
+  "Οι πραγματικές πληρωμές δεν έχουν ενεργοποιηθεί ακόμα.": "Pagesat reale nuk janë aktivizuar ende.",
+  "Η πληρωμή επιβεβαιώθηκε.": "Pagesa u konfirmua.",
+  "Η πληρωμή ακυρώθηκε ή έληξε.": "Pagesa u anulua ose ka skaduar.",
+  "Η πληρωμή εκκρεμεί ή δεν ολοκληρώθηκε.": "Pagesa është në pritje ose nuk ka përfunduar.",
+  "Αναμονή επιβεβαίωσης πληρωμής.": "Duke pritur konfirmimin e pagesës.",
+  "Διαχείριση συνδρομής": "Menaxho pajtimin",
+  "Ακύρωση πληρωμής": "Anulo pagesën",
+  "Επιλογή πλάνου": "Zgjidh planin",
+  "Ανάθεση διανομέα": "Cakto shpërndarësin",
+  "Χωρίς ανάθεση": "I pacaktuar",
+  "Παύση παρακολούθησης": "Ndalo ndjekjen",
+  "Συνέχιση παρακολούθησης": "Vazhdo ndjekjen",
+  "Δεν υπάρχει τοποθεσία προορισμού. Χρησιμοποιήστε χειροκίνητη επιβεβαίωση.": "Nuk ka lokacion destinacioni. Përdorni konfirmimin manual.",
+  "Ανακριβές σήμα GPS — αναμονή καλύτερης θέσης.": "Sinjal GPS i pasaktë — duke pritur për pozicionim më të mirë.",
+  "Αυτόματο «Παραδόθηκε»": "«U dorëzua» automatikisht",
+  "Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.": "Plani nuk nxë anëtarët aktivë dhe ftesat në pritje.",
+  "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Ekziston tashmë një pajtim. Menaxhoni pajtimin ekzistues.",
+  "χρήστες": "përdorues"
+}

@@ -1,0 +1,21 @@
+{
+  "Δοκιμαστικές πληρωμές — δεν χρεώνονται πραγματικά χρήματα.": "Testna plačila — dejanski denar se ne zaračunava.",
+  "Οι πραγματικές πληρωμές δεν έχουν ενεργοποιηθεί ακόμα.": "Dejanska plačila še niso omogočena.",
+  "Η πληρωμή επιβεβαιώθηκε.": "Plačilo je bilo potrjeno.",
+  "Η πληρωμή ακυρώθηκε ή έληξε.": "Plačilo je bilo preklicano ali je poteklo.",
+  "Η πληρωμή εκκρεμεί ή δεν ολοκληρώθηκε.": "Plačilo je v čakanju ali ni bilo dokončano.",
+  "Αναμονή επιβεβαίωσης πληρωμής.": "Čakanje na potrditev plačila.",
+  "Διαχείριση συνδρομής": "Upravljanje naročnine",
+  "Ακύρωση πληρωμής": "Preklic plačila",
+  "Επιλογή πλάνου": "Izbira paketa",
+  "Ανάθεση διανομέα": "Dodelitev dostavljavca",
+  "Χωρίς ανάθεση": "Brez dodelitve",
+  "Παύση παρακολούθησης": "Premor sledenja",
+  "Συνέχιση παρακολούθησης": "Nadaljevanje sledenja",
+  "Δεν υπάρχει τοποθεσία προορισμού. Χρησιμοποιήστε χειροκίνητη επιβεβαίωση.": "Ni ciljne lokacije. Uporabite ročno potrditev.",
+  "Ανακριβές σήμα GPS — αναμονή καλύτερης θέσης.": "Nenatančen signal GPS — čakanje na boljšo lokacijo.",
+  "Αυτόματο «Παραδόθηκε»": "Samodejno »Dostavljeno«",
+  "Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.": "Paket ne omogoča števila aktivnih članov in neporabljenih vabil.",
+  "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Naročnina že obstaja. Upravljajte obstoječo naročnino.",
+  "χρήστες": "uporabniki"
+}

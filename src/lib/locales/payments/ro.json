@@ -1,0 +1,21 @@
+{
+  "Δοκιμαστικές πληρωμές — δεν χρεώνονται πραγματικά χρήματα.": "Plăți de test — nu se încasează bani reali.",
+  "Οι πραγματικές πληρωμές δεν έχουν ενεργοποιηθεί ακόμα.": "Plățile reale nu au fost activate încă.",
+  "Η πληρωμή επιβεβαιώθηκε.": "Plată confirmată.",
+  "Η πληρωμή ακυρώθηκε ή έληξε.": "Plata a fost anulată sau a expirat.",
+  "Η πληρωμή εκκρεμεί ή δεν ολοκληρώθηκε.": "Plata este în așteptare sau nu a fost finalizată.",
+  "Αναμονή επιβεβαίωσης πληρωμής.": "Se așteaptă confirmarea plății.",
+  "Διαχείριση συνδρομής": "Gestionare abonament",
+  "Ακύρωση πληρωμής": "Anulare plată",
+  "Επιλογή πλάνου": "Alegere plan",
+  "Ανάθεση διανομέα": "Alocare curier",
+  "Χωρίς ανάθεση": "Nealocat",
+  "Παύση παρακολούθησης": "Întrerupere urmărire",
+  "Συνέχιση παρακολούθησης": "Reluare urmărire",
+  "Δεν υπάρχει τοποθεσία προορισμού. Χρησιμοποιήστε χειροκίνητη επιβεβαίωση.": "Nu există locație de destinație. Utilizați confirmarea manuală.",
+  "Ανακριβές σήμα GPS — αναμονή καλύτερης θέσης.": "Semnal GPS imprecis — se așteaptă o poziție mai bună.",
+  "Αυτόματο «Παραδόθηκε»": "„Livrat” automat",
+  "Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.": "Planul nu permite numărul actual de membri activi și invitații în așteptare.",
+  "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Există deja un abonament. Gestionați abonamentul existent.",
+  "χρήστες": "utilizatori"
+}
