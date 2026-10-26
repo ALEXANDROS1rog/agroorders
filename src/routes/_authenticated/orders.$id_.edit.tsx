@@ -12,6 +12,8 @@ import { OrgAccess } from "@/components/OrgAccess";
 export const Route = createFileRoute("/_authenticated/orders/$id_/edit")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Επεξεργασία παραγγελίας — VoiceOrders" },
       { name: "description", content: "Αλλαγή στοιχείων και προϊόντων παραγγελίας." },
       { property: "og:title", content: "Επεξεργασία παραγγελίας — VoiceOrders" },

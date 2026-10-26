@@ -14,6 +14,8 @@ import { OrgAccess } from "@/components/OrgAccess";
 export const Route = createFileRoute("/_authenticated/trips/new")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Νέο δρομολόγιο — VoiceOrders" },
       { name: "description", content: "Διάλεξε ημερομηνία και καταχώρισε τα έξοδα του δρομολογίου." },
       { property: "og:title", content: "Νέο δρομολόγιο — VoiceOrders" },

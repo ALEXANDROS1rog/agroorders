@@ -5,6 +5,8 @@ export const Route = createFileRoute("/")({
   ssr: false,
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "VoiceOrders — Παραγγελίες & Διανομές" },
       {
         name: "description",

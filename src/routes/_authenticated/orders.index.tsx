@@ -12,6 +12,8 @@ import { ORDER_STATUSES, ORDER_STATUS_LABEL, formatCurrency, formatDate } from "
 export const Route = createFileRoute("/_authenticated/orders/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Παραγγελίες — VoiceOrders" },
       { name: "description", content: "Όλες οι παραγγελίες με αναζήτηση και φίλτρο κατάστασης." },
       { property: "og:title", content: "Παραγγελίες — VoiceOrders" },

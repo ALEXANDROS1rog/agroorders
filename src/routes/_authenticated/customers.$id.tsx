@@ -15,6 +15,8 @@ import { useOrg } from "@/lib/org";
 export const Route = createFileRoute("/_authenticated/customers/$id")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Πελάτης — VoiceOrders" },
       { name: "description", content: "Στοιχεία πελάτη και ιστορικό παραγγελιών." },
       { property: "og:title", content: "Πελάτης — VoiceOrders" },

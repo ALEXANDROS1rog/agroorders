@@ -20,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/orders/new")({
   }),
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Νέα παραγγελία — VoiceOrders" },
       { name: "description", content: "Καταχώριση παραγγελίας χειροκίνητα ή με AI από κείμενο." },
       { property: "og:title", content: "Νέα παραγγελία — VoiceOrders" },

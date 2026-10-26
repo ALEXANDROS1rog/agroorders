@@ -18,6 +18,8 @@ import { useOrg } from "@/lib/org";
 export const Route = createFileRoute("/_authenticated/trips/$id")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Δρομολόγιο — VoiceOrders" },
       { name: "description", content: "Λεπτομέρειες δρομολογίου: έξοδα, έσοδα, καθαρά, παραγγελίες και προϊόντα για φόρτωμα." },
       { property: "og:title", content: "Δρομολόγιο — VoiceOrders" },

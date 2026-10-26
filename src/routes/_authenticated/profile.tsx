@@ -13,6 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Το προφίλ μου — VoiceOrders" },
       { name: "description", content: "Στοιχεία λογαριασμού, ρυθμίσεις και γλώσσα εφαρμογής." },
       { property: "og:title", content: "Το προφίλ μου — VoiceOrders" },

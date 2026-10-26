@@ -12,6 +12,8 @@ import { PRODUCT_CATEGORIES, UNITS, formatCurrency } from "@/lib/domain";
 export const Route = createFileRoute("/_authenticated/products")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Προϊόντα — VoiceOrders" },
       { name: "description", content: "Κατάλογος προϊόντων, τιμές και διαθεσιμότητα." },
       { property: "og:title", content: "Προϊόντα — VoiceOrders" },

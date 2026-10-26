@@ -10,6 +10,8 @@ import { OrderRow } from "@/components/OrderRow";
 export const Route = createFileRoute("/_authenticated/history")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Ιστορικό — VoiceOrders" },
       { name: "description", content: "Ιστορικό παραγγελιών με φίλτρα και σύνολα πωλήσεων." },
       { property: "og:title", content: "Ιστορικό — VoiceOrders" },
