@@ -11,7 +11,12 @@ import { distanceKm, formatCurrency } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
 import type { PositionState } from "@/hooks/use-position";
 import { useOrg } from "@/lib/org";
-import { deliveryDestination, useDeliveryTracking, setTracking, stopTracking } from "@/lib/delivery-tracking";
+import {
+  deliveryDestination,
+  useDeliveryTracking,
+  setTracking,
+  stopTracking,
+} from "@/lib/delivery-tracking";
 
 export function orderCoords(o: OrderWithRelations) {
   return deliveryDestination(o);
