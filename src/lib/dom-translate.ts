@@ -9,9 +9,20 @@ import mk from "./locales/mk.json";
 import sl from "./locales/sl.json";
 import me from "./locales/me.json";
 import tr from "./locales/tr.json";
+import orgEn from "./locales/organization/en.json";
+import orgSq from "./locales/organization/sq.json";
+import orgBg from "./locales/organization/bg.json";
+import orgRo from "./locales/organization/ro.json";
+import orgSr from "./locales/organization/sr.json";
+import orgHr from "./locales/organization/hr.json";
+import orgBs from "./locales/organization/bs.json";
+import orgMk from "./locales/organization/mk.json";
+import orgSl from "./locales/organization/sl.json";
+import orgMe from "./locales/organization/me.json";
+import orgTr from "./locales/organization/tr.json";
 
 /** Greek source text -> translated text, per language. Greek ("el") needs no map. */
-export const LOCALE_MAPS: Record<string, Record<string, string>> = { en, sq, bg, ro, sr, hr, bs, mk, sl, me, tr };
+export const LOCALE_MAPS: Record<string, Record<string, string>> = { en: { ...en, ...orgEn }, sq: { ...sq, ...orgSq }, bg: { ...bg, ...orgBg }, ro: { ...ro, ...orgRo }, sr: { ...sr, ...orgSr }, hr: { ...hr, ...orgHr }, bs: { ...bs, ...orgBs }, mk: { ...mk, ...orgMk }, sl: { ...sl, ...orgSl }, me: { ...me, ...orgMe }, tr: { ...tr, ...orgTr } };
 
 const ATTRS = ["placeholder", "aria-label", "title"];
 const GREEK = /[\u0370-\u03ff\u1f00-\u1fff]/;
