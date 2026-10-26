@@ -8,6 +8,8 @@ export const Route = createFileRoute("/auth/reset")({
   ssr: false,
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Νέος κωδικός — VoiceOrders" },
       { name: "description", content: "Όρισε νέο κωδικό για τον λογαριασμό σου." },
       { property: "og:title", content: "Νέος κωδικός — VoiceOrders" },

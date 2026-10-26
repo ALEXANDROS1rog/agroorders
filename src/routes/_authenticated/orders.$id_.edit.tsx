@@ -7,10 +7,13 @@ import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { Field, GhostButton, PrimaryButton, Select, TextArea } from "@/components/Field";
 import { fetchOrder, fetchProducts, updateOrder, type NewOrderItem } from "@/lib/api";
 import { formatCurrency } from "@/lib/domain";
+import { OrgAccess } from "@/components/OrgAccess";
 
 export const Route = createFileRoute("/_authenticated/orders/$id_/edit")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Επεξεργασία παραγγελίας — VoiceOrders" },
       { name: "description", content: "Αλλαγή στοιχείων και προϊόντων παραγγελίας." },
       { property: "og:title", content: "Επεξεργασία παραγγελίας — VoiceOrders" },
@@ -21,6 +24,9 @@ export const Route = createFileRoute("/_authenticated/orders/$id_/edit")({
 });
 
 function EditOrderPage() {
+  return <OrgAccess permission="orders.manage" title="Επεξεργασία παραγγελίας"><EditOrderBody /></OrgAccess>;
+}
+function EditOrderBody() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
   const navigate = useNavigate();

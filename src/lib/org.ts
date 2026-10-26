@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { canReserveMember } from "@/lib/org-access";
 
 export type OrgRole = "owner" | "manager" | "driver";
 export type OrgContext = {
@@ -53,7 +54,7 @@ export function useOrg() {
     org,
     can: (perm: string) => !!org?.permissions.includes(perm),
     hasFeature: (feature: string) => !!org?.features.includes(feature),
-    canAddMember: () => !!org && org.permissions.includes("members.manage") && org.active_users + org.pending_invites < org.max_users,
+    canAddMember: () => !!org && canReserveMember(org.permissions, org.active_users, org.pending_invites, org.max_users),
   };
 }
 

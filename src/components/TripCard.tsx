@@ -3,9 +3,11 @@ import { Truck } from "lucide-react";
 import { formatTripDate, tripNumbers, type TripWithOrders } from "@/lib/api";
 import { formatCurrency } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
+import { useOrg } from "@/lib/org";
 
 export function TripCard({ trip }: { trip: TripWithOrders }) {
   const { t } = useI18n();
+  const { can, hasFeature } = useOrg();
   const n = tripNumbers(trip);
   return (
     <Link to="/trips/$id" params={{ id: trip.id }} className="surface press block rounded-3xl p-4">
@@ -18,7 +20,7 @@ export function TripCard({ trip }: { trip: TripWithOrders }) {
           <p className="text-sm text-muted-foreground">{n.count} {t("c.orders")}</p>
         </div>
       </div>
-      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+      {can("finance.view") && hasFeature("advanced_finance") ? <div className="mt-3 grid grid-cols-3 gap-2 text-center">
         <div className="surface-subtle rounded-2xl p-2">
           <p className="text-[11px] text-muted-foreground">{t("r.revenue")}</p>
           <p className="font-semibold">{formatCurrency(n.revenue)}</p>
@@ -31,7 +33,7 @@ export function TripCard({ trip }: { trip: TripWithOrders }) {
           <p className="text-[11px] text-muted-foreground">{t("r.net")}</p>
           <p className="font-semibold text-brand">{formatCurrency(n.net)}</p>
         </div>
-      </div>
+      </div> : null}
     </Link>
   );
 }

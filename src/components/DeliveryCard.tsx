@@ -10,6 +10,7 @@ import { markDelivered, orderTotal, startDelivery, type OrderWithRelations } fro
 import { distanceKm, formatCurrency } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
 import type { PositionState } from "@/hooks/use-position";
+import { useOrg } from "@/lib/org";
 
 export function orderCoords(o: OrderWithRelations) {
   const c = o.customer;
@@ -32,6 +33,7 @@ export function GpsBanner({ pos }: { pos: PositionState }) {
 }
 
 export function DeliveryCard({ o, deliveryId, index, km }: { o: OrderWithRelations; deliveryId: string | undefined; index: number; km: number | null }) {
+  const { can, hasFeature } = useOrg();
   const { t } = useI18n();
   const qc = useQueryClient();
   const done = o.status === "delivered" || o.status === "cancelled";
@@ -42,7 +44,7 @@ export function DeliveryCard({ o, deliveryId, index, km }: { o: OrderWithRelatio
     catch (e) { toast.error(e instanceof Error ? e.message : t("c.error")); }
   }
   async function start() {
-    try { await startDelivery(o.id); enableAutoDeliver(); toast.success(t("del.started")); qc.invalidateQueries(); }
+    try { await startDelivery(o.id); if (hasFeature("auto_arrival")) enableAutoDeliver(); toast.success(t("del.started")); qc.invalidateQueries(); }
     catch (e) { toast.error(e instanceof Error ? e.message : t("c.error")); }
   }
 
@@ -61,10 +63,10 @@ export function DeliveryCard({ o, deliveryId, index, km }: { o: OrderWithRelatio
       {!done ? (
         <>
           <div className="mt-3 flex gap-2"><CallNavButtons phone={o.phone} address={o.address} latitude={o.customer?.latitude} longitude={o.customer?.longitude} /></div>
-          {o.status !== "delivering" ? (
+          {can("deliveries.update") && o.status !== "delivering" ? (
             <GhostButton className="mt-2" onClick={start}><span className="inline-flex items-center gap-2"><Play className="h-5 w-5" /> {t("del.start")}</span></GhostButton>
           ) : null}
-          {deliveryId ? <PrimaryButton className="mt-2" onClick={deliver}><span className="inline-flex items-center gap-2"><Check className="h-5 w-5" /> {t("del.delivered")}</span></PrimaryButton> : null}
+          {can("deliveries.update") && deliveryId ? <PrimaryButton className="mt-2" onClick={deliver}><span className="inline-flex items-center gap-2"><Check className="h-5 w-5" /> {t("del.delivered")}</span></PrimaryButton> : null}
         </>
       ) : null}
     </Card>

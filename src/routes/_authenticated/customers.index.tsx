@@ -13,6 +13,8 @@ import { initialsOf } from "@/lib/domain";
 export const Route = createFileRoute("/_authenticated/customers/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Πελάτες — VoiceOrders" },
       { name: "description", content: "Λίστα πελατών με αναζήτηση ονόματος, τηλεφώνου, διεύθυνσης." },
       { property: "og:title", content: "Πελάτες — VoiceOrders" },

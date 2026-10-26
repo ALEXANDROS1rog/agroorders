@@ -10,6 +10,8 @@ import { formatCurrency, initialsOf } from "@/lib/domain";
 export const Route = createFileRoute("/_authenticated/map")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Χάρτης — VoiceOrders" },
       { name: "description", content: "Πελάτες και εκκρεμείς διανομές στον χάρτη." },
       { property: "og:title", content: "Χάρτης — VoiceOrders" },

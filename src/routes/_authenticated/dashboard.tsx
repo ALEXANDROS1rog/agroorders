@@ -6,10 +6,13 @@ import { fetchDeliveries, fetchOrders, fetchProfile, fetchTrips, isToday, loadin
 import { LoadingList, TripCard } from "@/components/TripCard";
 import { formatCurrency } from "@/lib/domain";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrg } from "@/lib/org";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Αρχική — VoiceOrders" },
       { name: "description", content: "Σύνοψη ημέρας: παραγγελίες, διανομές και αξία." },
       { property: "og:title", content: "Αρχική — VoiceOrders" },
@@ -20,6 +23,8 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
+  const { org, can, hasFeature } = useOrg();
+  const finance = can("finance.view") && hasFeature("advanced_finance");
   const profile = useQuery({ queryKey: ["profile"], queryFn: fetchProfile });
   const orders = useQuery({ queryKey: ["orders"], queryFn: fetchOrders });
   const deliveries = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries });
@@ -43,7 +48,7 @@ function Dashboard() {
 
   return (
     <AppShell
-      title={profile.data?.business_name || "VoiceOrders"}
+      title={org?.organization_name || profile.data?.business_name || "VoiceOrders"}
       subtitle={profile.data ? `Καλώς ήρθες, ${profile.data.first_name}` : undefined}
       action={
         <button
@@ -80,15 +85,15 @@ function Dashboard() {
             <Link to="/orders/new" className="press flex h-16 items-center justify-center gap-2 rounded-2xl bg-brand text-base font-semibold text-brand-foreground">
               <Plus className="h-6 w-6" /> Νέα παραγγελία
             </Link>
-            <Link to="/trips/new" className="press flex h-16 items-center justify-center gap-2 rounded-2xl bg-brand text-base font-semibold text-brand-foreground">
+            {can("routes.manage") ? <Link to="/trips/new" className="press flex h-16 items-center justify-center gap-2 rounded-2xl bg-brand text-base font-semibold text-brand-foreground">
               <Plus className="h-6 w-6" /> Νέο δρομολόγιο
-            </Link>
+            </Link> : null}
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          {finance ? <div className="grid grid-cols-3 gap-2">
             <Card className="!p-3"><p className="text-xs text-muted-foreground">Έσοδα</p><p className="font-display mt-1 text-lg font-bold">{formatCurrency(tripTotals.revenue)}</p></Card>
             <Card className="!p-3"><p className="text-xs text-muted-foreground">Έξοδα</p><p className="font-display mt-1 text-lg font-bold text-destructive">{formatCurrency(tripTotals.expenses)}</p></Card>
             <Card className="!p-3"><p className="text-xs text-muted-foreground">Καθαρά</p><p className="font-display mt-1 text-lg font-bold text-brand">{formatCurrency(tripTotals.net)}</p></Card>
-          </div>
+          </div> : null}
           <Card>
             <p className="mb-2 font-semibold">Προϊόντα για φόρτωμα σήμερα</p>
             <LoadingList items={loadingList(todayTrips.flatMap((t) => t.orders))} empty="Δεν υπάρχουν προϊόντα για σήμερα" />

@@ -10,6 +10,8 @@ import { availableProducts, createOrder, fetchCustomers, fetchProducts, saveCust
 import { extractOrderFromText, transcribeAudio } from "@/lib/ai.functions";
 import { formatCurrency } from "@/lib/domain";
 import { TripSelect } from "@/components/TripSelect";
+import { useOrg } from "@/lib/org";
+import { OrgAccess } from "@/components/OrgAccess";
 
 export const Route = createFileRoute("/_authenticated/orders/new")({
   validateSearch: (s: Record<string, unknown>): { customer?: string; route?: string } => ({
@@ -18,6 +20,8 @@ export const Route = createFileRoute("/_authenticated/orders/new")({
   }),
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Νέα παραγγελία — VoiceOrders" },
       { name: "description", content: "Καταχώριση παραγγελίας χειροκίνητα ή με AI από κείμενο." },
       { property: "og:title", content: "Νέα παραγγελία — VoiceOrders" },
@@ -30,6 +34,10 @@ export const Route = createFileRoute("/_authenticated/orders/new")({
 type Line = NewOrderItem & { matched: boolean };
 
 function NewOrderPage() {
+  return <OrgAccess permission="orders.create" feature="orders" title="Νέα παραγγελία"><NewOrderBody /></OrgAccess>;
+}
+function NewOrderBody() {
+  const { hasFeature } = useOrg();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -37,7 +45,7 @@ function NewOrderPage() {
   const products = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
   const customers = useQuery({ queryKey: ["customers"], queryFn: fetchCustomers });
 
-  const [mode, setMode] = useState<"ai" | "voice" | "manual">(search.customer ? "manual" : "ai");
+  const [mode, setMode] = useState<"ai" | "voice" | "manual">(search.customer || !hasFeature("voice_ai") ? "manual" : "ai");
   const [text, setText] = useState("");
   const [aiBusy, setAiBusy] = useState(false);
   const [review, setReview] = useState(false);
@@ -119,7 +127,7 @@ function NewOrderPage() {
     setAiBusy(true);
     try {
       const r = await extract({ data: { text: input, source } });
-      const match = r.phone ? customers.data?.find((c) => c.phone && r.phone!.endsWith(c.phone.slice(-10))) : undefined;
+      const match = r.phone ? customers.data?.find((c) => c.phone && r.phone?.endsWith(c.phone.slice(-10))) : undefined;
       setCustomerId(match?.id ?? "");
       setName(r.customer_name ?? match?.full_name ?? "");
       setPhone(r.phone ?? match?.phone ?? "");
@@ -176,7 +184,7 @@ function NewOrderPage() {
   return (
     <AppShell title="Νέα παραγγελία" back="/orders">
       <div className="surface-subtle mb-4 flex rounded-2xl p-1">
-        {(["voice", "ai", "manual"] as const).map((m) => (
+        {(["voice", "ai", "manual"] as const).filter((m) => m === "manual" || hasFeature("voice_ai")).map((m) => (
           <button key={m} disabled={recording} onClick={() => { setMode(m); setReview(false); }} className={`press flex-1 rounded-xl px-1 py-3 text-sm font-semibold ${mode === m ? "bg-brand/20 text-brand ring-1 ring-brand/30" : "text-muted-foreground"}`}>
             {m === "voice" ? "Ηχογράφηση" : m === "ai" ? "Από κείμενο" : "Χειροκίνητα"}
           </button>

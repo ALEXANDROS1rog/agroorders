@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { LogOut } from "lucide-react";
+import { LogOut, Building2 } from "lucide-react";
+import { ROLE_LABEL, useOrg, fetchMyInvitations } from "@/lib/org";
 import { AppShell, Card, Loading } from "@/components/AppShell";
-import { Field, PrimaryButton, Select } from "@/components/Field";
+import { Field, PrimaryButton, GhostButton, Select } from "@/components/Field";
 import { fetchProfile, updateProfile } from "@/lib/api";
 import { LANGUAGES, isLang, useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Το προφίλ μου — VoiceOrders" },
       { name: "description", content: "Στοιχεία λογαριασμού, ρυθμίσεις και γλώσσα εφαρμογής." },
       { property: "og:title", content: "Το προφίλ μου — VoiceOrders" },
@@ -22,6 +25,9 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
+  const navigate = useNavigate();
+  const { org, can } = useOrg();
+  const invitations = useQuery({ queryKey: ["my-invitations"], queryFn: fetchMyInvitations });
   const { t, lang, setLang } = useI18n();
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["profile"], queryFn: fetchProfile });
@@ -61,6 +67,13 @@ function ProfilePage() {
     <AppShell title={t("p.title")} back="/dashboard">
       {isLoading ? <Loading /> : (
         <div className="space-y-4">
+          {org ? <Card className="space-y-2">
+            <Building2 className="h-6 w-6 text-brand" />
+            <p className="text-lg font-semibold" data-no-translate>{org.organization_name}</p>
+            <p className="text-sm text-muted-foreground">{ROLE_LABEL[org.role]} · {org.plan_name}</p>
+            {can("org.manage") ? <Link to="/organization" className="surface press flex h-14 items-center justify-center rounded-2xl font-semibold">Επιχείρηση και μέλη</Link> : null}
+          </Card> : null}
+          {(invitations.data ?? []).map((i) => <Link key={i.token} to="/invite/$token" params={{ token: i.token }} className="surface press block rounded-3xl p-4"><p className="font-semibold">Αποδοχή πρόσκλησης</p><p className="text-sm text-muted-foreground" data-no-translate>{i.organization_name}</p></Link>)}
           <Card className="space-y-3">
             <Field label={t("p.first")} value={f.first_name} onChange={(e) => setF({ ...f, first_name: e.target.value })} />
             <Field label={t("p.last")} value={f.last_name} onChange={(e) => setF({ ...f, last_name: e.target.value })} />
@@ -75,12 +88,12 @@ function ProfilePage() {
               {LANGUAGES.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}
             </Select>
           </Card>
-          <button
-            onClick={async () => { await supabase.auth.signOut(); window.location.href = "/auth"; }}
-            className="surface press flex h-14 w-full items-center justify-center gap-2 rounded-2xl font-semibold text-destructive"
+          <GhostButton
+            onClick={async () => { await qc.cancelQueries(); qc.clear(); await supabase.auth.signOut(); navigate({ to: "/auth", replace: true }); }}
+            className="flex items-center justify-center gap-2 text-destructive"
           >
             <LogOut className="h-5 w-5" /> {t("p.logout")}
-          </button>
+          </GhostButton>
         </div>
       )}
     </AppShell>

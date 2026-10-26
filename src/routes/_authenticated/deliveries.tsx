@@ -5,10 +5,13 @@ import { AppShell, EmptyState, Loading } from "@/components/AppShell";
 import { DeliveryCard, GpsBanner, sortByDistance } from "@/components/DeliveryCard";
 import { useMyPosition } from "@/hooks/use-position";
 import { fetchDeliveries } from "@/lib/api";
+import { useOrg } from "@/lib/org";
 
 export const Route = createFileRoute("/_authenticated/deliveries")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Διανομές — VoiceOrders" },
       { name: "description", content: "Εκκρεμείς διανομές ταξινομημένες με βάση την απόσταση από τη θέση σου." },
       { property: "og:title", content: "Διανομές — VoiceOrders" },
@@ -19,8 +22,9 @@ export const Route = createFileRoute("/_authenticated/deliveries")({
 });
 
 function DeliveriesPage() {
+  const { hasFeature } = useOrg();
   const { data, isLoading } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries });
-  const pos = useMyPosition();
+  const pos = useMyPosition(hasFeature("gps_delivery"));
   const pending = (data ?? []).filter(
     (d) => (d.status === "pending" || d.status === "in_progress") && d.order.status !== "cancelled",
   );
@@ -29,7 +33,7 @@ function DeliveriesPage() {
   return (
     <AppShell title="Διανομές" subtitle={`${pending.length} εκκρεμείς`}>
       <AutoDeliver />
-      <GpsBanner pos={pos} />
+      {hasFeature("gps_delivery") ? <GpsBanner pos={pos} /> : null}
       {isLoading ? <Loading /> : !pending.length ? <EmptyState title="Δεν υπάρχουν εκκρεμείς διανομές" /> : (
         <div className="space-y-3">
           {sorted.map(({ item, km }, i) => (

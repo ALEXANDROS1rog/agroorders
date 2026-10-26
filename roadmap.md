@@ -1,15 +1,18 @@
 # VoiceOrders roadmap
-- [ ] Secure role_permissions without unrelated design changes
-- [ ] Complete organization, members and subscription screens with existing Liquid Glass elements
-- [ ] Wire role/plan access controls and invitation sign-in continuity
-- [ ] Translate new organization text into all supported languages
-- [ ] Verify organization flows and permission restrictions with a signed-in account
+- [x] Secure role_permissions without unrelated design changes; live write denial verified
+- [x] Complete organization, members and subscription screens with existing Liquid Glass elements
+- [x] Wire organization/plan access, create/edit guards, AI feature enforcement and invitation sign-in continuity
+- [x] Translate new organization text into all supported languages
+- [x] Verify owner invitation creation/cancellation, plans, translations and mobile layout with signed-in account
+- [ ] Verify acceptance and shared orders/delivery updates as Driver and Manager — requires approved access to those accounts
+- [ ] Verify plan upgrade — blocked until real payments are configured (no fake upgrade)
+- [ ] Full voice/GPS and cross-role end-to-end verification — requires recorded input, GPS scenario and additional approved accounts
 - [x] Trips (δρομολόγια) backend: totals, cleanup after 2 months, language on profile
 - [x] i18n: 12 languages incl. English, whole app translated
-- [ ] Bottom nav 5 items incl. Δρομολόγια
-- [ ] Routes pages: list (active/history), new (calendar + expenses), details (orders, loading list)
-- [ ] New order: route selector
-- [ ] Deliveries: remove planning, GPS sort, start delivery, GPS verification
-- [ ] Dashboard: revenue/expenses(red)/net, loading list, today's trips, Νέο δρομολόγιο
-- [ ] Profile page (edit, language, logout), header tap opens it
-- [ ] Rename to VoiceOrders
+- [x] Bottom nav 5 items incl. Δρομολόγια
+- [x] Routes pages: list (active/history), new (calendar + expenses), details (orders, loading list)
+- [x] New order: route selector
+- [x] Deliveries: remove planning, GPS sort, start delivery, GPS verification implemented (real GPS test above pending)
+- [x] Dashboard: revenue/expenses(red)/net, loading list, today's trips, Νέο δρομολόγιο
+- [x] Profile page (edit, language, logout), header tap opens it
+- [x] Rename to VoiceOrders
