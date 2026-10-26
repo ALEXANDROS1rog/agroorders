@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createStripeClient, verifyWebhook, type StripeEnv } from "@/lib/stripe.server";
 import type Stripe from "stripe";
+import { verifiedPaidPeriod, type PreviousPaymentState } from "@/lib/payment-state";
 
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
@@ -63,21 +64,24 @@ async function synchronizeSubscription(
     .eq("organization_id", org)
     .single();
   if (readError) throw readError;
-  const old = (existing.payment_states as Record<string, { paid?: boolean; period_end?: string }>)[
+  const old = (existing.payment_states as Record<string, PreviousPaymentState>)[
     env
   ];
   // A failed renewal must not extend access past the last actually paid period.
   const paidNow = invoice?.status === "paid";
+  const customerId = typeof sub.customer === "string" ? sub.customer : sub.customer.id;
   const state = {
     subscription_id: sub.id,
-    customer_id: typeof sub.customer === "string" ? sub.customer : sub.customer.id,
+    customer_id: customerId,
     price_id: item.price.lookup_key,
     status: sub.status,
-    paid: paidNow || old?.paid === true,
     period_start: new Date(item.current_period_start * 1000).toISOString(),
-    period_end: paidNow
-      ? new Date(item.current_period_end * 1000).toISOString()
-      : (old?.period_end ?? null),
+    ...verifiedPaidPeriod(old, {
+      subscriptionId: sub.id,
+      customerId,
+      invoicePaid: paidNow,
+      periodEnd: new Date(item.current_period_end * 1000).toISOString(),
+    }),
     cancel_at_period_end: sub.cancel_at_period_end,
   };
   const { error } = await supabaseAdmin.rpc("apply_company_payment", {
