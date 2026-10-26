@@ -1,4 +1,9 @@
 # VoiceOrders roadmap
+- [ ] Secure role_permissions without unrelated design changes
+- [ ] Complete organization, members and subscription screens with existing Liquid Glass elements
+- [ ] Wire role/plan access controls and invitation sign-in continuity
+- [ ] Translate new organization text into all supported languages
+- [ ] Verify organization flows and permission restrictions with a signed-in account
 - [x] Trips (δρομολόγια) backend: totals, cleanup after 2 months, language on profile
 - [x] i18n: 12 languages incl. English, whole app translated
 - [ ] Bottom nav 5 items incl. Δρομολόγια
