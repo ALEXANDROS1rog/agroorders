@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Check, Play } from "lucide-react";
+import { Check, Play, Pause } from "lucide-react";
 import { Card } from "@/components/AppShell";
 import { GhostButton, PrimaryButton } from "@/components/Field";
 import { CallNavButtons, StatusChip } from "@/components/ui-bits";
@@ -11,6 +11,7 @@ import { distanceKm, formatCurrency } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
 import type { PositionState } from "@/hooks/use-position";
 import { useOrg } from "@/lib/org";
+import { useDeliveryTracking, setTracking, stopTracking } from "@/lib/delivery-tracking";
 
 export function orderCoords(o: OrderWithRelations) {
   const c = o.customer;
@@ -37,14 +38,15 @@ export function DeliveryCard({ o, deliveryId, index, km }: { o: OrderWithRelatio
   const { t } = useI18n();
   const qc = useQueryClient();
   const done = o.status === "delivered" || o.status === "cancelled";
+  const tracking = useDeliveryTracking();
 
   async function deliver() {
     if (!deliveryId) return;
-    try { await markDelivered(deliveryId, o.id); toast.success(t("del.delivered")); qc.invalidateQueries(); }
+    try { await markDelivered(deliveryId, o.id); if (tracking.deliveryId === deliveryId) stopTracking(); toast.success(t("del.delivered")); qc.invalidateQueries(); }
     catch (e) { toast.error(e instanceof Error ? e.message : t("c.error")); }
   }
   async function start() {
-    try { await startDelivery(o.id); if (hasFeature("auto_arrival")) enableAutoDeliver(); toast.success(t("del.started")); qc.invalidateQueries(); }
+    try { await startDelivery(o.id); if (deliveryId && hasFeature("auto_arrival")) enableAutoDeliver(deliveryId); toast.success(t("del.started")); qc.invalidateQueries(); }
     catch (e) { toast.error(e instanceof Error ? e.message : t("c.error")); }
   }
 
@@ -66,6 +68,7 @@ export function DeliveryCard({ o, deliveryId, index, km }: { o: OrderWithRelatio
           {can("deliveries.update") && o.status !== "delivering" ? (
             <GhostButton className="mt-2" onClick={start}><span className="inline-flex items-center gap-2"><Play className="h-5 w-5" /> {t("del.start")}</span></GhostButton>
           ) : null}
+          {can("deliveries.update") && hasFeature("auto_arrival") && deliveryId && o.status === "delivering" ? <GhostButton className="mt-2" onClick={() => setTracking(deliveryId, tracking.deliveryId === deliveryId && tracking.status === "active" ? "paused" : "active")}><span className="inline-flex items-center gap-2">{tracking.deliveryId === deliveryId && tracking.status === "active" ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}{tracking.deliveryId === deliveryId && tracking.status === "active" ? "Παύση παρακολούθησης" : "Συνέχιση παρακολούθησης"}</span></GhostButton> : null}
           {can("deliveries.update") && deliveryId ? <PrimaryButton className="mt-2" onClick={deliver}><span className="inline-flex items-center gap-2"><Check className="h-5 w-5" /> {t("del.delivered")}</span></PrimaryButton> : null}
         </>
       ) : null}
