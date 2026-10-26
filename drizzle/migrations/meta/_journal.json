@@ -22,6 +22,13 @@
       "when": 1792999010424,
       "tag": "0002_trusted_company_billing_and_references",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792999082881,
+      "tag": "0003_assigned_work_and_atomic_delivery",
+      "breakpoints": true
     }
   ]
 }

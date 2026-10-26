@@ -117,6 +117,7 @@ export type Database = {
       }
       deliveries: {
         Row: {
+          assigned_driver_id: string | null
           auto_confirmed: boolean
           created_at: string
           delivered_at: string | null
@@ -131,6 +132,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          assigned_driver_id?: string | null
           auto_confirmed?: boolean
           created_at?: string
           delivered_at?: string | null
@@ -145,6 +147,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          assigned_driver_id?: string | null
           auto_confirmed?: boolean
           created_at?: string
           delivered_at?: string | null
@@ -177,6 +180,7 @@ export type Database = {
       }
       delivery_routes: {
         Row: {
+          assigned_driver_id: string | null
           created_at: string
           food: number
           fuel: number
@@ -192,6 +196,7 @@ export type Database = {
           wear: number
         }
         Insert: {
+          assigned_driver_id?: string | null
           created_at?: string
           food?: number
           fuel?: number
@@ -207,6 +212,7 @@ export type Database = {
           wear?: number
         }
         Update: {
+          assigned_driver_id?: string | null
           created_at?: string
           food?: number
           fuel?: number
@@ -760,6 +766,7 @@ export type Database = {
         Args: { _env: string; _event: string; _org: string; _state: Json }
         Returns: undefined
       }
+      can_access_order: { Args: { _order: string }; Returns: boolean }
       change_member_role: {
         Args: { _member: string; _role: string }
         Returns: undefined
@@ -827,6 +834,16 @@ export type Database = {
       purge_old_history: { Args: never; Returns: undefined }
       recalc_route_value: { Args: { _route: string }; Returns: undefined }
       remove_member: { Args: { _member: string }; Returns: undefined }
+      set_delivery_state: {
+        Args: {
+          _auto?: boolean
+          _lat?: number
+          _lng?: number
+          _order: string
+          _status: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
