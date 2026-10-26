@@ -43,6 +43,13 @@
       "when": 1792999392125,
       "tag": "0005_restrict_member_directory",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792999641671,
+      "tag": "0006_prevent_driver_direct_write_bypass",
+      "breakpoints": true
     }
   ]
 }
