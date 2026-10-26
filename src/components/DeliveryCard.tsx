@@ -11,11 +11,10 @@ import { distanceKm, formatCurrency } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
 import type { PositionState } from "@/hooks/use-position";
 import { useOrg } from "@/lib/org";
-import { useDeliveryTracking, setTracking, stopTracking } from "@/lib/delivery-tracking";
+import { deliveryDestination, useDeliveryTracking, setTracking, stopTracking } from "@/lib/delivery-tracking";
 
 export function orderCoords(o: OrderWithRelations) {
-  const c = o.customer;
-  return c?.latitude != null && c?.longitude != null ? { lat: c.latitude, lng: c.longitude } : null;
+  return deliveryDestination(o);
 }
 
 /** Sorts by distance from the current GPS position; orders without coordinates go last. */
@@ -121,8 +120,8 @@ export function DeliveryCard({
             <CallNavButtons
               phone={o.phone}
               address={o.address}
-              latitude={o.customer?.latitude}
-              longitude={o.customer?.longitude}
+              latitude={orderCoords(o)?.lat}
+              longitude={orderCoords(o)?.lng}
             />
           </div>
           {can("deliveries.update") && o.status !== "delivering" ? (

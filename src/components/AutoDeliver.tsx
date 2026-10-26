@@ -9,6 +9,7 @@ import { useOrg } from "@/lib/org";
 import { GhostButton } from "@/components/Field";
 import {
   arrivalSample,
+  deliveryDestination,
   stopTracking,
   setTracking,
   getTracking,
@@ -73,12 +74,13 @@ export function AutoDeliver() {
         const now = Date.now();
         for (const d of pending) {
           const c = d.order.customer;
-          if (c?.latitude == null || c?.longitude == null) {
+          const destination = deliveryDestination(d.order);
+          if (!destination) {
             setHint("Δεν υπάρχει τοποθεσία προορισμού. Χρησιμοποιήστε χειροκίνητη επιβεβαίωση.");
             continue;
           }
           if (completing.current) continue;
-          const m = distanceKm(me, { lat: c.latitude, lng: c.longitude }) * 1000;
+          const m = distanceKm(me, destination) * 1000;
           if (now - pos.timestamp > 5000) {
             dwell.current = null;
             continue;
@@ -90,7 +92,7 @@ export function AutoDeliver() {
           completing.current = true;
           try {
             await markDelivered(d.id, d.order.id, { lat: me.lat, lng: me.lng, auto: true });
-            toast.success(`${t("a.done")}: ${c.full_name}`);
+            toast.success(`${t("a.done")}: ${c?.full_name ?? "—"}`);
             stopTracking();
             qc.invalidateQueries();
           } catch {

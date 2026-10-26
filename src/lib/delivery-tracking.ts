@@ -1,4 +1,9 @@
 import { useSyncExternalStore } from "react";
+export function deliveryDestination(order: { address: string; customer: { address: string; latitude: number | null; longitude: number | null } | null }) {
+  const customer = order.customer;
+  if (!customer || customer.latitude == null || customer.longitude == null || order.address.trim().toLowerCase() !== customer.address.trim().toLowerCase()) return null;
+  return { lat: customer.latitude, lng: customer.longitude };
+}
 export type Tracking = { deliveryId: string | null; status: "stopped" | "active" | "paused" };
 const empty: Tracking = { deliveryId: null, status: "stopped" };
 let current: Tracking = empty;

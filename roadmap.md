@@ -1,16 +1,20 @@
 # VoiceOrders roadmap
-- [ ] Audit and repair company isolation, driver assignments and subscription enforcement without data loss
-- [ ] Set Basic €350 and modestly reduce Pro/Business while preserving annual billing
-- [ ] Add registration plan selection and trusted Stripe subscription lifecycle — waiting for payment setup confirmation
-- [ ] Implement and test delivery tracking pause/resume, accuracy/dwell and stop-on-completion
-- [ ] Verify realistic role/account and payment scenarios; report unexecuted checks explicitly
+- [x] Audit and repair company isolation, delivery assignments and subscription write enforcement; preserve legacy access and data
+- [x] Set annual prices Basic €350, Pro €420, Business €550; provider and database values verified
+- [x] Registration plan selection, embedded test checkout, trusted signature-checked/idempotent billing lifecycle and owner portal
+- [x] Delivery-scoped pause/resume, conservative accuracy/dwell and stop-on-completion; rule tests pass
+- [ ] Verify real driver/manager shared-data and GPS flows — requires approved role accounts with assigned work
+- [ ] Verify hosted payment-event delivery automatically reaches the app — actual provider event replay works locally, automatic delivery not observed
+- [ ] Verify declined checkout and complete registration/email confirmation — test decline was not conclusively observed; registration selector verified only
+- [ ] Configure and verify prorated upgrades/period-end downgrades in billing portal — requires owner choices and provider portal configuration
+- [ ] Enable live billing — requires account claim, business verification, bank details and live readiness check in Payments
 - [x] Secure role_permissions without unrelated design changes; live write denial verified
 - [x] Complete organization, members and subscription screens with existing Liquid Glass elements
 - [x] Wire organization/plan access, create/edit guards, AI feature enforcement and invitation sign-in continuity
 - [x] Translate new organization text into all supported languages
 - [x] Verify owner invitation creation/cancellation, plans, translations and mobile layout with signed-in account
 - [ ] Verify acceptance and shared orders/delivery updates as Driver and Manager — requires approved access to those accounts
-- [ ] Verify plan upgrade — blocked until real payments are configured (no fake upgrade)
+- [ ] Verify plan upgrade — blocked until portal change policy/configuration and live readiness are completed
 - [ ] Full voice/GPS and cross-role end-to-end verification — requires recorded input, GPS scenario and additional approved accounts
 - [x] Trips (δρομολόγια) backend: totals, cleanup after 2 months, language on profile
 - [x] i18n: 12 languages incl. English, whole app translated
