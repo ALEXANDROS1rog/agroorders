@@ -7,10 +7,19 @@ import { distanceKm } from "@/lib/domain";
 import { useI18n } from "@/lib/i18n";
 import { useOrg } from "@/lib/org";
 import { GhostButton } from "@/components/Field";
-import { arrivalSample, stopTracking, setTracking, getTracking, useDeliveryTracking, type Dwell } from "@/lib/delivery-tracking";
+import {
+  arrivalSample,
+  stopTracking,
+  setTracking,
+  getTracking,
+  useDeliveryTracking,
+  type Dwell,
+} from "@/lib/delivery-tracking";
 
 /** Call to switch automatic confirmation on from anywhere (e.g. "Έναρξη διανομής"). */
-export function enableAutoDeliver(deliveryId: string) { setTracking(deliveryId, "active"); }
+export function enableAutoDeliver(deliveryId: string) {
+  setTracking(deliveryId, "active");
+}
 
 /** Toggle + GPS watcher: marks a pending delivery as delivered when the farmer
  * arrives at (and briefly stays at) the customer's saved location. */
@@ -22,7 +31,12 @@ export function AutoDeliver() {
   const tracking = useDeliveryTracking();
   const on = tracking.status === "active";
   const [hint, setHint] = useState("");
-  const { data } = useQuery({ queryKey: ["deliveries"], queryFn: fetchDeliveries, enabled: on, refetchInterval: on ? 5000 : false });
+  const { data } = useQuery({
+    queryKey: ["deliveries"],
+    queryFn: fetchDeliveries,
+    enabled: on,
+    refetchInterval: on ? 5000 : false,
+  });
   const dwell = useRef<Dwell>(null);
   const completing = useRef(false);
   const listRef = useRef(data);
@@ -31,28 +45,44 @@ export function AutoDeliver() {
   useEffect(() => {
     if (!allowed) stopTracking();
     if (!data || !on) return;
-    const delivery = data.find(d => d.id === tracking.deliveryId);
-    if (!delivery || delivery.order.status === "cancelled" || delivery.order.status === "delivered") stopTracking();
+    const delivery = data.find((d) => d.id === tracking.deliveryId);
+    if (!delivery || delivery.order.status === "cancelled" || delivery.order.status === "delivered")
+      stopTracking();
   }, [data, on, allowed, tracking.deliveryId]);
 
   useEffect(() => {
     dwell.current = null;
     if (!on || !allowed || !tracking.deliveryId) return;
-    if (!("geolocation" in navigator)) { setHint(t("a.denied")); return; }
+    if (!("geolocation" in navigator)) {
+      setHint(t("a.denied"));
+      return;
+    }
     setHint(t("del.gpsWait"));
     const id = navigator.geolocation.watchPosition(
       async (pos) => {
-        if (getTracking().status !== "active" || getTracking().deliveryId !== tracking.deliveryId) return;
+        if (getTracking().status !== "active" || getTracking().deliveryId !== tracking.deliveryId)
+          return;
         const me = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setHint(t("a.active"));
-        const pending = (listRef.current ?? []).filter(d => d.id === tracking.deliveryId && d.status === "in_progress" && d.order.status === "delivering");
+        const pending = (listRef.current ?? []).filter(
+          (d) =>
+            d.id === tracking.deliveryId &&
+            d.status === "in_progress" &&
+            d.order.status === "delivering",
+        );
         const now = Date.now();
         for (const d of pending) {
           const c = d.order.customer;
-          if (c?.latitude == null || c?.longitude == null) { setHint("Δεν υπάρχει τοποθεσία προορισμού. Χρησιμοποιήστε χειροκίνητη επιβεβαίωση."); continue; }
+          if (c?.latitude == null || c?.longitude == null) {
+            setHint("Δεν υπάρχει τοποθεσία προορισμού. Χρησιμοποιήστε χειροκίνητη επιβεβαίωση.");
+            continue;
+          }
           if (completing.current) continue;
           const m = distanceKm(me, { lat: c.latitude, lng: c.longitude }) * 1000;
-          if (now - pos.timestamp > 5000) { dwell.current = null; continue; }
+          if (now - pos.timestamp > 5000) {
+            dwell.current = null;
+            continue;
+          }
           const result = arrivalSample(dwell.current, m, pos.coords.accuracy, now);
           dwell.current = result.dwell;
           if (pos.coords.accuracy > 30) setHint("Ανακριβές σήμα GPS — αναμονή καλύτερης θέσης.");
@@ -63,11 +93,17 @@ export function AutoDeliver() {
             toast.success(`${t("a.done")}: ${c.full_name}`);
             stopTracking();
             qc.invalidateQueries();
-          } catch { dwell.current = null; }
-          finally { completing.current = false; }
+          } catch {
+            dwell.current = null;
+          } finally {
+            completing.current = false;
+          }
         }
       },
-      (error) => { dwell.current = null; setHint(error.code === 1 ? t("a.denied") : "Ανακριβές σήμα GPS — αναμονή καλύτερης θέσης."); },
+      (error) => {
+        dwell.current = null;
+        setHint(error.code === 1 ? t("a.denied") : "Ανακριβές σήμα GPS — αναμονή καλύτερης θέσης.");
+      },
       { enableHighAccuracy: true, maximumAge: 5000 },
     );
     return () => navigator.geolocation.clearWatch(id);
@@ -81,10 +117,16 @@ export function AutoDeliver() {
 
   if (!allowed || !tracking.deliveryId) return null;
   return (
-    <GhostButton onClick={toggle} aria-pressed={on} className={`mb-4 flex !h-auto items-center gap-3 p-4 text-left ${on ? "bg-brand/20 ring-1 ring-brand/40" : "surface-subtle"}`}>
+    <GhostButton
+      onClick={toggle}
+      aria-pressed={on}
+      className={`mb-4 flex !h-auto items-center gap-3 p-4 text-left ${on ? "bg-brand/20 ring-1 ring-brand/40" : "surface-subtle"}`}
+    >
       <MapPinCheck className={`h-6 w-6 shrink-0 ${on ? "text-brand" : "text-muted-foreground"}`} />
       <span className="min-w-0 flex-1">
-        <span className="block font-semibold">{on ? "Παύση παρακολούθησης" : "Συνέχιση παρακολούθησης"}</span>
+        <span className="block font-semibold">
+          {on ? "Παύση παρακολούθησης" : "Συνέχιση παρακολούθησης"}
+        </span>
         <span className="block text-xs text-muted-foreground">{hint || t("a.hint")}</span>
       </span>
     </GhostButton>

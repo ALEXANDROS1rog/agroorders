@@ -19,21 +19,52 @@ export function orderCoords(o: OrderWithRelations) {
 }
 
 /** Sorts by distance from the current GPS position; orders without coordinates go last. */
-export function sortByDistance<T>(list: T[], getOrder: (x: T) => OrderWithRelations, pos: PositionState) {
+export function sortByDistance<T>(
+  list: T[],
+  getOrder: (x: T) => OrderWithRelations,
+  pos: PositionState,
+) {
   if (pos.status !== "ok") return list.map((x) => ({ item: x, km: null as number | null }));
   return list
-    .map((x) => { const c = orderCoords(getOrder(x)); return { item: x, km: c ? distanceKm(pos, c) : null }; })
+    .map((x) => {
+      const c = orderCoords(getOrder(x));
+      return { item: x, km: c ? distanceKm(pos, c) : null };
+    })
     .sort((a, b) => (a.km ?? Infinity) - (b.km ?? Infinity));
 }
 
 export function GpsBanner({ pos }: { pos: PositionState }) {
   const { t } = useI18n();
-  if (pos.status === "ok") return <p className="mb-3 rounded-2xl bg-brand/15 px-4 py-3 text-sm font-semibold text-brand">{t("del.gpsOk")}</p>;
-  if (pos.status === "denied") return <p className="mb-3 rounded-2xl bg-warning/15 px-4 py-3 text-sm font-semibold text-warning">{t("del.gpsDenied")}</p>;
-  return <p className="surface-subtle mb-3 rounded-2xl px-4 py-3 text-sm text-muted-foreground">{t("del.gpsWait")}</p>;
+  if (pos.status === "ok")
+    return (
+      <p className="mb-3 rounded-2xl bg-brand/15 px-4 py-3 text-sm font-semibold text-brand">
+        {t("del.gpsOk")}
+      </p>
+    );
+  if (pos.status === "denied")
+    return (
+      <p className="mb-3 rounded-2xl bg-warning/15 px-4 py-3 text-sm font-semibold text-warning">
+        {t("del.gpsDenied")}
+      </p>
+    );
+  return (
+    <p className="surface-subtle mb-3 rounded-2xl px-4 py-3 text-sm text-muted-foreground">
+      {t("del.gpsWait")}
+    </p>
+  );
 }
 
-export function DeliveryCard({ o, deliveryId, index, km }: { o: OrderWithRelations; deliveryId: string | undefined; index: number; km: number | null }) {
+export function DeliveryCard({
+  o,
+  deliveryId,
+  index,
+  km,
+}: {
+  o: OrderWithRelations;
+  deliveryId: string | undefined;
+  index: number;
+  km: number | null;
+}) {
   const { can, hasFeature } = useOrg();
   const { t } = useI18n();
   const qc = useQueryClient();
@@ -42,34 +73,99 @@ export function DeliveryCard({ o, deliveryId, index, km }: { o: OrderWithRelatio
 
   async function deliver() {
     if (!deliveryId) return;
-    try { await markDelivered(deliveryId, o.id); if (tracking.deliveryId === deliveryId) stopTracking(); toast.success(t("del.delivered")); qc.invalidateQueries(); }
-    catch (e) { toast.error(e instanceof Error ? e.message : t("c.error")); }
+    try {
+      await markDelivered(deliveryId, o.id);
+      if (tracking.deliveryId === deliveryId) stopTracking();
+      toast.success(t("del.delivered"));
+      qc.invalidateQueries();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("c.error"));
+    }
   }
   async function start() {
-    try { await startDelivery(o.id); if (deliveryId && hasFeature("auto_arrival")) enableAutoDeliver(deliveryId); toast.success(t("del.started")); qc.invalidateQueries(); }
-    catch (e) { toast.error(e instanceof Error ? e.message : t("c.error")); }
+    try {
+      await startDelivery(o.id);
+      if (deliveryId && hasFeature("auto_arrival")) enableAutoDeliver(deliveryId);
+      toast.success(t("del.started"));
+      qc.invalidateQueries();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("c.error"));
+    }
   }
 
   return (
     <Card>
       <div className="flex items-start justify-between gap-2">
         <Link to="/orders/$id" params={{ id: o.id }} className="min-w-0">
-          <p className="text-lg font-semibold">{index}. {o.customer?.full_name ?? "—"}{km != null ? <span className="ml-2 text-sm font-bold text-accent">{km.toFixed(1)} km</span> : null}</p>
+          <p className="text-lg font-semibold">
+            {index}. {o.customer?.full_name ?? "—"}
+            {km != null ? (
+              <span className="ml-2 text-sm font-bold text-accent">{km.toFixed(1)} km</span>
+            ) : null}
+          </p>
           <p className="text-sm">{o.phone}</p>
-          <p className="text-sm text-muted-foreground">{o.address}{orderCoords(o) ? "" : ` (${t("del.noLoc")})`}</p>
+          <p className="text-sm text-muted-foreground">
+            {o.address}
+            {orderCoords(o) ? "" : ` (${t("del.noLoc")})`}
+          </p>
         </Link>
         <StatusChip status={o.status} />
       </div>
-      <p className="mt-2 text-sm">{o.order_items.map((i) => `${i.quantity}× ${i.product_name}`).join(", ")}</p>
+      <p className="mt-2 text-sm">
+        {o.order_items.map((i) => `${i.quantity}× ${i.product_name}`).join(", ")}
+      </p>
       <p className="font-display mt-1 text-xl font-bold">{formatCurrency(orderTotal(o))}</p>
       {!done ? (
         <>
-          <div className="mt-3 flex gap-2"><CallNavButtons phone={o.phone} address={o.address} latitude={o.customer?.latitude} longitude={o.customer?.longitude} /></div>
+          <div className="mt-3 flex gap-2">
+            <CallNavButtons
+              phone={o.phone}
+              address={o.address}
+              latitude={o.customer?.latitude}
+              longitude={o.customer?.longitude}
+            />
+          </div>
           {can("deliveries.update") && o.status !== "delivering" ? (
-            <GhostButton className="mt-2" onClick={start}><span className="inline-flex items-center gap-2"><Play className="h-5 w-5" /> {t("del.start")}</span></GhostButton>
+            <GhostButton className="mt-2" onClick={start}>
+              <span className="inline-flex items-center gap-2">
+                <Play className="h-5 w-5" /> {t("del.start")}
+              </span>
+            </GhostButton>
           ) : null}
-          {can("deliveries.update") && hasFeature("auto_arrival") && deliveryId && o.status === "delivering" ? <GhostButton className="mt-2" onClick={() => setTracking(deliveryId, tracking.deliveryId === deliveryId && tracking.status === "active" ? "paused" : "active")}><span className="inline-flex items-center gap-2">{tracking.deliveryId === deliveryId && tracking.status === "active" ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}{tracking.deliveryId === deliveryId && tracking.status === "active" ? "Παύση παρακολούθησης" : "Συνέχιση παρακολούθησης"}</span></GhostButton> : null}
-          {can("deliveries.update") && deliveryId ? <PrimaryButton className="mt-2" onClick={deliver}><span className="inline-flex items-center gap-2"><Check className="h-5 w-5" /> {t("del.delivered")}</span></PrimaryButton> : null}
+          {can("deliveries.update") &&
+          hasFeature("auto_arrival") &&
+          deliveryId &&
+          o.status === "delivering" ? (
+            <GhostButton
+              className="mt-2"
+              onClick={() =>
+                setTracking(
+                  deliveryId,
+                  tracking.deliveryId === deliveryId && tracking.status === "active"
+                    ? "paused"
+                    : "active",
+                )
+              }
+            >
+              <span className="inline-flex items-center gap-2">
+                {tracking.deliveryId === deliveryId && tracking.status === "active" ? (
+                  <Pause className="h-5 w-5" />
+                ) : (
+                  <Play className="h-5 w-5" />
+                )}
+                {tracking.deliveryId === deliveryId && tracking.status === "active"
+                  ? "Παύση παρακολούθησης"
+                  : "Συνέχιση παρακολούθησης"}
+              </span>
+            </GhostButton>
+          ) : null}
+          {can("deliveries.update") && deliveryId ? (
+            <PrimaryButton className="mt-2" onClick={deliver}>
+              <span className="inline-flex items-center gap-2">
+                <Check className="h-5 w-5" /> {t("del.delivered")}
+              </span>
+            </PrimaryButton>
+          ) : null}
         </>
       ) : null}
     </Card>

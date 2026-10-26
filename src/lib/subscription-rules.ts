@@ -7,7 +7,12 @@ export type PlanSlug = keyof typeof ANNUAL_PLANS;
 export function isPlanSlug(value: unknown): value is PlanSlug {
   return typeof value === "string" && value in ANNUAL_PLANS;
 }
-export function subscriptionAccess(status: string, periodEnd: string | null, paid: boolean, now = Date.now()) {
+export function subscriptionAccess(
+  status: string,
+  periodEnd: string | null,
+  paid: boolean,
+  now = Date.now(),
+) {
   if (!paid || !periodEnd || Date.parse(periodEnd) <= now) return false;
   return ["active", "past_due", "canceled"].includes(status);
 }
