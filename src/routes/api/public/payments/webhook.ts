@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createStripeClient, verifyWebhook, type StripeEnv } from "@/lib/stripe.server";
 import type Stripe from "stripe";
 import { verifiedPaidPeriod, type PreviousPaymentState } from "@/lib/payment-state";
+import { planKeyForPrice } from "@/lib/subscription-rules";
 
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
@@ -55,7 +56,8 @@ async function synchronizeSubscription(
   const org = sub.metadata["organizationId"];
   if (!org || !/^[0-9a-f-]{36}$/i.test(org)) throw new Error("Missing organization metadata");
   const item = sub.items.data[0];
-  if (!item?.price.lookup_key) throw new Error("Unknown subscription price");
+  const planKey = item ? planKeyForPrice(item.price) : null;
+  if (!item || !planKey) throw new Error("Unknown subscription price");
   const invoice = typeof sub.latest_invoice === "object" ? sub.latest_invoice : null;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: existing, error: readError } = await supabaseAdmin
@@ -73,7 +75,7 @@ async function synchronizeSubscription(
   const state = {
     subscription_id: sub.id,
     customer_id: customerId,
-    price_id: item.price.lookup_key,
+    price_id: planKey,
     status: sub.status,
     period_start: new Date(item.current_period_start * 1000).toISOString(),
     ...verifiedPaidPeriod(old, {
