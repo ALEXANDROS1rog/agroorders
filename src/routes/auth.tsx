@@ -7,7 +7,7 @@ import { lovable } from "@/integrations/lovable";
 import { PENDING_INVITE_KEY, fetchOrgContext } from "@/lib/org";
 import { needsPlanSelection } from "@/lib/subscription-rules";
 
-type SocialProvider = "google" | "apple" | "lovable";
+type SocialProvider = "google" | "apple";
 
 const SOCIAL_OPTIONS: { id: SocialProvider; label: string; icon: React.ReactNode }[] = [
   {
@@ -25,15 +25,6 @@ const SOCIAL_OPTIONS: { id: SocialProvider; label: string; icon: React.ReactNode
     icon: (
       <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
         <path d="M17.05 12.54c-.03-2.66 2.17-3.94 2.27-4a4.7 4.7 0 0 0-3.7-2.02c-1.55-.16-3.06.93-3.85.93-.79 0-2.02-.9-3.32-.88-1.7.03-3.28.99-4.15 2.52-1.77 3.07-.45 7.62 1.27 10.11.84 1.22 1.85 2.59 3.17 2.54 1.27-.05 1.75-.82 3.29-.82 1.53 0 1.97.82 3.31.8 1.37-.03 2.24-1.25 3.08-2.48a10.4 10.4 0 0 0 1.4-2.87 4.5 4.5 0 0 1-2.77-3.81ZM14.53 4.86a4.35 4.35 0 0 0 1-3.11 4.4 4.4 0 0 0-2.86 1.48 4.12 4.12 0 0 0-1.02 3 3.65 3.65 0 0 0 2.88-1.37Z" />
-      </svg>
-    ),
-  },
-  {
-    id: "lovable",
-    label: "Σύνδεση με Lovable",
-    icon: (
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
-        <path d="M12 21.35 10.55 20A16.9 16.9 0 0 1 5 15a5.66 5.66 0 0 1-1.5-3.9A5.1 5.1 0 0 1 12 7.7a5.1 5.1 0 0 1 8.5 3.4A5.66 5.66 0 0 1 19 15a16.9 16.9 0 0 1-5.55 5Z" />
       </svg>
     ),
   },
