@@ -24,5 +24,6 @@
   "Αναβάθμιση πλάνου": "Upgrade plan",
   "Αναβάθμιση...": "Upgrading...",
   "Η αναβάθμιση εκκρεμεί μέχρι να ολοκληρωθεί η πληρωμή της διαφοράς.": "The upgrade is pending until the difference is paid.",
-  "Η αναβάθμιση ολοκληρώθηκε. Η χρέωση της διαφοράς έγινε αναλογικά.": "Upgrade complete. The difference was charged proportionally."
+  "Η αναβάθμιση ολοκληρώθηκε. Η χρέωση της διαφοράς έγινε αναλογικά.": "Upgrade complete. The difference was charged proportionally.",
+  "Λογαριασμός": "Account"
 }

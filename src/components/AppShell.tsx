@@ -3,6 +3,7 @@ import { ChevronLeft, Home, ClipboardList, Truck, Users, Route as RouteIcon } fr
 import { useI18n, type TKey } from "@/lib/i18n";
 import { useEffect, useState, type ReactNode } from "react";
 import { useOrg } from "@/lib/org";
+import { needsPlanSelection } from "@/lib/subscription-rules";
 
 const NAV = [
   { to: "/dashboard", label: "nav.home" as TKey, icon: Home },
@@ -86,7 +87,8 @@ function PageBody({ title, subtitle, back, action, children }: ShellProps) {
 function ShellFrame(props: ShellProps) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { t } = useI18n();
-  const { can, hasFeature } = useOrg();
+  const { org, can, hasFeature } = useOrg();
+  const choosingPlan = needsPlanSelection(org);
   const permissions = [null, "orders.view", "deliveries.view", "customers.view", "routes.view"];
   const features = [null, "orders", "deliveries", "customers", "routes"];
 
@@ -104,7 +106,7 @@ function ShellFrame(props: ShellProps) {
     <div data-tone={tone} className="relative min-h-screen w-full overflow-clip bg-background text-foreground">
       <PageBody {...props} />
 
-      <nav className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[420px] -translate-x-1/2">
+      {choosingPlan ? null : <nav className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[420px] -translate-x-1/2">
         <div
           className="liquid-glass relative flex rounded-[1.75rem] p-1.5"
         >
@@ -129,7 +131,7 @@ function ShellFrame(props: ShellProps) {
             );
           })}
         </div>
-      </nav>
+      </nav>}
     </div>
   );
 }
