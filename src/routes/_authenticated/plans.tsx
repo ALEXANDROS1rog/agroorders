@@ -87,6 +87,6 @@ function PlansBody() {
         : <PrimaryButton disabled={!configured || !!selected || tooSmall} onClick={() => { if (isPlanSlug(p.slug)) setSelected(p.slug); }}>Επιλογή πλάνου</PrimaryButton>}
     </Card>; })}
   </div>;
-  if (onboarding) return <div className="min-h-screen bg-background text-foreground"><main className="mx-auto max-w-[460px] px-4 pb-10 pt-[calc(1.5rem+env(safe-area-inset-top))]"><h1 className="font-display mb-4 text-2xl font-bold">Επιλέξτε πλάνο</h1>{content}</main></div>;
+  if (onboarding) return <div data-tone="account" className="min-h-screen bg-background text-foreground"><main className="mx-auto max-w-[460px] px-4 pb-10 pt-[calc(1.5rem+env(safe-area-inset-top))]"><h1 className="font-display mb-4 text-2xl font-bold">Επιλέξτε πλάνο</h1>{content}</main></div>;
   return <AppShell title="Πλάνα και συνδρομή" back="/organization">{content}</AppShell>;
 }
