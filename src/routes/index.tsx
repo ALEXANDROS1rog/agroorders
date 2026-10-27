@@ -17,7 +17,9 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Οργάνωσε παραγγελίες, πελάτες, προϊόντα και διανομές από το κινητό σου.",
       },
+      { property: "og:url", content: "https://voiceorders.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://voiceorders.lovable.app/" }],
   }),
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();

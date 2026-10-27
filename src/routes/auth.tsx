@@ -68,7 +68,9 @@ export const Route = createFileRoute("/auth")({
       },
       { property: "og:title", content: "Σύνδεση — VoiceOrders" },
       { property: "og:description", content: "Σύνδεση παραγωγού στο VoiceOrders." },
+      { property: "og:url", content: "https://voiceorders.lovable.app/auth" },
     ],
+    links: [{ rel: "canonical", href: "https://voiceorders.lovable.app/auth" }],
   }),
   component: AuthPage,
 });

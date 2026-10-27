@@ -96,6 +96,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "VoiceOrders" },
       { property: "og:description", content: "Παραγγελίες και διανομές για παραγωγούς." },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "VoiceOrders" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
@@ -108,6 +109,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "stylesheet", href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://voiceorders.lovable.app/#organization",
+              name: "VoiceOrders",
+              url: "https://voiceorders.lovable.app/",
+              logo: "https://voiceorders.lovable.app/favicon.png",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://voiceorders.lovable.app/#website",
+              url: "https://voiceorders.lovable.app/",
+              name: "VoiceOrders",
+              description:
+                "Διαχείριση παραγγελιών, πελατών, προϊόντων και διανομών για παραγωγούς.",
+              inLanguage: "el",
+              publisher: { "@id": "https://voiceorders.lovable.app/#organization" },
+            },
+          ],
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
