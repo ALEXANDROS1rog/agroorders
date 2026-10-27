@@ -1,4 +1,5 @@
 # VoiceOrders roadmap
+- [x] Add restrained visible section-color accents and center the new-customer toolbar button; verify opening/canceling its form.
 - [ ] Complete authorized own-account LIVE Stripe migration — live connection/webhook credentials are not provisioned; connected account catalog returns no recurring prices and its live mode is not verified. Unify checkout/portal/webhooks only after supported runtime account linkage. Never create duplicate plans or real test charges; confirm irreversible actions first.
 - [x] Prevent replacement subscriptions/customers inheriting previous paid periods; five regression tests plus existing payment/delivery tests pass (23 total)
 - [x] Narrow signup changes: free account-only form, email confirmation returns to plans, unpaid-owner sign-in returns to plans, actual implemented feature list, verified-payment entry and same-plan incomplete-checkout retry; no data/permission/provider catalog changes
