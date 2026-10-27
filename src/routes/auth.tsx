@@ -84,6 +84,22 @@ function AuthPage() {
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((prev) => ({ ...prev, [k]: e.target.value }));
 
+  async function onSocial(provider: SocialProvider) {
+    setBusy(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: window.location.origin,
+      });
+      if (result.error) throw result.error;
+      if (result.redirected) return;
+      await afterLogin(navigate);
+    } catch {
+      toast.error("Δεν ήταν δυνατή η σύνδεση. Δοκίμασε ξανά.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
