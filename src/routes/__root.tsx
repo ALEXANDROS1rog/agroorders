@@ -85,12 +85,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { title: "VoiceOrders — Παραγγελίες & Διανομές" },
-      {
-        name: "description",
-        content:
-          "Διαχείριση παραγγελιών, πελατών, προϊόντων και διανομών για παραγωγούς.",
-      },
       { name: "theme-color", content: "#0b1220", media: "(prefers-color-scheme: dark)" },
       { name: "theme-color", content: "#eef2f8", media: "(prefers-color-scheme: light)" },
       {
