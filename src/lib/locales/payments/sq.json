@@ -19,5 +19,10 @@
   "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Ekziston tashmë një pajtim. Menaxhoni pajtimin ekzistues.",
   "χρήστες": "përdorues",
   "Η εγγραφή είναι δωρεάν. Δεν απαιτείται κάρτα.": "Regjistrimi është falas. Nuk kërkohet kartë.",
-  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Pagesa e provës u konfirmua. Nuk aktivizon një abonim real."
+  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Pagesa e provës u konfirmua. Nuk aktivizon një abonim real.",
+  "Επιλέξτε πλάνο": "Zgjidhni një plan",
+  "Αναβάθμιση πλάνου": "Përmirëso planin",
+  "Αναβάθμιση...": "Duke përmirësuar...",
+  "Η αναβάθμιση εκκρεμεί μέχρι να ολοκληρωθεί η πληρωμή της διαφοράς.": "Përmirësimi pret pagesën e diferencës.",
+  "Η αναβάθμιση ολοκληρώθηκε. Η χρέωση της διαφοράς έγινε αναλογικά.": "Përmirësimi përfundoi. Diferenca u tarifua në mënyrë proporcionale."
 }

@@ -19,5 +19,10 @@
   "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "A subscription already exists. Manage the existing subscription.",
   "χρήστες": "users",
   "Η εγγραφή είναι δωρεάν. Δεν απαιτείται κάρτα.": "Registration is free. No card required.",
-  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Test payment confirmed. It does not activate a real subscription."
+  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Test payment confirmed. It does not activate a real subscription.",
+  "Επιλέξτε πλάνο": "Choose a plan",
+  "Αναβάθμιση πλάνου": "Upgrade plan",
+  "Αναβάθμιση...": "Upgrading...",
+  "Η αναβάθμιση εκκρεμεί μέχρι να ολοκληρωθεί η πληρωμή της διαφοράς.": "The upgrade is pending until the difference is paid.",
+  "Η αναβάθμιση ολοκληρώθηκε. Η χρέωση της διαφοράς έγινε αναλογικά.": "Upgrade complete. The difference was charged proportionally."
 }

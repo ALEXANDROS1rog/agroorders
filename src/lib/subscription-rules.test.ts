@@ -20,4 +20,19 @@ test("Test payment never bypasses existing live entitlement restrictions", () =>
 test("Unimplemented advanced AI and analytics are not advertised", () => {
   assert.equal(CHECKOUT_FEATURES.has("advanced_ai"), false);
   assert.equal(CHECKOUT_FEATURES.has("advanced_analytics"), false);
+});test("Basic can upgrade to Pro and Business; Pro only to Business", async () => {
+  const { canUpgrade } = await import("./subscription-rules");
+  assert.equal(canUpgrade("basic","pro"), true);
+  assert.equal(canUpgrade("basic","business"), true);
+  assert.equal(canUpgrade("pro","business"), true);
+  assert.equal(canUpgrade("pro","basic"), false);
+  assert.equal(canUpgrade("business","pro"), false);
+  assert.equal(canUpgrade("pro","pro"), false);
+});
+test("Live price IDs map to the plan keys", async () => {
+  const { planKeyForPrice } = await import("./subscription-rules");
+  assert.equal(planKeyForPrice({id:"price_1UUwPhKmzqfVZ3iXD1bBfvEY", lookup_key:null}), "voiceorders_basic_yearly");
+  assert.equal(planKeyForPrice({id:"price_1UUwQGKmzqfVZ3iXiJGX6D2A"}), "voiceorders_pro_yearly");
+  assert.equal(planKeyForPrice({id:"price_1UUwR7KmzqfVZ3iXyIhUhUbi"}), "voiceorders_business_yearly");
+  assert.equal(planKeyForPrice({id:"price_unknown"}), null);
 });
