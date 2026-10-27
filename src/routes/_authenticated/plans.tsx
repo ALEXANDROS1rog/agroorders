@@ -9,9 +9,9 @@ import { useState, useEffect, lazy, Suspense } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { PrimaryButton, GhostButton } from "@/components/Field";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
-import { companyBillingState, createCompanyPortal } from "@/lib/payments.functions";
+import { companyBillingState, createCompanyPortal, upgradeCompanyPlan } from "@/lib/payments.functions";
 import { getStripeEnvironment } from "@/lib/stripe";
-import { isPlanSlug, canEnterAfterPayment, CHECKOUT_FEATURES, type PlanSlug } from "@/lib/subscription-rules";
+import { isPlanSlug, canEnterAfterPayment, canUpgrade, needsPlanSelection, planSlugForKey, CHECKOUT_FEATURES, type PlanSlug } from "@/lib/subscription-rules";
 const CompanyCheckout = lazy(() => import("@/components/CompanyCheckout").then(m => ({ default: m.CompanyCheckout })));
 
 export const Route = createFileRoute("/_authenticated/plans")({
@@ -30,8 +30,11 @@ function PlansBody() {
   const { session_id } = Route.useSearch();
   const [selected, setSelected] = useState<PlanSlug | null>(null);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [upgrading, setUpgrading] = useState<PlanSlug | null>(null);
   const billing = useServerFn(companyBillingState);
   const portal = useServerFn(createCompanyPortal);
+  const upgrade = useServerFn(upgradeCompanyPlan);
   const configured = !!import.meta.env['VITE_PAYMENTS_CLIENT_TOKEN'];
   const state = useQuery({ queryKey: ["billing-state", session_id], enabled: configured, queryFn: async () => {
     const result = await billing({ data: { environment: getStripeEnvironment(), ...(session_id ? { sessionId: session_id } : {}) } });
@@ -48,20 +51,42 @@ function PlansBody() {
   useEffect(() => {
     if (confirmed) void navigate({ to: "/dashboard", replace: true });
   }, [confirmed, navigate]);
-  return <AppShell title="Πλάνα και συνδρομή" back="/organization"><div className="space-y-4">
+  const onboarding = needsPlanSelection(org);
+  const paid = !!state.data?.state?.paid;
+  const currentSlug = planSlugForKey(state.data?.state?.price_id) ?? org?.plan_slug ?? null;
+  const doUpgrade = async (slug: PlanSlug) => {
+    setError(""); setNotice(""); setUpgrading(slug);
+    try {
+      const r = await upgrade({ data: { plan: slug, environment: getStripeEnvironment() } });
+      if ("error" in r) throw new Error(r.error);
+      setNotice(r.pending ? "Η αναβάθμιση εκκρεμεί μέχρι να ολοκληρωθεί η πληρωμή της διαφοράς." : "Η αναβάθμιση ολοκληρώθηκε. Η χρέωση της διαφοράς έγινε αναλογικά.");
+      void qc.invalidateQueries({ queryKey: ["billing-state"] });
+      void qc.invalidateQueries({ queryKey: ["org-context"] });
+    } catch (e) { setError(e instanceof Error ? e.message : "Σφάλμα"); }
+    finally { setUpgrading(null); }
+  };
+  const content = <div className="space-y-4">
     <PaymentTestModeBanner />
-    {state.data?.state?.paid && getStripeEnvironment() === "sandbox" ? <p role="status" className="surface-subtle p-3 text-sm">Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.</p> : null}
-    <div className="flex items-start gap-3"><CreditCard className="h-6 w-6 shrink-0 text-brand" /><div><p className="font-semibold">{org?.plan_name ?? "—"}</p><p className="text-sm text-muted-foreground">Κατάσταση συνδρομής: {status[org?.subscription_status ?? ""] ?? "—"}</p></div></div>
-    {session_id ? <p role="status" className="surface-subtle p-3 text-sm">{state.data?.state?.paid && state.data.paymentStatus === "paid" ? "Η πληρωμή επιβεβαιώθηκε." : state.data?.paymentStatus === "expired" ? "Η πληρωμή ακυρώθηκε ή έληξε." : state.data?.paymentStatus === "unpaid" ? "Η πληρωμή εκκρεμεί ή δεν ολοκληρώθηκε." : "Αναμονή επιβεβαίωσης πληρωμής."}</p> : null}
+    {paid && getStripeEnvironment() === "sandbox" ? <p role="status" className="surface-subtle p-3 text-sm">Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.</p> : null}
+    {onboarding ? null : <div className="flex items-start gap-3"><CreditCard className="h-6 w-6 shrink-0 text-brand" /><div><p className="font-semibold">{org?.plan_name ?? "—"}</p><p className="text-sm text-muted-foreground">Κατάσταση συνδρομής: {status[org?.subscription_status ?? ""] ?? "—"}</p></div></div>}
+    {session_id ? <p role="status" className="surface-subtle p-3 text-sm">{paid && state.data?.paymentStatus === "paid" ? "Η πληρωμή επιβεβαιώθηκε." : state.data?.paymentStatus === "expired" ? "Η πληρωμή ακυρώθηκε ή έληξε." : state.data?.paymentStatus === "unpaid" ? "Η πληρωμή εκκρεμεί ή δεν ολοκληρώθηκε." : "Αναμονή επιβεβαίωσης πληρωμής."}</p> : null}
+    {notice ? <p role="status" className="surface-subtle p-3 text-sm">{notice}</p> : null}
     {state.error || error ? <p role="alert" className="text-sm text-destructive" data-no-translate>{error || state.error?.message}</p> : null}
-    {state.data?.state?.customer_id ? <GhostButton onClick={async () => { try { const r = await portal({ data: { environment: getStripeEnvironment() } }); if ("error" in r) throw new Error(r.error); window.open(r.url, "_blank", "noopener,noreferrer"); } catch (e) { setError(e instanceof Error ? e.message : "Σφάλμα"); } }}>Διαχείριση συνδρομής</GhostButton> : null}
+    {!onboarding && state.data?.state?.customer_id ? <GhostButton onClick={async () => { try { const r = await portal({ data: { environment: getStripeEnvironment() } }); if ("error" in r) throw new Error(r.error); window.open(r.url, "_blank", "noopener,noreferrer"); } catch (e) { setError(e instanceof Error ? e.message : "Σφάλμα"); } }}>Διαχείριση συνδρομής</GhostButton> : null}
     {selected ? <><GhostButton onClick={() => setSelected(null)}>Ακύρωση πληρωμής</GhostButton><Suspense fallback={<Loading />}><CompanyCheckout key={selected} plan={selected} /></Suspense></> : null}
-    {plans.isLoading ? <Loading /> : plans.isError ? <EmptyState title="Δεν ήταν δυνατή η φόρτωση των πλάνων." /> : plans.data?.map((p) => <Card key={p.id} className={`space-y-3 ${p.slug === org?.plan_slug ? "border-brand/50" : ""}`}>
-      <div className="flex items-center justify-between gap-2"><h2 className="text-xl font-bold" data-no-translate>{p.name}</h2>{p.slug === org?.plan_slug && org.features.length > 0 ? <span className="text-sm font-semibold text-brand">Τρέχον πλάνο</span> : null}</div>
+    {plans.isLoading ? <Loading /> : plans.isError ? <EmptyState title="Δεν ήταν δυνατή η φόρτωση των πλάνων." /> : plans.data?.map((p) => {
+      const isCurrent = paid && p.slug === currentSlug;
+      const tooSmall = (org?.active_users ?? 0) + (org?.pending_invites ?? 0) > p.max_users;
+      return <Card key={p.id} className={`space-y-3 ${isCurrent ? "border-brand/50" : ""}`}>
+      <div className="flex items-center justify-between gap-2"><h2 className="text-xl font-bold" data-no-translate>{p.name}</h2>{isCurrent ? <span className="text-sm font-semibold text-brand">Τρέχον πλάνο</span> : null}</div>
       <p className="text-3xl font-bold">{formatCurrency(p.price)} <span className="text-sm font-normal text-muted-foreground">{p.billing_interval === "year" ? "/ έτος" : p.billing_interval === "month" ? "/ μήνα" : ""}</span></p>
       <p className="font-semibold">Μέγιστοι χρήστες: {p.max_users}</p>
       <ul className="space-y-2">{p.features.filter(f => CHECKOUT_FEATURES.has(f)).map((f) => <li key={f} className="flex items-start gap-2 text-sm"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" /><span>{FEATURE_LABEL[f] ?? f}</span></li>)}</ul>
-      <PrimaryButton disabled={!configured || !!selected || !!state.data?.state?.paid || (org?.active_users ?? 0) + (org?.pending_invites ?? 0) > p.max_users} onClick={() => { if (isPlanSlug(p.slug)) setSelected(p.slug); }}>Επιλογή πλάνου</PrimaryButton>
-    </Card>)}
-  </div></AppShell>;
+      {paid
+        ? (canUpgrade(currentSlug, p.slug) ? <PrimaryButton disabled={!configured || !!upgrading || tooSmall} onClick={() => { if (isPlanSlug(p.slug)) void doUpgrade(p.slug); }}>{upgrading === p.slug ? "Αναβάθμιση..." : "Αναβάθμιση πλάνου"}</PrimaryButton> : null)
+        : <PrimaryButton disabled={!configured || !!selected || tooSmall} onClick={() => { if (isPlanSlug(p.slug)) setSelected(p.slug); }}>Επιλογή πλάνου</PrimaryButton>}
+    </Card>; })}
+  </div>;
+  if (onboarding) return <div className="min-h-screen bg-background text-foreground"><main className="mx-auto max-w-[460px] px-4 pb-10 pt-[calc(1.5rem+env(safe-area-inset-top))]"><h1 className="font-display mb-4 text-2xl font-bold">Επιλέξτε πλάνο</h1>{content}</main></div>;
+  return <AppShell title="Πλάνα και συνδρομή" back="/organization">{content}</AppShell>;
 }
