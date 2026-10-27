@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
         name: "description",
         content: "Οργάνωσε παραγγελίες, πελάτες, προϊόντα και διανομές από το κινητό σου.",
       },
-      { property: "og:title", content: "VoiceOrders" },
+      { property: "og:title", content: "VoiceOrders — Παραγγελίες & Διανομές για Παραγωγούς" },
       {
         property: "og:description",
         content: "Οργάνωσε παραγγελίες, πελάτες, προϊόντα και διανομές από το κινητό σου.",

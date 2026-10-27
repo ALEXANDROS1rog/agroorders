@@ -246,7 +246,7 @@ function NewOrderBody() {
                   <button aria-label="Αφαίρεση" onClick={() => setLines(lines.filter((_, i) => i !== idx))} className="grid h-10 w-10 place-items-center rounded-xl text-destructive"><Trash2 className="h-4 w-4" /></button>
                 </div>
                 {!l.matched ? (
-                  <select className="surface-subtle mt-2 h-12 w-full rounded-xl field-select px-3" value="" onChange={(e) => {
+                  <select aria-label="Αντιστοίχιση με προϊόν" className="surface-subtle mt-2 h-12 w-full rounded-xl field-select px-3" value="" onChange={(e) => {
                     const p = catalog.find((x) => x.id === e.target.value);
                     if (p) setLines(lines.map((x, i) => (i === idx ? { ...x, product_id: p.id, product_name: p.name, unit: p.unit, unit_price: Number(p.price), matched: true } : x)));
                   }}>
@@ -262,7 +262,7 @@ function NewOrderBody() {
                 </div>
               </div>
             ))}
-            <select className="surface-subtle h-14 w-full rounded-2xl field-select px-4" value="" onChange={(e) => addProduct(e.target.value)}>
+            <select aria-label="Προσθήκη προϊόντος" className="surface-subtle h-14 w-full rounded-2xl field-select px-4" value="" onChange={(e) => addProduct(e.target.value)}>
               <option value="">+ Προσθήκη προϊόντος</option>
               {catalog.map((p) => <option key={p.id} value={p.id}>{p.name} · {formatCurrency(p.price)}</option>)}
             </select>

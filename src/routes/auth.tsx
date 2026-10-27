@@ -178,7 +178,7 @@ function AuthPage() {
             <img src={logoUrl} alt="VoiceOrders" width={40} height={40} className="h-10 w-10 object-contain" />
           </div>
           <div>
-            <h1 className="font-display text-xl font-semibold leading-none">VoiceOrders</h1>
+            <h1 className="font-display text-xl font-semibold leading-none">VoiceOrders — Διαχείριση Παραγγελιών</h1>
             <p className="mt-1 text-xs text-muted-foreground">
               Παραγγελίες & διανομές για παραγωγούς
             </p>
