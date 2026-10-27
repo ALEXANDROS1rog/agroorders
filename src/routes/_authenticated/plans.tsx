@@ -1,6 +1,6 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, CreditCard } from "lucide-react";
+import { Check, CreditCard, UserRound } from "lucide-react";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { OrgAccess } from "@/components/OrgAccess";
 import { FEATURE_LABEL, fetchPlans, useOrg } from "@/lib/org";
@@ -75,7 +75,7 @@ function PlansBody() {
     {!onboarding && state.data?.state?.customer_id ? <GhostButton onClick={async () => { try { const r = await portal({ data: { environment: getStripeEnvironment() } }); if ("error" in r) throw new Error(r.error); window.open(r.url, "_blank", "noopener,noreferrer"); } catch (e) { setError(e instanceof Error ? e.message : "Σφάλμα"); } }}>Διαχείριση συνδρομής</GhostButton> : null}
     {selected ? <><GhostButton onClick={() => setSelected(null)}>Ακύρωση πληρωμής</GhostButton><Suspense fallback={<Loading />}><CompanyCheckout key={selected} plan={selected} /></Suspense></> : null}
     {plans.isLoading ? <Loading /> : plans.isError ? <EmptyState title="Δεν ήταν δυνατή η φόρτωση των πλάνων." /> : plans.data?.map((p) => {
-      const isCurrent = paid && p.slug === currentSlug;
+      const isCurrent = paid && p.slug === currentSlug && (org?.features.length ?? 0) > 0;
       const tooSmall = (org?.active_users ?? 0) + (org?.pending_invites ?? 0) > p.max_users;
       return <Card key={p.id} className={`space-y-3 ${isCurrent ? "border-brand/50" : ""}`}>
       <div className="flex items-center justify-between gap-2"><h2 className="text-xl font-bold" data-no-translate>{p.name}</h2>{isCurrent ? <span className="text-sm font-semibold text-brand">Τρέχον πλάνο</span> : null}</div>
@@ -87,6 +87,6 @@ function PlansBody() {
         : <PrimaryButton disabled={!configured || !!selected || tooSmall} onClick={() => { if (isPlanSlug(p.slug)) setSelected(p.slug); }}>Επιλογή πλάνου</PrimaryButton>}
     </Card>; })}
   </div>;
-  if (onboarding) return <div data-tone="account" className="min-h-screen bg-background text-foreground"><main className="mx-auto max-w-[460px] px-4 pb-10 pt-[calc(1.5rem+env(safe-area-inset-top))]"><h1 className="font-display mb-4 text-2xl font-bold">Επιλέξτε πλάνο</h1>{content}</main></div>;
+  if (onboarding) return <div data-tone="account" className="min-h-screen bg-background text-foreground"><main className="mx-auto max-w-[460px] px-4 pb-10 pt-[calc(1.5rem+env(safe-area-inset-top))]"><div className="mb-4 flex items-center justify-between gap-3"><h1 className="font-display text-2xl font-bold">Επιλέξτε πλάνο</h1><Link to="/profile" className="surface press flex h-11 items-center gap-2 rounded-2xl px-3 text-sm font-semibold"><UserRound className="h-5 w-5 text-brand" />Λογαριασμός</Link></div>{content}</main></div>;
   return <AppShell title="Πλάνα και συνδρομή" back="/organization">{content}</AppShell>;
 }
