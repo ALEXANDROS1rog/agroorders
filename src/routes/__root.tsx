@@ -91,7 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "google-site-verification",
         content: "NGTBkpIb5DcWj-P-dlzM3mZMjoyGqmA6_r7A9v7Ek2E",
       },
-      { property: "og:title", content: "VoiceOrders" },
+      { property: "og:title", content: "VoiceOrders — Παραγγελίες & Διανομές για Παραγωγούς" },
       { property: "og:description", content: "Παραγγελίες και διανομές για παραγωγούς." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "VoiceOrders" },
