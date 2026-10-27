@@ -96,7 +96,8 @@ function ShellFrame(props: ShellProps) {
   const activeIndex = NAV.findIndex((n) => pathname.startsWith(n.to));
 
   const tone = pathname.startsWith("/orders") || pathname.startsWith("/history") ? "orders"
-    : pathname.startsWith("/deliveries") || pathname.startsWith("/trips") || pathname.startsWith("/map") ? "deliveries"
+    : pathname.startsWith("/trips") ? "routes"
+    : pathname.startsWith("/deliveries") || pathname.startsWith("/map") ? "deliveries"
     : pathname.startsWith("/customers") ? "customers"
     : pathname.startsWith("/products") ? "products"
     : pathname.startsWith("/profile") || pathname.startsWith("/organization") || pathname.startsWith("/plans") ? "account"

@@ -342,14 +342,16 @@
 }
 [data-tone="home"] { --brand: oklch(0.5 0.12 250); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.99 0.01 250); --primary-foreground: var(--brand-foreground); }
 [data-tone="orders"] { --brand: oklch(0.62 0.15 60); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.2 0.05 60); --primary-foreground: var(--brand-foreground); }
-[data-tone="deliveries"] { --brand: oklch(0.52 0.13 235); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.99 0.01 235); --primary-foreground: var(--brand-foreground); }
+[data-tone="deliveries"] { --brand: oklch(0.55 0.16 25); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.99 0.01 25); --primary-foreground: var(--brand-foreground); }
+[data-tone="routes"] { --brand: oklch(0.68 0.13 95); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.2 0.05 95); --primary-foreground: var(--brand-foreground); }
 [data-tone="customers"] { --brand: oklch(0.5 0.15 350); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.99 0.005 350); --primary-foreground: var(--brand-foreground); }
 [data-tone="products"] { --brand: oklch(0.52 0.14 150); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.99 0.01 150); --primary-foreground: var(--brand-foreground); }
 [data-tone="account"] { --brand: oklch(0.48 0.13 275); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.99 0.01 275); --primary-foreground: var(--brand-foreground); }
 @media (prefers-color-scheme: dark) {
   [data-tone="home"] { --brand: oklch(0.74 0.11 250); --brand-foreground: oklch(0.2 0.04 250); }
   [data-tone="orders"] { --brand: oklch(0.8 0.14 70); --brand-foreground: oklch(0.22 0.05 60); }
-  [data-tone="deliveries"] { --brand: oklch(0.74 0.11 235); --brand-foreground: oklch(0.2 0.04 235); }
+  [data-tone="deliveries"] { --brand: oklch(0.72 0.14 25); --brand-foreground: oklch(0.2 0.04 25); }
+  [data-tone="routes"] { --brand: oklch(0.83 0.13 95); --brand-foreground: oklch(0.2 0.05 95); }
   [data-tone="customers"] { --brand: oklch(0.78 0.12 350); --brand-foreground: oklch(0.2 0.04 350); }
   [data-tone="products"] { --brand: oklch(0.74 0.14 150); --brand-foreground: oklch(0.2 0.045 150); }
   [data-tone="account"] { --brand: oklch(0.74 0.11 275); --brand-foreground: oklch(0.2 0.04 275); }
