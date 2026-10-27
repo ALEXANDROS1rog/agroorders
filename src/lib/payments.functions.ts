@@ -216,3 +216,47 @@ export const createCompanyPortal = createServerFn({ method: "POST" })
       return { error: getStripeErrorMessage(error) };
     }
   });
+
+/** Upgrades the organization's existing subscription to a higher tier. The prorated
+ * difference is invoiced immediately; Stripe only applies the new price once that invoice
+ * is paid (pending_if_incomplete), and access changes arrive through the signed webhook. */
+export const upgradeCompanyPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { plan: PlanSlug; environment: StripeEnv }) => {
+    validate(data);
+    if (!isPlanSlug(data.plan)) throw new Error("Invalid plan");
+    return data;
+  })
+  .handler(async ({ data, context }) => {
+    try {
+      const org = await billingOrg(context);
+      const target = ANNUAL_PLANS[data.plan];
+      if (org.active_users + org.pending_invites > target.seats)
+        throw new Error("Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.");
+      const { data: row, error } = await context.supabase
+        .from("organization_subscriptions")
+        .select("payment_states")
+        .eq("organization_id", org.organization_id)
+        .single();
+      if (error) throw error;
+      const state = (row.payment_states as Record<string, { subscription_id?: string; paid?: boolean }>)[data.environment];
+      if (!state?.subscription_id || !state.paid) throw new Error("Δεν βρέθηκε πληρωμένη συνδρομή.");
+      const stripe = createStripeClient(data.environment);
+      const sub = await stripe.subscriptions.retrieve(state.subscription_id);
+      if (sub.metadata["organizationId"] !== org.organization_id) throw new Error("Forbidden subscription");
+      if (!["active", "past_due"].includes(sub.status)) throw new Error("Η συνδρομή δεν είναι ενεργή.");
+      const item = sub.items.data[0];
+      const current = item ? planSlugForKey(planKeyForPrice(item.price)) : null;
+      if (!item || !canUpgrade(current, data.plan)) throw new Error("Επιτρέπεται μόνο αναβάθμιση σε ανώτερο πλάνο.");
+      const price = await resolvePlanPrice(stripe, data.plan);
+      const updated = await stripe.subscriptions.update(sub.id, {
+        items: [{ id: item.id, price: price.id }],
+        proration_behavior: "always_invoice",
+        payment_behavior: "pending_if_incomplete",
+        cancel_at_period_end: false,
+      });
+      return { pending: !!updated.pending_update };
+    } catch (error) {
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
