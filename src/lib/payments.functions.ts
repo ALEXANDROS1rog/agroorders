@@ -1,7 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createStripeClient, getStripeErrorMessage, type StripeEnv } from "@/lib/stripe.server";
-import { isPlanSlug, ANNUAL_PLANS, type PlanSlug } from "@/lib/subscription-rules";
+import { isPlanSlug, ANNUAL_PLANS, planKeyForPrice, planSlugForKey, canUpgrade, type PlanSlug } from "@/lib/subscription-rules";
+
+/** Finds the plan's annual price by lookup key, falling back to the known live price ID. */
+async function resolvePlanPrice(stripe: ReturnType<typeof createStripeClient>, slug: PlanSlug) {
+  const plan = ANNUAL_PLANS[slug];
+  const prices = await stripe.prices.list({ lookup_keys: [plan.lookupKey], active: true, limit: 1 });
+  let price = prices.data[0];
+  if (!price) {
+    try { price = await stripe.prices.retrieve(plan.livePriceId); } catch { /* not in this account */ }
+  }
+  if (
+    !price || !price.active ||
+    price.unit_amount !== plan.price * 100 ||
+    price.currency !== "eur" ||
+    price.recurring?.interval !== "year"
+  )
+    throw new Error("Η τιμή συνδρομής δεν είναι διαθέσιμη.");
+  return price;
+}
 
 async function resolveOrCreateCustomer(
   stripe: ReturnType<typeof createStripeClient>,
@@ -92,7 +110,7 @@ export const createCompanyCheckout = createServerFn({ method: "POST" })
       if (incomplete) {
         const sessions = await stripe.checkout.sessions.list({ subscription: incomplete.id, limit: 100 });
         const open = sessions.data.find(s => s.status === "open" && s.client_secret);
-        const samePlan = incomplete.items.data.some(item => item.price.lookup_key === plan.lookupKey);
+        const samePlan = incomplete.items.data.some(item => planKeyForPrice(item.price) === plan.lookupKey);
         if (open?.client_secret && samePlan) return { clientSecret: open.client_secret };
       }
       if (
@@ -103,12 +121,7 @@ export const createCompanyCheckout = createServerFn({ method: "POST" })
         )
       )
         throw new Error("Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.");
-      const prices = await stripe.prices.list({
-        lookup_keys: [plan.lookupKey],
-        active: true,
-        limit: 1,
-      });
-      const price = prices.data[0];
+      const price = await resolvePlanPrice(stripe, data.plan);
       if (
         !price ||
         price.unit_amount !== plan.price * 100 ||
