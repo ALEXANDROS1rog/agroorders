@@ -93,8 +93,15 @@ function ShellFrame(props: ShellProps) {
   // Highlighted tab (also for detail pages such as /orders/123) ...
   const activeIndex = NAV.findIndex((n) => pathname.startsWith(n.to));
 
+  const tone = pathname.startsWith("/orders") || pathname.startsWith("/history") ? "orders"
+    : pathname.startsWith("/deliveries") || pathname.startsWith("/trips") || pathname.startsWith("/map") ? "deliveries"
+    : pathname.startsWith("/customers") ? "customers"
+    : pathname.startsWith("/products") ? "products"
+    : pathname.startsWith("/profile") || pathname.startsWith("/organization") || pathname.startsWith("/plans") ? "account"
+    : "home";
+
   return (
-    <div className="relative min-h-screen w-full overflow-clip bg-background text-foreground">
+    <div data-tone={tone} className="relative min-h-screen w-full overflow-clip bg-background text-foreground">
       <PageBody {...props} />
 
       <nav className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[420px] -translate-x-1/2">

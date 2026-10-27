@@ -19,5 +19,10 @@
   "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Pretplata već postoji. Upravljajte postojećom pretplatom.",
   "χρήστες": "korisnici",
   "Η εγγραφή είναι δωρεάν. Δεν απαιτείται κάρτα.": "Registracija je besplatna. Kartica nije potrebna.",
-  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Testno plaćanje je potvrđeno. Ne aktivira stvarnu pretplatu."
+  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Testno plaćanje je potvrđeno. Ne aktivira stvarnu pretplatu.",
+  "Επιλέξτε πλάνο": "Izaberite plan",
+  "Αναβάθμιση πλάνου": "Nadogradi plan",
+  "Αναβάθμιση...": "Nadogradnja...",
+  "Η αναβάθμιση εκκρεμεί μέχρι να ολοκληρωθεί η πληρωμή της διαφοράς.": "Nadogradnja čeka plaćanje razlike.",
+  "Η αναβάθμιση ολοκληρώθηκε. Η χρέωση της διαφοράς έγινε αναλογικά.": "Nadogradnja je završena. Razlika je naplaćena srazmjerno."
 }

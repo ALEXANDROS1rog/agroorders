@@ -19,5 +19,10 @@
   "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Există deja un abonament. Gestionați abonamentul existent.",
   "χρήστες": "utilizatori",
   "Η εγγραφή είναι δωρεάν. Δεν απαιτείται κάρτα.": "Înregistrarea este gratuită. Nu este necesar un card.",
-  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Plata de test a fost confirmată. Nu activează un abonament real."
+  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Plata de test a fost confirmată. Nu activează un abonament real.",
+  "Επιλέξτε πλάνο": "Alegeți un plan",
+  "Αναβάθμιση πλάνου": "Actualizați planul",
+  "Αναβάθμιση...": "Se actualizează...",
+  "Η αναβάθμιση εκκρεμεί μέχρι να ολοκληρωθεί η πληρωμή της διαφοράς.": "Actualizarea așteaptă plata diferenței.",
+  "Η αναβάθμιση ολοκληρώθηκε. Η χρέωση της διαφοράς έγινε αναλογικά.": "Actualizare finalizată. Diferența a fost taxată proporțional."
 }

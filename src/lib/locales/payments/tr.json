@@ -19,5 +19,10 @@
   "Υπάρχει ήδη συνδρομή. Διαχειριστείτε την υπάρχουσα συνδρομή.": "Zaten bir abonelik mevcut. Mevcut aboneliği yönetin.",
   "χρήστες": "kullanıcılar",
   "Η εγγραφή είναι δωρεάν. Δεν απαιτείται κάρτα.": "Kayıt ücretsizdir. Kart gerekmez.",
-  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Test ödemesi onaylandı. Gerçek bir abonelik etkinleştirmez."
+  "Η δοκιμαστική πληρωμή επιβεβαιώθηκε. Δεν ενεργοποιεί πραγματική συνδρομή.": "Test ödemesi onaylandı. Gerçek bir abonelik etkinleştirmez.",
+  "Επιλέξτε πλάνο": "Bir plan seçin",
+  "Αναβάθμιση πλάνου": "Planı yükselt",
+  "Αναβάθμιση...": "Yükseltiliyor...",
+  "Η αναβάθμιση εκκρεμεί μέχρι να ολοκληρωθεί η πληρωμή της διαφοράς.": "Yükseltme, fark ödenene kadar beklemede.",
+  "Η αναβάθμιση ολοκληρώθηκε. Η χρέωση της διαφοράς έγινε αναλογικά.": "Yükseltme tamamlandı. Fark orantılı olarak tahsil edildi."
 }
