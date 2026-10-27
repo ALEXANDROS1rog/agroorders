@@ -6,10 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { PENDING_INVITE_KEY, fetchOrgContext } from "@/lib/org";
 import { needsPlanSelection } from "@/lib/subscription-rules";
+import logoUrl from "@/assets/voiceorders-logo.png";
 
-type SocialProvider = "google" | "apple";
+type SocialProvider = "google" | "apple" | "lovable";
 
 const SOCIAL_OPTIONS: { id: SocialProvider; label: string; icon: React.ReactNode }[] = [
+  {
+    id: "lovable",
+    label: "Σύνδεση με VoiceOrders",
+    icon: (
+      <img src={logoUrl} alt="" width={24} height={24} className="h-6 w-6 object-contain" />
+    ),
+  },
   {
     id: "google",
     label: "Σύνδεση με Google",
@@ -157,7 +165,7 @@ function AuthPage() {
       <div className="relative mx-auto flex min-h-screen max-w-[460px] flex-col justify-center px-4 py-10">
         <div className="mb-6 flex items-center gap-3">
           <div className="grid h-12 w-12 place-items-center rounded-2xl bg-brand/20 ring-1 ring-brand/40">
-            <span className="font-display text-xl font-bold text-brand">V</span>
+            <img src={logoUrl} alt="VoiceOrders" width={40} height={40} className="h-10 w-10 object-contain" />
           </div>
           <div>
             <h1 className="font-display text-xl font-semibold leading-none">VoiceOrders</h1>
