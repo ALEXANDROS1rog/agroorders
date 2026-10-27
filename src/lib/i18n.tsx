@@ -254,7 +254,7 @@ export type LangCode = (typeof LANGUAGES)[number]["code"];
 const STORAGE = "farm-lang";
 type Ctx = { lang: LangCode; setLang: (l: LangCode) => void; t: (k: TKey) => string; locale: Locale; intl: string };
 // Keep one context instance across hot reloads so a reloaded page still finds the root provider.
-const ctxStore = globalThis as typeof globalThis & { __voiceOrdersI18nCtx?: React.Context<Ctx | null> };
+const ctxStore = globalThis as typeof globalThis & { __voiceOrdersI18nCtx?: import("react").Context<Ctx | null> };
 const I18nCtx = (ctxStore.__voiceOrdersI18nCtx ??= createContext<Ctx | null>(null));
 
 export function isLang(v: unknown): v is LangCode {
