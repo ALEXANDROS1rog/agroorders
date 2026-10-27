@@ -17,6 +17,6 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthenticatedLayout() {
   const { org } = useOrg();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  if (needsPlanSelection(org) && pathname !== "/plans") return <Navigate to="/plans" replace />;
+  if (needsPlanSelection(org) && !["/plans", "/profile", "/organization"].includes(pathname)) return <Navigate to="/plans" replace />;
   return <Outlet />;
 }
