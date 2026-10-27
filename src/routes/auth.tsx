@@ -270,9 +270,9 @@ function AuthPage() {
                     type="button"
                     disabled={busy}
                     onClick={() => onSocial(option.id)}
-                    className="press surface-subtle flex h-14 w-full items-center justify-center gap-3 rounded-2xl text-[15px] font-semibold text-foreground ring-1 ring-border/60 disabled:opacity-60"
+                    className="press surface-subtle relative flex h-14 w-full items-center justify-center rounded-2xl px-5 text-[15px] font-semibold text-foreground ring-1 ring-border/60 disabled:opacity-60"
                   >
-                    {option.icon}
+                    <span className="absolute left-5 grid h-5 w-5 place-items-center">{option.icon}</span>
                     {option.label}
                   </button>
                 ))}
