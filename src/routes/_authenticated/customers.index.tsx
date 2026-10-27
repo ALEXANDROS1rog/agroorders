@@ -38,7 +38,7 @@ function CustomersPage() {
       title="Πελάτες"
       subtitle={data ? `${data.length} πελάτες` : undefined}
       action={can("customers.manage") ?
-        <GhostButton aria-label="Νέος πελάτης" onClick={() => setAdding(true)} className="!h-11 !w-11 !p-0">
+        <GhostButton type="button" aria-label="Νέος πελάτης" title="Νέος πελάτης" onClick={() => setAdding(true)} className="grid !h-11 !w-11 shrink-0 place-items-center !p-0 text-brand">
           <Plus className="h-5 w-5" />
         </GhostButton> : null
       }
