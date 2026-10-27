@@ -8,7 +8,7 @@ import { PENDING_INVITE_KEY, fetchOrgContext } from "@/lib/org";
 import { needsPlanSelection } from "@/lib/subscription-rules";
 import logoUrl from "@/assets/voiceorders-logo.png";
 
-type SocialProvider = "google" | "apple" | "lovable";
+type SocialProvider = "google" | "apple";
 
 const SOCIAL_OPTIONS: { id: SocialProvider; label: string; icon: React.ReactNode }[] = [
   {
