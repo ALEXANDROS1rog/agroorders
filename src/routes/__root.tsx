@@ -93,6 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { name: "theme-color", content: "#0b1220", media: "(prefers-color-scheme: dark)" },
       { name: "theme-color", content: "#eef2f8", media: "(prefers-color-scheme: light)" },
+      {
+        name: "google-site-verification",
+        content: "NGTBkpIb5DcWj-P-dlzM3mZMjoyGqmA6_r7A9v7Ek2E",
+      },
       { property: "og:title", content: "VoiceOrders" },
       { property: "og:description", content: "Παραγγελίες και διανομές για παραγωγούς." },
       { property: "og:type", content: "website" },
