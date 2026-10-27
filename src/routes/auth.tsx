@@ -249,6 +249,30 @@ function AuthPage() {
             </PrimaryButton>
           </form>
 
+          {mode !== "forgot" ? (
+            <>
+              <div className="my-4 flex items-center gap-3" aria-hidden>
+                <span className="h-px flex-1 bg-border" />
+                <span className="text-xs font-medium text-muted-foreground">ή</span>
+                <span className="h-px flex-1 bg-border" />
+              </div>
+              <div className="space-y-2.5">
+                {SOCIAL_OPTIONS.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    disabled={busy}
+                    onClick={() => onSocial(option.id)}
+                    className="press surface-subtle flex h-14 w-full items-center justify-center gap-3 rounded-2xl text-[15px] font-semibold text-foreground ring-1 ring-border/60 disabled:opacity-60"
+                  >
+                    {option.icon}
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : null}
+
           {mode === "login" ? (
             <button
               type="button"
