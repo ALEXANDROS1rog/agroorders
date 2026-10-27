@@ -12,13 +12,6 @@ type SocialProvider = "google" | "apple" | "lovable";
 
 const SOCIAL_OPTIONS: { id: SocialProvider; label: string; icon: React.ReactNode }[] = [
   {
-    id: "lovable",
-    label: "Σύνδεση με VoiceOrders",
-    icon: (
-      <img src={logoUrl} alt="" width={24} height={24} className="h-6 w-6 object-contain" />
-    ),
-  },
-  {
     id: "google",
     label: "Σύνδεση με Google",
     icon: (
