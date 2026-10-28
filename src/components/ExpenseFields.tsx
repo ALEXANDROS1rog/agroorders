@@ -29,14 +29,14 @@ export function ExpenseFields({ value, onChange }: { value: Expenses; onChange: 
             value={value[r.k]}
             onChange={(e) => onChange({ ...value, [r.k]: e.target.value.replace(/[^\d.,]/g, "") })}
             placeholder="0,00"
-            className="h-12 w-28 rounded-xl bg-background/60 px-3 text-right text-lg font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+            className="h-12 w-28 rounded-xl bg-background/60 px-3 text-right text-lg font-semibold outline-none focus-visible:ring-2 focus-visible:ring-ring/50"\n            style={{ color: "#e53935" }}
           />
-          <span className="font-semibold">€</span>
+          <span className="font-semibold" style={{ color: "#e53935" }}>€</span>
         </label>
       ))}
-      <div className="flex items-center justify-between rounded-2xl bg-destructive/10 px-4 py-3">
+      <div className="flex items-center justify-between rounded-2xl bg-[#e53935]/10 px-4 py-3">
         <span className="font-semibold">{t("r.totalExp")}</span>
-        <span className="font-display text-xl font-bold text-destructive">{formatCurrency(total)}</span>
+        <span className="font-display text-xl font-bold" style={{ color: "#e53935" }}>{formatCurrency(total)}</span>
       </div>
     </div>
   );
