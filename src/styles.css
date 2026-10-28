@@ -356,3 +356,33 @@
   [data-tone="products"] { --brand: #9be52e; --brand-foreground: #263a08; }
   [data-tone="account"] { --brand: oklch(0.74 0.11 275); --brand-foreground: oklch(0.2 0.04 275); }
 }
+
+
+/* Persistent colors for navigation concepts wherever these Lucide icons appear. */
+:root {
+  --icon-home: #00a6d6;
+  --icon-orders: #80d000;
+  --icon-deliveries: #bebebe;
+  --icon-customers: #e5007d;
+  --icon-routes: #80d000;
+}
+svg.lucide-home,
+svg.lucide-house {
+  color: var(--icon-home) !important;
+}
+svg.lucide-clipboard-list,
+svg.lucide-clipboard,
+svg.lucide-notebook-pen {
+  color: var(--icon-orders) !important;
+}
+svg.lucide-truck {
+  color: var(--icon-deliveries) !important;
+}
+svg.lucide-users,
+svg.lucide-users-round {
+  color: var(--icon-customers) !important;
+}
+svg.lucide-route,
+svg.lucide-signpost {
+  color: var(--icon-routes) !important;
+}
