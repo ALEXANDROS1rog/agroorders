@@ -80,7 +80,7 @@ function TripPage() {
         {finance ? <Card>
           <div className="grid grid-cols-3 gap-2 text-center">
             <div><p className="text-xs text-muted-foreground">{t("r.revenue")}</p><p className="font-display text-xl font-bold">{formatCurrency(n.revenue)}</p></div>
-            <div><p className="text-xs text-muted-foreground">{t("r.expenses")}</p><p className="font-display text-xl font-bold text-destructive">{formatCurrency(n.expenses)}</p></div>
+            <div><p className="text-xs text-muted-foreground">{t("r.expenses")}</p><p className="font-display text-xl font-bold" style={{ color: "#e53935" }}>{formatCurrency(n.expenses)}</p></div>
             <div><p className="text-xs text-muted-foreground">{t("r.net")}</p><p className="font-display text-xl font-bold text-brand">{formatCurrency(n.net)}</p></div>
           </div>
         </Card> : null}
@@ -96,9 +96,9 @@ function TripPage() {
             <>
               <ul className="space-y-1">
                 {rows.map(([icon, label, v]) => (
-                  <li key={label} className="flex justify-between text-[15px]"><span>{label}</span><span className="font-semibold">{formatCurrency(v)}</span></li>
+                  <li key={label} className="flex justify-between text-[15px]"><span>{label}</span><span className="font-semibold" style={{ color: "#e53935" }}>{formatCurrency(v)}</span></li>
                 ))}
-                <li className="flex justify-between border-t border-border pt-2 font-bold"><span>{t("r.totalExp")}</span><span className="text-destructive">{formatCurrency(n.expenses)}</span></li>
+                <li className="flex justify-between border-t border-border pt-2 font-bold"><span>{t("r.totalExp")}</span><span style={{ color: "#e53935" }}>{formatCurrency(n.expenses)}</span></li>
               </ul>
               <GhostButton onClick={() => setEditing(true)}>{t("r.editExp")}</GhostButton>
             </>
