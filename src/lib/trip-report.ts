@@ -91,11 +91,11 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
   if (includeFinance) {
     heading("Οικονομικά");
     write(`Έσοδα: ${formatCurrency(totals.revenue)}`);
-    write(`Καύσιμα: ${formatCurrency(trip.fuel)}`);
-    write(`Διόδια: ${formatCurrency(trip.tolls)}`);
-    write(`Φθορές: ${formatCurrency(trip.wear)}`);
-    write(`Διατροφή: ${formatCurrency(trip.food)}`);
-    write(`Σύνολο εξόδων: ${formatCurrency(totals.expenses)}`, { weight: 600 });
+    write(`Καύσιμα: ${formatCurrency(trip.fuel)}`, { color: "#e53935" });
+    write(`Διόδια: ${formatCurrency(trip.tolls)}`, { color: "#e53935" });
+    write(`Φθορές: ${formatCurrency(trip.wear)}`, { color: "#e53935" });
+    write(`Διατροφή: ${formatCurrency(trip.food)}`, { color: "#e53935" });
+    write(`Σύνολο εξόδων: ${formatCurrency(totals.expenses)}`, { weight: 700, color: "#e53935" });
     write(`Καθαρό αποτέλεσμα: ${formatCurrency(totals.net)}`, { weight: 700, color: "#80d000", gap: 22 });
   }
 
@@ -161,8 +161,13 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
     objects[pageId] = encoder.encode(
       `${pageId} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>\nendobj\n`,
     );
-    const stream = encoder.encode("q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\n");
-    objects[contentId] = encoder.encode(`${contentId} 0 obj\n<< /Length ${stream.length} >>\nstream\nq\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\nendstream\nendobj\n`);
+    const contentStream = encoder.encode("q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\n");
+    const contentHeader = encoder.encode(`${contentId} 0 obj\n<< /Length ${contentStream.length} >>\nstream\n`);
+    const contentFooter = encoder.encode("endstream\nendobj\n");
+    objects[contentId] = new Uint8Array(contentHeader.length + contentStream.length + contentFooter.length);
+    objects[contentId].set(contentHeader);
+    objects[contentId].set(contentStream, contentHeader.length);
+    objects[contentId].set(contentFooter, contentHeader.length + contentStream.length);
     const imageHeader = encoder.encode(
       `${imageId} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
     );
