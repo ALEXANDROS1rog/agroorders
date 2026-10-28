@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { FileDown, Plus, Trash2 } from "lucide-react";\nimport { openTripReport } from "@/lib/trip-report";
 import { AppShell, Card, EmptyState, Loading } from "@/components/AppShell";
 import { GhostButton, PrimaryButton } from "@/components/Field";
 import { ExpenseFields, toAmount, type Expenses } from "@/components/ExpenseFields";
@@ -74,7 +74,7 @@ function TripPage() {
   ] as const;
 
   return (
-    <AppShell title={`${formatTripDate(trip.route_date)}`} subtitle={`${n.count} ${t("c.orders")}`} back="/trips">
+    <AppShell title={`${formatTripDate(trip.route_date)}`} subtitle={`${n.count} ${t("c.orders")}`} back="/trips" action={<button type="button" aria-label="Εξαγωγή αναφοράς PDF" onClick={() => openTripReport(trip, finance)} className="press flex h-11 shrink-0 items-center gap-2 rounded-2xl px-3 text-sm font-semibold text-white" style={{ backgroundColor: "#e53935" }}><FileDown className="h-4 w-4" />PDF</button>}>
       <div className="space-y-4">
         {finance ? <Card>
           <div className="grid grid-cols-3 gap-2 text-center">
