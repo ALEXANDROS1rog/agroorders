@@ -91,7 +91,7 @@ function Dashboard() {
           </div>
           {finance ? <div className="grid grid-cols-3 gap-2">
             <Card className="!p-3"><p className="text-xs text-muted-foreground">Έσοδα</p><p className="font-display mt-1 text-lg font-bold">{formatCurrency(tripTotals.revenue)}</p></Card>
-            <Card className="!p-3"><p className="text-xs text-muted-foreground">Έξοδα</p><p className="font-display mt-1 text-lg font-bold text-destructive">{formatCurrency(tripTotals.expenses)}</p></Card>
+            <Card className="!p-3"><p className="text-xs text-muted-foreground">Έξοδα</p><p className="font-display mt-1 text-lg font-bold" style={{ color: "#e53935" }}>{formatCurrency(tripTotals.expenses)}</p></Card>
             <Card className="!p-3"><p className="text-xs text-muted-foreground">Καθαρά</p><p className="font-display mt-1 text-lg font-bold text-brand">{formatCurrency(tripTotals.net)}</p></Card>
           </div> : null}
           <Card>
