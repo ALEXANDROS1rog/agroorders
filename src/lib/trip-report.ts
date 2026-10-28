@@ -9,7 +9,7 @@ type PdfPage = { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D };
 
 function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
   const pages: PdfPage[] = [];
-  let page = {} as PdfPage;
+  let page: PdfPage;
   let y = 0;
 
   function startPage() {
@@ -125,7 +125,6 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
     }
     if (includeFinance) write(`Σύνολο παραγγελίας: ${formatCurrency(orderTotal(order))}`, { size: 25, weight: 600 });
     if (order.notes) write(`Σημειώσεις: ${order.notes}`, { size: 24 });
-    write("Υπογραφή πελάτη: __________________________", { size: 22, color: "#586579", gap: 22 });
     if (index < trip.orders.length - 1) {
       y += 6;
       page.ctx.fillStyle = "#e5e7eb";
@@ -161,13 +160,8 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
     objects[pageId] = encoder.encode(
       `${pageId} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>\nendobj\n`,
     );
-    const contentStream = encoder.encode("q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\n");
-    const contentHeader = encoder.encode(`${contentId} 0 obj\n<< /Length ${contentStream.length} >>\nstream\n`);
-    const contentFooter = encoder.encode("endstream\nendobj\n");
-    objects[contentId] = new Uint8Array(contentHeader.length + contentStream.length + contentFooter.length);
-    objects[contentId].set(contentHeader);
-    objects[contentId].set(contentStream, contentHeader.length);
-    objects[contentId].set(contentFooter, contentHeader.length + contentStream.length);
+    const stream = encoder.encode(`q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\n`);
+    objects[contentId] = encoder.encode(`${contentId} 0 obj\n<< /Length ${stream.length} >>\nstream\nq\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\nendstream\nendobj\n`);
     const imageHeader = encoder.encode(
       `${imageId} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
     );
