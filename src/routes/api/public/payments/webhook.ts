@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createStripeClient, verifyWebhook, type StripeEnv } from "@/lib/stripe.server";
 import type Stripe from "stripe";
 import { verifiedPaidPeriod, type PreviousPaymentState } from "@/lib/payment-state";
-import { planKeyForPrice } from "@/lib/subscription-rules";
+import { planKeyForPrice, planSlugForKey, seatsForSubscriptionPrice } from "@/lib/subscription-rules";
 
 export const Route = createFileRoute("/api/public/payments/webhook")({
   server: {
@@ -58,6 +58,9 @@ async function synchronizeSubscription(
   const item = sub.items.data[0];
   const planKey = item ? planKeyForPrice(item.price) : null;
   if (!item || !planKey) throw new Error("Unknown subscription price");
+  const slug = planSlugForKey(planKey);
+  const seats = slug ? seatsForSubscriptionPrice(slug, item.price.unit_amount, item.quantity, item.price.id) : null;
+  if (!seats) throw new Error("Invalid purchased user count");
   const invoice = typeof sub.latest_invoice === "object" ? sub.latest_invoice : null;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: existing, error: readError } = await supabaseAdmin
@@ -76,6 +79,7 @@ async function synchronizeSubscription(
     subscription_id: sub.id,
     customer_id: customerId,
     price_id: planKey,
+    seats,
     status: sub.status,
     period_start: new Date(item.current_period_start * 1000).toISOString(),
     ...verifiedPaidPeriod(old, {

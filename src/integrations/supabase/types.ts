@@ -237,6 +237,27 @@ export type Database = {
           },
         ]
       }
+      help_ai_access_blocks: {
+        Row: {
+          id: string
+          message: string
+          status: number
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          message: string
+          status: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          message?: string
+          status?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string
@@ -505,6 +526,7 @@ export type Database = {
           paid_confirmed: boolean
           payment_states: Json
           plan_id: string
+          seat_limit: number | null
           status: string
           stripe_price_id: string | null
           stripe_subscription_id: string | null
@@ -520,6 +542,7 @@ export type Database = {
           paid_confirmed?: boolean
           payment_states?: Json
           plan_id: string
+          seat_limit?: number | null
           status?: string
           stripe_price_id?: string | null
           stripe_subscription_id?: string | null
@@ -535,6 +558,7 @@ export type Database = {
           paid_confirmed?: boolean
           payment_states?: Json
           plan_id?: string
+          seat_limit?: number | null
           status?: string
           stripe_price_id?: string | null
           stripe_subscription_id?: string | null

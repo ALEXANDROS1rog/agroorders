@@ -1,9 +1,31 @@
 export const ANNUAL_PLANS = {
-  basic: { price: 350, seats: 2, rank: 1, lookupKey: "voiceorders_basic_yearly", livePriceId: "price_1UUwPhKmzqfVZ3iXD1bBfvEY" },
-  pro: { price: 420, seats: 5, rank: 2, lookupKey: "voiceorders_pro_yearly", livePriceId: "price_1UUwQGKmzqfVZ3iXiJGX6D2A" },
-  business: { price: 550, seats: 10, rank: 3, lookupKey: "voiceorders_business_yearly", livePriceId: "price_1UUwR7KmzqfVZ3iXyIhUhUbi" },
+  basic: { price: 350, seats: 1, rank: 1, lookupKey: "voiceorders_basic_yearly", livePriceId: "price_1UUwPhKmzqfVZ3iXD1bBfvEY" },
+  pro: { price: 600, seats: 2, rank: 2, lookupKey: "voiceorders_pro_yearly", livePriceId: "price_1UUwQGKmzqfVZ3iXiJGX6D2A" },
+  business: { price: 1200, seats: 4, rank: 3, lookupKey: "voiceorders_business_yearly", livePriceId: "price_1UUwR7KmzqfVZ3iXyIhUhUbi" },
 } as const;
 export type PlanSlug = keyof typeof ANNUAL_PLANS;
+export function purchasedSeats(plan: PlanSlug, seats?: number): number {
+  const count = seats ?? ANNUAL_PLANS[plan].seats;
+  if (!Number.isInteger(count) || (plan === "business" ? count < 4 || count > 10 : count !== ANNUAL_PLANS[plan].seats)) throw new Error("Invalid user count");
+  return count;
+}
+export function annualPrice(plan: PlanSlug, seats?: number): number {
+  const count = purchasedSeats(plan, seats);
+  return plan === "business" ? 1200 + (count - 4) * 300 : ANNUAL_PLANS[plan].price;
+}
+export function stripeUnitAmount(plan: PlanSlug): number {
+  return (plan === "business" ? 300 : ANNUAL_PLANS[plan].price) * 100;
+}
+/** Old paid prices retain their previously purchased limits; new Business is per user. */
+export function seatsForSubscriptionPrice(plan: PlanSlug, unitAmount: number | null, quantity: number | null | undefined, priceId?: string): number | null {
+  if (plan === "basic" && quantity === 1 && unitAmount === 35000 && ["price_1UUi7YL9IU9FnfJgh2GGDnJq", ANNUAL_PLANS.basic.livePriceId].includes(priceId ?? "")) return 2;
+  if (unitAmount === stripeUnitAmount(plan)) {
+    try { return purchasedSeats(plan, plan === "business" ? quantity ?? 0 : undefined); } catch { return null; }
+  }
+  const oldAmounts = { basic: 35000, pro: 42000, business: 55000 };
+  const oldSeats = { basic: 2, pro: 5, business: 10 };
+  return unitAmount === oldAmounts[plan] && quantity === 1 ? oldSeats[plan] : null;
+}
 export function isPlanSlug(value: unknown): value is PlanSlug {
   return typeof value === "string" && Object.hasOwn(ANNUAL_PLANS, value);
 }

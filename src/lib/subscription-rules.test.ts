@@ -1,9 +1,13 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
-import { ANNUAL_PLANS, subscriptionAccess, needsPlanSelection, canEnterAfterPayment, CHECKOUT_FEATURES } from "./subscription-rules";
-test("Basic annual price is €350 and includes two users", () => { assert.equal(ANNUAL_PLANS.basic.price, 350); assert.equal(ANNUAL_PLANS.basic.seats, 2); });
-test("Pro annual price is €420 and includes five users", () => { assert.equal(ANNUAL_PLANS.pro.price, 420); assert.equal(ANNUAL_PLANS.pro.seats, 5); });
-test("Business annual price is €550 and includes ten users", () => { assert.equal(ANNUAL_PLANS.business.price, 550); assert.equal(ANNUAL_PLANS.business.seats, 10); });
+import { ANNUAL_PLANS, annualPrice, purchasedSeats, seatsForSubscriptionPrice, subscriptionAccess, needsPlanSelection, canEnterAfterPayment, CHECKOUT_FEATURES } from "./subscription-rules";
+test("Basic annual price is €350 and includes one user", () => { assert.equal(ANNUAL_PLANS.basic.price, 350); assert.equal(purchasedSeats("basic"), 1); assert.throws(() => purchasedSeats("basic", 2)); });
+test("Pro annual price is €600 and includes two users", () => { assert.equal(ANNUAL_PLANS.pro.price, 600); assert.equal(purchasedSeats("pro"), 2); assert.throws(() => purchasedSeats("pro", 5)); });
+test("Business annual price is €1200 and includes four users", () => { assert.equal(annualPrice("business", 4), 1200); assert.equal(purchasedSeats("business"), 4); });
+test("Each Business user above four adds €300 annually", () => { assert.equal(annualPrice("business", 5), 1500); assert.equal(annualPrice("business", 6), 1800); assert.equal(annualPrice("business", 10), 3000); });
+test("Business accepts only whole counts from four to ten", () => { for (const n of [3, 11, 4.5, NaN]) assert.throws(() => purchasedSeats("business", n)); });
+test("Trusted Business quantities enforce purchased capacity", () => { assert.equal(seatsForSubscriptionPrice("business",30000,5),5); assert.equal(seatsForSubscriptionPrice("business",30000,11),null); });
+test("Existing subscription prices preserve old seat limits", () => { assert.equal(seatsForSubscriptionPrice("pro",42000,1),5); assert.equal(seatsForSubscriptionPrice("business",55000,1),10); assert.equal(seatsForSubscriptionPrice("basic",35000,1,"price_1UUwPhKmzqfVZ3iXD1bBfvEY"),2); });
 test("Unpaid initial subscriptions never grant access", () => assert.equal(subscriptionAccess("active", "2030-01-01", false, 0), false));
 test("Paid cancellation retains access until paid period ends", () => { assert.equal(subscriptionAccess("canceled", "2030-01-01", true, 0), true); assert.equal(subscriptionAccess("canceled", "2030-01-01", true, Date.parse("2031-01-01")), false); });
 test("Free signup with an unpaid owner goes to plan selection", () => assert.equal(needsPlanSelection({role:"owner", subscription_status:"unpaid", features:[]}), true));

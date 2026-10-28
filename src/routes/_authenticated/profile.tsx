@@ -89,6 +89,10 @@ function ProfilePage() {
             </Select>
           </Card>
           <GhostButton
+            className="flex items-center justify-center gap-2"
+            onClick={() => navigate({ to: "/help" })}
+          >Κέντρο βοήθειας</GhostButton>
+          <GhostButton
             onClick={async () => { await qc.cancelQueries(); qc.clear(); await supabase.auth.signOut(); navigate({ to: "/auth", replace: true }); }}
             className="flex items-center justify-center gap-2 text-destructive"
           >

@@ -18,3 +18,5 @@
 - Order creation/editing and delivery status changes use transactional database RPCs so partial writes cannot leave operational records inconsistent.
 - Delivery tracking is explicitly scoped to one delivery in memory, with pause/resume and accuracy/dwell checks; never restore an automatic GPS watcher from persistent preferences.
 - CompanySync combines company-filtered realtime with visibility-aware polling so updates and revoked memberships refresh without relying on realtime publication availability.
+- Company seat limits are snapshotted per subscription and reconciled from signed Stripe price/quantity state; catalog changes must not alter existing purchased limits.
+- Help uses AI Elements and authenticated streaming Responses with request-local gateway helpers; a single session conversation has no persistence unless explicitly requested.

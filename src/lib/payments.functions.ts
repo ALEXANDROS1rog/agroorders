@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createStripeClient, getStripeErrorMessage, type StripeEnv } from "@/lib/stripe.server";
-import { isPlanSlug, ANNUAL_PLANS, planKeyForPrice, planSlugForKey, canUpgrade, type PlanSlug } from "@/lib/subscription-rules";
+import { isPlanSlug, ANNUAL_PLANS, purchasedSeats, stripeUnitAmount, planKeyForPrice, planSlugForKey, canUpgrade, type PlanSlug } from "@/lib/subscription-rules";
 
 /** Finds the plan's annual price by lookup key, falling back to the known live price ID. */
 async function resolvePlanPrice(stripe: ReturnType<typeof createStripeClient>, slug: PlanSlug) {
@@ -13,7 +13,7 @@ async function resolvePlanPrice(stripe: ReturnType<typeof createStripeClient>, s
   }
   if (
     !price || !price.active ||
-    price.unit_amount !== plan.price * 100 ||
+    price.unit_amount !== stripeUnitAmount(slug) ||
     price.currency !== "eur" ||
     price.recurring?.interval !== "year"
   )
@@ -71,13 +71,14 @@ async function billingOrg(context: {
 
 export const createCompanyCheckout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { plan: PlanSlug; environment: StripeEnv; origin: string }) => {
+  .inputValidator((data: { plan: PlanSlug; seats?: number; environment: StripeEnv; origin: string }) => {
     validate(data);
     if (!isPlanSlug(data.plan)) throw new Error("Invalid plan");
+    purchasedSeats(data.plan, data.seats);
     const url = new URL(data.origin);
     if (!(
       (url.protocol === "https:" &&
-        (url.hostname === "voiceorder.lovable.app" ||
+        (url.hostname === "voiceorders.eu" || url.hostname === "www.voiceorders.eu" || url.hostname === "voiceorder.lovable.app" ||
           url.hostname.endsWith(".lovable.app") ||
           url.hostname.endsWith(".lovableproject.com"))) ||
       url.origin === "http://localhost:8080"
@@ -89,7 +90,9 @@ export const createCompanyCheckout = createServerFn({ method: "POST" })
     try {
       const org = await billingOrg(context);
       const plan = ANNUAL_PLANS[data.plan];
-      if (org.active_users + org.pending_invites > plan.seats)
+      const seats = purchasedSeats(data.plan, data.seats);
+      const quantity = data.plan === "business" ? seats : 1;
+      if (org.active_users + org.pending_invites > seats)
         throw new Error("Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.");
       const stripe = createStripeClient(data.environment);
       const {
@@ -110,7 +113,7 @@ export const createCompanyCheckout = createServerFn({ method: "POST" })
       if (incomplete) {
         const sessions = await stripe.checkout.sessions.list({ subscription: incomplete.id, limit: 100 });
         const open = sessions.data.find(s => s.status === "open" && s.client_secret);
-        const samePlan = incomplete.items.data.some(item => planKeyForPrice(item.price) === plan.lookupKey);
+        const samePlan = incomplete.items.data.some(item => planKeyForPrice(item.price) === plan.lookupKey && item.price.unit_amount === stripeUnitAmount(data.plan) && item.quantity === quantity);
         if (open?.client_secret && samePlan) return { clientSecret: open.client_secret };
       }
       if (
@@ -124,7 +127,7 @@ export const createCompanyCheckout = createServerFn({ method: "POST" })
       const price = await resolvePlanPrice(stripe, data.plan);
       if (
         !price ||
-        price.unit_amount !== plan.price * 100 ||
+        price.unit_amount !== stripeUnitAmount(data.plan) ||
         price.currency !== "eur" ||
         price.recurring?.interval !== "year"
       )
@@ -133,7 +136,7 @@ export const createCompanyCheckout = createServerFn({ method: "POST" })
         customer,
         mode: "subscription",
         ui_mode: "embedded_page",
-        line_items: [{ price: price.id, quantity: 1 }],
+        line_items: [{ price: price.id, quantity }],
         return_url: `${data.origin}/plans?session_id={CHECKOUT_SESSION_ID}`,
         metadata: { userId: context.userId, organizationId: org.organization_id },
         subscription_data: {
@@ -174,6 +177,7 @@ export const companyBillingState = createServerFn({ method: "POST" })
           customer_id?: string;
           period_end?: string;
           cancel_at_period_end?: boolean;
+          seats?: number;
         }
       >;
       let paymentStatus: string | null = null;
@@ -222,16 +226,17 @@ export const createCompanyPortal = createServerFn({ method: "POST" })
  * is paid (pending_if_incomplete), and access changes arrive through the signed webhook. */
 export const upgradeCompanyPlan = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { plan: PlanSlug; environment: StripeEnv }) => {
+  .inputValidator((data: { plan: PlanSlug; seats?: number; environment: StripeEnv }) => {
     validate(data);
     if (!isPlanSlug(data.plan)) throw new Error("Invalid plan");
+    purchasedSeats(data.plan, data.seats);
     return data;
   })
   .handler(async ({ data, context }) => {
     try {
       const org = await billingOrg(context);
-      const target = ANNUAL_PLANS[data.plan];
-      if (org.active_users + org.pending_invites > target.seats)
+      const seats = purchasedSeats(data.plan, data.seats);
+      if (org.active_users + org.pending_invites > seats)
         throw new Error("Το πλάνο δεν χωρά τα ενεργά μέλη και τις εκκρεμείς προσκλήσεις.");
       const { data: row, error } = await context.supabase
         .from("organization_subscriptions")
@@ -250,7 +255,7 @@ export const upgradeCompanyPlan = createServerFn({ method: "POST" })
       if (!item || !canUpgrade(current, data.plan)) throw new Error("Επιτρέπεται μόνο αναβάθμιση σε ανώτερο πλάνο.");
       const price = await resolvePlanPrice(stripe, data.plan);
       const updated = await stripe.subscriptions.update(sub.id, {
-        items: [{ id: item.id, price: price.id }],
+        items: [{ id: item.id, price: price.id, quantity: data.plan === "business" ? seats : 1 }],
         proration_behavior: "always_invoice",
         payment_behavior: "pending_if_incomplete",
         cancel_at_period_end: false,

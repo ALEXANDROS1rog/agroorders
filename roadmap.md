@@ -1,4 +1,7 @@
 # VoiceOrders roadmap
+- [ ] Apply new annual prices and purchased seat limits for future purchases, preserving existing subscriptions.
+- [ ] Add Business 4–10-user selection with €300/year per additional user and verify checkout/reconciliation.
+- [ ] Add one-session AI help desk and expandable FAQs; verify a real answer and follow-up.
 - [x] Add restrained visible section-color accents and center the new-customer toolbar button; verify opening/canceling its form.
 - [ ] Complete authorized own-account LIVE Stripe migration — live connection/webhook credentials are not provisioned; connected account catalog returns no recurring prices and its live mode is not verified. Unify checkout/portal/webhooks only after supported runtime account linkage. Never create duplicate plans or real test charges; confirm irreversible actions first.
 - [x] Prevent replacement subscriptions/customers inheriting previous paid periods; five regression tests plus existing payment/delivery tests pass (23 total)
