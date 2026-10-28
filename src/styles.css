@@ -341,18 +341,18 @@
   border-color: color-mix(in oklab, var(--brand) 18%, var(--surface-border));
 }
 [data-tone="home"] { --brand: #00a6d6; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #ffffff; --primary-foreground: var(--brand-foreground); }
-[data-tone="orders"] { --brand: #bebebe; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #424242; --primary-foreground: var(--brand-foreground); }
-[data-tone="deliveries"] { --brand: #e5007d; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #ffffff; --primary-foreground: var(--brand-foreground); }
-[data-tone="routes"] { --brand: #929292; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #ffffff; --primary-foreground: var(--brand-foreground); }
-[data-tone="customers"] { --brand: #80d000; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #ffffff; --primary-foreground: var(--brand-foreground); }
+[data-tone="orders"] { --brand: #80d000; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #ffffff; --primary-foreground: var(--brand-foreground); }
+[data-tone="deliveries"] { --brand: #bebebe; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #424242; --primary-foreground: var(--brand-foreground); }
+[data-tone="routes"] { --brand: #80d000; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #ffffff; --primary-foreground: var(--brand-foreground); }
+[data-tone="customers"] { --brand: #e5007d; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #ffffff; --primary-foreground: var(--brand-foreground); }
 [data-tone="products"] { --brand: #80d000; --primary: var(--brand); --ring: var(--brand); --brand-foreground: #ffffff; --primary-foreground: var(--brand-foreground); }
 [data-tone="account"] { --brand: oklch(0.48 0.13 275); --primary: var(--brand); --ring: var(--brand); --brand-foreground: oklch(0.99 0.01 275); --primary-foreground: var(--brand-foreground); }
 @media (prefers-color-scheme: dark) {
   [data-tone="home"] { --brand: #45c4e8; --brand-foreground: #063b49; }
-  [data-tone="orders"] { --brand: #d2d0d0; --brand-foreground: #424242; }
-  [data-tone="deliveries"] { --brand: #ff4ca9; --brand-foreground: #4b082e; }
-  [data-tone="routes"] { --brand: #d2d0d0; --brand-foreground: #424242; }
-  [data-tone="customers"] { --brand: #9be52e; --brand-foreground: #263a08; }
+  [data-tone="orders"] { --brand: #9be52e; --brand-foreground: #263a08; }
+  [data-tone="deliveries"] { --brand: #d2d0d0; --brand-foreground: #424242; }
+  [data-tone="routes"] { --brand: #9be52e; --brand-foreground: #263a08; }
+  [data-tone="customers"] { --brand: #ff4ca9; --brand-foreground: #4b082e; }
   [data-tone="products"] { --brand: #9be52e; --brand-foreground: #263a08; }
   [data-tone="account"] { --brand: oklch(0.74 0.11 275); --brand-foreground: oklch(0.2 0.04 275); }
 }
