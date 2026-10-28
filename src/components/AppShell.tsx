@@ -6,11 +6,11 @@ import { useOrg } from "@/lib/org";
 import { needsPlanSelection } from "@/lib/subscription-rules";
 
 const NAV = [
-  { to: "/dashboard", label: "nav.home" as TKey, icon: Home },
-  { to: "/orders", label: "nav.orders" as TKey, icon: ClipboardList },
-  { to: "/deliveries", label: "nav.deliveries" as TKey, icon: Truck },
-  { to: "/customers", label: "nav.customers" as TKey, icon: Users },
-  { to: "/trips", label: "nav.routes" as TKey, icon: RouteIcon },
+  { to: "/dashboard", label: "nav.home" as TKey, icon: Home, color: "#00a6d6" },
+  { to: "/orders", label: "nav.orders" as TKey, icon: ClipboardList, color: "#80d000" },
+  { to: "/deliveries", label: "nav.deliveries" as TKey, icon: Truck, color: "#bebebe" },
+  { to: "/customers", label: "nav.customers" as TKey, icon: Users, color: "#e5007d" },
+  { to: "/trips", label: "nav.routes" as TKey, icon: RouteIcon, color: "#80d000" },
 ] as const;
 
 type ShellProps = {
@@ -124,8 +124,8 @@ function ShellFrame(props: ShellProps) {
                 aria-current={active ? "page" : undefined}
                 className="tab-tone press relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.375rem] px-0.5 py-2"
               >
-                <Icon className="h-5 w-5" />
-                <span className="w-full truncate text-center text-[10px] font-semibold leading-none">
+                <Icon className="h-5 w-5" style={{ color: item.color }} />
+                <span className="w-full truncate text-center text-[10px] font-semibold leading-none" style={{ color: item.color }}>
                   {t(item.label)}
                 </span>
               </Link>
