@@ -27,7 +27,7 @@ export function TripCard({ trip }: { trip: TripWithOrders }) {
         </div>
         <div className="surface-subtle rounded-2xl p-2">
           <p className="text-[11px] text-muted-foreground">{t("r.expenses")}</p>
-          <p className="font-semibold text-destructive">{formatCurrency(n.expenses)}</p>
+          <p className="font-semibold" style={{ color: "#e53935" }}>{formatCurrency(n.expenses)}</p>
         </div>
         <div className="surface-subtle rounded-2xl p-2">
           <p className="text-[11px] text-muted-foreground">{t("r.net")}</p>
