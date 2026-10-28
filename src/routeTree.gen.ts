@@ -31,6 +31,7 @@ import { Route as AuthenticatedOrdersNewRouteImport } from './routes/_authentica
 import { Route as AuthenticatedTripsIndexRouteImport } from './routes/_authenticated/trips.index'
 import { Route as AuthenticatedTripsIdRouteImport } from './routes/_authenticated/trips.$id'
 import { Route as AuthenticatedTripsNewRouteImport } from './routes/_authenticated/trips.new'
+import { Route as ApiPublicHelpRouteImport } from './routes/api/public/help'
 import { Route as AuthenticatedOrdersIdEditRouteImport } from './routes/_authenticated/orders.$id_.edit'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
@@ -147,6 +148,11 @@ const AuthenticatedTripsNewRoute = AuthenticatedTripsNewRouteImport.update({
   path: '/trips/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicHelpRoute = ApiPublicHelpRouteImport.update({
+  id: '/api/public/help',
+  path: '/api/public/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedOrdersIdEditRoute =
   AuthenticatedOrdersIdEditRouteImport.update({
     id: '/orders/$id_/edit',
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/orders/new': typeof AuthenticatedOrdersNewRoute
   '/trips/$id': typeof AuthenticatedTripsIdRoute
   '/trips/new': typeof AuthenticatedTripsNewRoute
+  '/api/public/help': typeof ApiPublicHelpRoute
   '/customers/': typeof AuthenticatedCustomersIndexRoute
   '/orders/': typeof AuthenticatedOrdersIndexRoute
   '/trips/': typeof AuthenticatedTripsIndexRoute
@@ -204,6 +211,7 @@ export interface FileRoutesByTo {
   '/orders/new': typeof AuthenticatedOrdersNewRoute
   '/trips/$id': typeof AuthenticatedTripsIdRoute
   '/trips/new': typeof AuthenticatedTripsNewRoute
+  '/api/public/help': typeof ApiPublicHelpRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/orders': typeof AuthenticatedOrdersIndexRoute
   '/trips': typeof AuthenticatedTripsIndexRoute
@@ -231,6 +239,7 @@ export interface FileRoutesById {
   '/_authenticated/orders/new': typeof AuthenticatedOrdersNewRoute
   '/_authenticated/trips/$id': typeof AuthenticatedTripsIdRoute
   '/_authenticated/trips/new': typeof AuthenticatedTripsNewRoute
+  '/api/public/help': typeof ApiPublicHelpRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/orders/': typeof AuthenticatedOrdersIndexRoute
   '/_authenticated/trips/': typeof AuthenticatedTripsIndexRoute
@@ -258,6 +267,7 @@ export interface FileRouteTypes {
     | '/orders/new'
     | '/trips/$id'
     | '/trips/new'
+    | '/api/public/help'
     | '/customers/'
     | '/orders/'
     | '/trips/'
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/orders/new'
     | '/trips/$id'
     | '/trips/new'
+    | '/api/public/help'
     | '/customers'
     | '/orders'
     | '/trips'
@@ -309,6 +320,7 @@ export interface FileRouteTypes {
     | '/_authenticated/orders/new'
     | '/_authenticated/trips/$id'
     | '/_authenticated/trips/new'
+    | '/api/public/help'
     | '/_authenticated/customers/'
     | '/_authenticated/orders/'
     | '/_authenticated/trips/'
@@ -322,6 +334,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   HelpRoute: typeof HelpRoute
   InviteTokenRoute: typeof InviteTokenRoute
+  ApiPublicHelpRoute: typeof ApiPublicHelpRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -481,6 +494,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTripsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/help': {
+      id: '/api/public/help'
+      path: '/api/public/help'
+      fullPath: '/api/public/help'
+      preLoaderRoute: typeof ApiPublicHelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/orders/$id_/edit': {
       id: '/_authenticated/orders/$id_/edit'
       path: '/orders/$id/edit'
@@ -557,6 +577,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   HelpRoute: HelpRoute,
   InviteTokenRoute: InviteTokenRoute,
+  ApiPublicHelpRoute: ApiPublicHelpRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
