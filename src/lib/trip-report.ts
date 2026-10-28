@@ -1,6 +1,5 @@
 import { loadingList, tripNumbers, type TripWithOrders } from "@/lib/api";
-import { ORDER_STATUS_LABEL } from "@/lib/domain";
-import { formatCurrency } from "@/lib/domain";
+import { formatCurrency, ORDER_STATUS_LABEL } from "@/lib/domain";
 
 const PAGE_WIDTH = 1240;
 const PAGE_HEIGHT = 1754;
@@ -10,7 +9,7 @@ type PdfPage = { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D };
 
 function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
   const pages: PdfPage[] = [];
-  let page: PdfPage;
+  let page = {} as PdfPage;
   let y = 0;
 
   function startPage() {
@@ -152,7 +151,6 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
     objects[pageId] = encoder.encode(
       `${pageId} 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 ${imageId} 0 R >> >> /Contents ${contentId} 0 R >>\nendobj\n`,
     );
-    const stream = encoder.encode(`q\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\n`);
     objects[contentId] = encoder.encode(`${contentId} 0 obj\n<< /Length ${stream.length} >>\nstream\nq\n595.28 0 0 841.89 0 0 cm\n/Im0 Do\nQ\nendstream\nendobj\n`);
     const imageHeader = encoder.encode(
       `${imageId} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
