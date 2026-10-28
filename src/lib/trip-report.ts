@@ -1,4 +1,4 @@
-import { loadingList, tripNumbers, type TripWithOrders } from "@/lib/api";
+import { loadingList, orderTotal, tripNumbers, type TripWithOrders } from "@/lib/api";
 import { formatCurrency, ORDER_STATUS_LABEL } from "@/lib/domain";
 
 const PAGE_WIDTH = 1240;
@@ -114,7 +114,7 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
     } else {
       write("Δεν υπάρχουν γραμμές προϊόντων.", { size: 24 });
     }
-    if (includeFinance) write(`Σύνολο παραγγελίας: ${formatCurrency(order.order_items.reduce((sum, item) => sum + Number(item.quantity) * Number(item.unit_price), 0))}`, { size: 25, weight: 600 });
+    if (includeFinance) write(`Σύνολο παραγγελίας: ${formatCurrency(orderTotal(order))}`, { size: 25, weight: 600 });
     if (order.notes) write(`Σημειώσεις: ${order.notes}`, { size: 24 });
     if (index < trip.orders.length - 1) {
       y += 6;
