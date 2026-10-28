@@ -505,6 +505,7 @@ export type Database = {
           paid_confirmed: boolean
           payment_states: Json
           plan_id: string
+          seat_limit: number | null
           status: string
           stripe_price_id: string | null
           stripe_subscription_id: string | null
@@ -520,6 +521,7 @@ export type Database = {
           paid_confirmed?: boolean
           payment_states?: Json
           plan_id: string
+          seat_limit?: number | null
           status?: string
           stripe_price_id?: string | null
           stripe_subscription_id?: string | null
@@ -535,6 +537,7 @@ export type Database = {
           paid_confirmed?: boolean
           payment_states?: Json
           plan_id?: string
+          seat_limit?: number | null
           status?: string
           stripe_price_id?: string | null
           stripe_subscription_id?: string | null

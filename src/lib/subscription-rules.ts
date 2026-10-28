@@ -17,7 +17,8 @@ export function stripeUnitAmount(plan: PlanSlug): number {
   return (plan === "business" ? 300 : ANNUAL_PLANS[plan].price) * 100;
 }
 /** Old paid prices retain their previously purchased limits; new Business is per user. */
-export function seatsForSubscriptionPrice(plan: PlanSlug, unitAmount: number | null, quantity: number | null | undefined): number | null {
+export function seatsForSubscriptionPrice(plan: PlanSlug, unitAmount: number | null, quantity: number | null | undefined, priceId?: string): number | null {
+  if (plan === "basic" && quantity === 1 && unitAmount === 35000 && ["price_1UUi7YL9IU9FnfJgh2GGDnJq", ANNUAL_PLANS.basic.livePriceId].includes(priceId ?? "")) return 2;
   if (unitAmount === stripeUnitAmount(plan)) {
     try { return purchasedSeats(plan, plan === "business" ? quantity ?? 0 : undefined); } catch { return null; }
   }

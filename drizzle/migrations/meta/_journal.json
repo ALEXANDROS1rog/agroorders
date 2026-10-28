@@ -50,6 +50,13 @@
       "when": 1792999641671,
       "tag": "0006_prevent_driver_direct_write_bypass",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793178791324,
+      "tag": "0007_purchased_company_seat_limits",
+      "breakpoints": true
     }
   ]
 }
