@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as HelpRouteImport } from './routes/help'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDeliveriesRouteImport } from './routes/_authenticated/deliveries'
 import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
@@ -45,6 +46,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -157,6 +163,7 @@ const ApiPublicPaymentsWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
+  '/help': typeof HelpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliveries': typeof AuthenticatedDeliveriesRoute
   '/history': typeof AuthenticatedHistoryRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
+  '/help': typeof HelpRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/deliveries': typeof AuthenticatedDeliveriesRoute
   '/history': typeof AuthenticatedHistoryRoute
@@ -207,6 +215,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
+  '/help': typeof HelpRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/deliveries': typeof AuthenticatedDeliveriesRoute
   '/_authenticated/history': typeof AuthenticatedHistoryRoute
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/help'
     | '/dashboard'
     | '/deliveries'
     | '/history'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/help'
     | '/dashboard'
     | '/deliveries'
     | '/history'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/help'
     | '/_authenticated/dashboard'
     | '/_authenticated/deliveries'
     | '/_authenticated/history'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
+  HelpRoute: typeof HelpRoute
   InviteTokenRoute: typeof InviteTokenRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
@@ -333,6 +346,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -535,6 +555,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
+  HelpRoute: HelpRoute,
   InviteTokenRoute: InviteTokenRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
