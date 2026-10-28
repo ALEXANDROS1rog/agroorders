@@ -214,12 +214,12 @@ export function openTripReport(trip: TripWithOrders, includeFinance: boolean): v
 
   try {
     const pdf = createPdf(trip, includeFinance);
-    const pdfBlob = new Blob([pdf], { type: "application/pdf" });
-    const pdfUrl = URL.createObjectURL(pdfBlob);
     const filename = `voiceorders-route-${trip.route_date}.pdf`;
     const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "-");
 
     if (!reportWindow) {
+      const pdfBlob = new Blob([pdf], { type: "application/pdf" });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
       const download = document.createElement("a");
       download.href = pdfUrl;
       download.download = safeFilename;
@@ -245,22 +245,25 @@ small{color:#596579}iframe{display:block;width:min(100%,1000px);height:calc(100v
 @media print{header{display:none}iframe{width:100%;height:100vh;margin:0;box-shadow:none}}
 </style></head><body>
 <header><strong>${title}</strong><small>Κοινοποίηση PDF μέσω email, MMS/SMS, Viber ή WhatsApp (ανάλογα με τις εφαρμογές της συσκευής).</small>
-<a class="download" href="${pdfUrl}" download="${safeFilename}">Λήψη PDF</a>
+<a class="download" id="download" href="#" download="${safeFilename}">Λήψη PDF</a>
 <button class="share" id="share" type="button">Κοινοποίηση PDF</button>
 <button class="primary" type="button" onclick="window.print()">Εκτύπωση</button></header>
-<iframe title="${title}" src="${pdfUrl}"></iframe>
+<iframe id="pdf-preview" title="${title}"></iframe>
 <script>
 const pdfData="${base64}";
 const fileName="${safeFilename}";
+const binary=atob(pdfData), pdfBytes=new Uint8Array(binary.length);
+for(let i=0;i<binary.length;i++) pdfBytes[i]=binary.charCodeAt(i);
+const pdfUrl=URL.createObjectURL(new Blob([pdfBytes],{type:"application/pdf"}));
+document.getElementById("pdf-preview").src=pdfUrl;
+document.getElementById("download").href=pdfUrl;
 document.getElementById("share").addEventListener("click", async () => {
-  const binary=atob(pdfData), bytes=new Uint8Array(binary.length);
-  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
-  const file=new File([bytes],fileName,{type:"application/pdf"});
+  const file=new File([pdfBytes],fileName,{type:"application/pdf"});
   if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
     try{await navigator.share({files:[file],title:${JSON.stringify(title)},text:"Αναφορά δρομολογίου VoiceOrders"});}
     catch(error){if(error.name!=="AbortError")alert("Δεν ήταν δυνατή η κοινοποίηση. Χρησιμοποίησε το κουμπί Λήψη PDF.");}
   }else{
-    const link=document.createElement("a");link.href="${pdfUrl}";link.download=fileName;link.click();
+    const link=document.createElement("a");link.href=pdfUrl;link.download=fileName;link.click();
     alert("Η συσκευή δεν υποστηρίζει απευθείας κοινοποίηση αρχείου PDF. Το PDF κατέβηκε· μπορείς να το επισυνάψεις με email, MMS/SMS, Viber ή WhatsApp.");
   }
 });
