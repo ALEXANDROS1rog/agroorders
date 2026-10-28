@@ -9,7 +9,7 @@ type PdfPage = { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D };
 
 function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
   const pages: PdfPage[] = [];
-  let page: PdfPage;
+  let page = {} as PdfPage;
   let y = 0;
 
   function startPage() {
@@ -166,10 +166,11 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
       `${imageId} 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
     );
     const imageFooter = encoder.encode("\nendstream\nendobj\n");
-    objects[imageId] = new Uint8Array(imageHeader.length + jpeg.length + imageFooter.length);
-    objects[imageId].set(imageHeader);
-    objects[imageId].set(jpeg, imageHeader.length);
-    objects[imageId].set(imageFooter, imageHeader.length + jpeg.length);
+    const imageObject = new Uint8Array(imageHeader.length + jpeg.length + imageFooter.length);
+    imageObject.set(imageHeader);
+    imageObject.set(jpeg, imageHeader.length);
+    imageObject.set(imageFooter, imageHeader.length + jpeg.length);
+    objects[imageId] = imageObject;
   });
 
   const header = encoder.encode("%PDF-1.4\n");
@@ -178,8 +179,10 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
   let offset = header.length;
   for (let id = 1; id < objects.length; id++) {
     offsets[id] = offset;
-    chunks.push(objects[id]);
-    offset += objects[id].length;
+    const object = objects[id];
+    if (!object) throw new Error("Το PDF δεν δημιουργήθηκε σωστά.");
+    chunks.push(object);
+    offset += object.length;
   }
   const xrefOffset = offset;
   let xref = `xref\n0 ${objects.length}\n0000000000 65535 f \n`;
@@ -201,25 +204,32 @@ function toBase64(bytes: Uint8Array): string {
   const chunkSize = 0x8000;
   for (let start = 0; start < bytes.length; start += chunkSize) {
     const chunk = bytes.subarray(start, start + chunkSize);
-    for (let i = 0; i < chunk.length; i++) binary += String.fromCharCode(chunk[i]);
+    for (let i = 0; i < chunk.length; i++) binary += String.fromCharCode(chunk[i] ?? 0);
   }
   return btoa(binary);
 }
 
 export function openTripReport(trip: TripWithOrders, includeFinance: boolean): void {
   const reportWindow = window.open("", "_blank");
-  if (!reportWindow) {
-    window.alert("Επίτρεψε τα αναδυόμενα παράθυρα για να ανοίξει το report.");
-    return;
-  }
 
   try {
     const pdf = createPdf(trip, includeFinance);
     const pdfBlob = new Blob([pdf], { type: "application/pdf" });
     const pdfUrl = URL.createObjectURL(pdfBlob);
-    const base64 = toBase64(pdf);
     const filename = `voiceorders-route-${trip.route_date}.pdf`;
     const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "-");
+
+    if (!reportWindow) {
+      const download = document.createElement("a");
+      download.href = pdfUrl;
+      download.download = safeFilename;
+      download.click();
+      window.setTimeout(() => URL.revokeObjectURL(pdfUrl), 60_000);
+      window.alert("Το παράθυρο report μπλοκαρίστηκε. Κατέβασα το PDF απευθείας.");
+      return;
+    }
+
+    const base64 = toBase64(pdf);
     const routeDate = trip.route_date.split("-").reverse().join("/");
     const title = `Αναφορά δρομολογίου · ${routeDate}`;
     reportWindow.document.open();
@@ -258,7 +268,7 @@ document.getElementById("share").addEventListener("click", async () => {
     reportWindow.document.close();
     reportWindow.focus();
   } catch (error) {
-    reportWindow.close();
+    reportWindow?.close();
     window.alert(error instanceof Error ? error.message : "Δεν ήταν δυνατή η δημιουργία του PDF.");
   }
 }
