@@ -27,7 +27,7 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
     ctx.fillRect(0, 0, PAGE_WIDTH, 18);
   }
 
-  function write(text: string, options: { size?: number; weight?: number; color?: string; gap?: number } = {}) {
+  function write(text: string, options: { size?: number; weight?: number; color?: string; gap?: number; underline?: boolean } = {}) {
     const size = options.size ?? 28;
     const weight = options.weight ?? 400;
     const color = options.color ?? "#1f2937";
@@ -54,6 +54,14 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
       page.ctx.font = `${weight} ${size}px Arial, sans-serif`;
       page.ctx.fillStyle = color;
       page.ctx.fillText(lineText, MARGIN, y + size);
+      if (options.underline) {
+        page.ctx.beginPath();
+        page.ctx.moveTo(MARGIN, y + size + 3);
+        page.ctx.lineTo(MARGIN + page.ctx.measureText(lineText).width, y + size + 3);
+        page.ctx.strokeStyle = color;
+        page.ctx.lineWidth = 2;
+        page.ctx.stroke();
+      }
       y += size + gap;
     }
   }
@@ -103,7 +111,8 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
   for (const [index, order] of trip.orders.entries()) {
     const customer = order.customer?.full_name || "Χωρίς πελάτη";
     const status = ORDER_STATUS_LABEL[order.status] ?? order.status;
-    write(`#${order.order_number} · ${customer}`, { size: 30, weight: 700, color: "#18212b", gap: 8 });
+    write(`#${order.order_number}`, { size: 25, weight: 700, color: "#18212b", gap: 4 });
+    write(customer, { size: 32, weight: 700, color: "#e5007d", underline: true, gap: 12 });
     write(`Κατάσταση: ${status}`);
     if (order.phone) write(`Τηλέφωνο: ${order.phone}`);
     if (order.address) write(`Διεύθυνση: ${order.address}`);
@@ -116,6 +125,7 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
     }
     if (includeFinance) write(`Σύνολο παραγγελίας: ${formatCurrency(orderTotal(order))}`, { size: 25, weight: 600 });
     if (order.notes) write(`Σημειώσεις: ${order.notes}`, { size: 24 });
+    write("Υπογραφή πελάτη: __________________________", { size: 22, color: "#586579", gap: 22 });
     if (index < trip.orders.length - 1) {
       y += 6;
       page.ctx.fillStyle = "#e5e7eb";
