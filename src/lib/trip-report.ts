@@ -224,7 +224,7 @@ small{color:#596579}iframe{display:block;width:min(100%,1000px);height:calc(100v
 @media(max-width:600px){header{gap:7px;padding:10px}header strong{width:100%}button,a{flex:1;text-align:center;padding:10px 8px}iframe{height:calc(100vh - 150px);min-height:420px;margin:10px auto}}
 @media print{header{display:none}iframe{width:100%;height:100vh;margin:0;box-shadow:none}}
 </style></head><body>
-<header><strong>${title}</strong><small>Το PDF είναι έτοιμο για αποθήκευση ή κοινοποίηση.</small>
+<header><strong>${title}</strong><small>Κοινοποίηση PDF μέσω email, MMS/SMS, Viber ή WhatsApp (ανάλογα με τις εφαρμογές της συσκευής).</small>
 <a class="download" href="${pdfUrl}" download="${safeFilename}">Λήψη PDF</a>
 <button class="share" id="share" type="button">Κοινοποίηση PDF</button>
 <button class="primary" type="button" onclick="window.print()">Εκτύπωση</button></header>
