@@ -44,7 +44,7 @@ function HelpPage() {
         {status === "submitted" ? <Shimmer>Ετοιμάζω την απάντηση...</Shimmer> : null}
       </ConversationContent><ConversationScrollButton aria-label="Τελευταίο μήνυμα" /></Conversation>
       {error ? <p role="alert" className="px-4 py-2 text-sm text-destructive" data-no-translate>{error.message}</p> : null}
-      <PromptInput className="m-3 [&>[data-slot=input-group]]:surface-subtle [&>[data-slot=input-group]]:rounded-2xl" onSubmit={async () => { if (!text.trim() || busy) return; const value = text; setText(""); await sendMessage({ text: value }, { body: { language: lang } }); input.current?.focus(); }}>
+      <PromptInput className="m-3 w-[calc(100%-1.5rem)] shrink-0 [&>[data-slot=input-group]]:surface-subtle [&>[data-slot=input-group]]:rounded-2xl" onSubmit={async () => { if (!text.trim() || busy) return; const value = text; setText(""); await sendMessage({ text: value }, { body: { language: lang } }); input.current?.focus(); }}>
         <PromptInputTextarea ref={input} autoFocus value={text} onChange={e => setText(e.target.value)} placeholder="Γράψτε την ερώτησή σας..." aria-label="Η ερώτησή σας" className="min-h-16 text-base" />
         <PromptInputFooter className="justify-end"><PromptInputSubmit status={status} onStop={stop} disabled={!busy && !text.trim()} aria-label={busy ? "Διακοπή" : "Αποστολή"} title={busy ? "Διακοπή" : "Αποστολή"} className="h-10 w-10 rounded-xl bg-brand text-brand-foreground">{busy ? undefined : <ArrowUp />}</PromptInputSubmit></PromptInputFooter>
       </PromptInput>
