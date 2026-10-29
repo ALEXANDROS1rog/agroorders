@@ -6,11 +6,11 @@ import { useOrg } from "@/lib/org";
 import { needsPlanSelection } from "@/lib/subscription-rules";
 
 const NAV = [
-  { to: "/dashboard", label: "nav.home" as TKey, icon: Home, color: "#00a6d6" },
-  { to: "/orders", label: "nav.orders" as TKey, icon: ClipboardList, color: "#80d000" },
-  { to: "/deliveries", label: "nav.deliveries" as TKey, icon: Truck, color: "#bebebe" },
-  { to: "/customers", label: "nav.customers" as TKey, icon: Users, color: "#e5007d" },
-  { to: "/trips", label: "nav.routes" as TKey, icon: RouteIcon, color: "#80d000" },
+  { to: "/dashboard", label: "nav.home" as TKey, icon: Home },
+  { to: "/orders", label: "nav.orders" as TKey, icon: ClipboardList },
+  { to: "/deliveries", label: "nav.deliveries" as TKey, icon: Truck },
+  { to: "/customers", label: "nav.customers" as TKey, icon: Users },
+  { to: "/trips", label: "nav.routes" as TKey, icon: RouteIcon },
 ] as const;
 
 type ShellProps = {
@@ -50,7 +50,7 @@ function PageBody({ title, subtitle, back, action, children }: ShellProps) {
             <Link
               to={back}
               aria-label={t("c.back")}
-              className="surface press grid h-11 w-11 shrink-0 place-items-center rounded-2xl"
+              className="liquid-glass-clear press grid h-11 w-11 shrink-0 place-items-center rounded-full"
             >
               <ChevronLeft className="h-5 w-5" />
             </Link>
@@ -58,9 +58,9 @@ function PageBody({ title, subtitle, back, action, children }: ShellProps) {
             <Link
               to="/profile"
               aria-label="Το προφίλ μου"
-              className="surface press grid h-11 w-11 shrink-0 place-items-center rounded-2xl"
+              className="liquid-glass-clear press grid h-11 w-11 shrink-0 place-items-center rounded-full"
             >
-              <span className="font-display text-lg font-bold text-brand">V</span>
+              <span className="font-display text-lg font-semibold text-foreground">V</span>
             </Link>
           )}
           <div className="min-w-0">
@@ -109,7 +109,7 @@ function ShellFrame(props: ShellProps) {
 
       {choosingPlan ? null : <nav className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[420px] -translate-x-1/2">
         <div
-          className="liquid-glass relative flex rounded-[1.75rem] p-1.5"
+          className="liquid-glass relative isolate flex items-stretch gap-0.5 rounded-full p-1.5"
         >
           {NAV.map((item, i) => {
             const permission = permissions[i];
@@ -122,10 +122,10 @@ function ShellFrame(props: ShellProps) {
                 key={item.to}
                 to={item.to}
                 aria-current={active ? "page" : undefined}
-                className="tab-tone press relative flex min-w-0 flex-1 flex-col items-center gap-1 rounded-[1.375rem] px-0.5 py-2"
+                className="tab-tone press relative flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-full px-0.5 py-2"
               >
-                <Icon className="h-5 w-5" style={{ color: item.color }} />
-                <span className="w-full truncate text-center text-[10px] font-semibold leading-none" style={{ color: item.color }}>
+                <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={active ? 2 : 1.65} />
+                <span className="w-full truncate text-center text-[10px] font-medium leading-tight">
                   {t(item.label)}
                 </span>
               </Link>

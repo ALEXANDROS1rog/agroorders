@@ -20,3 +20,4 @@
 - CompanySync combines company-filtered realtime with visibility-aware polling so updates and revoked memberships refresh without relying on realtime publication availability.
 - Company seat limits are snapshotted per subscription and reconciled from signed Stripe price/quantity state; catalog changes must not alter existing purchased limits.
 - Help uses AI Elements and authenticated streaming Responses with request-local gateway helpers; a single session conversation has no persistence unless explicitly requested.
+- Shared appearance and navigation materials are defined in src/styles.css; AppShell navigation inherits semantic colors without inline category colors or global icon overrides so the interface stays theme-consistent.
