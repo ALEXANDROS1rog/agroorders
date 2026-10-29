@@ -110,7 +110,7 @@ function createPdf(trip: TripWithOrders, includeFinance: boolean): Uint8Array {
   heading("Παραγγελίες");
   for (const [index, order] of trip.orders.entries()) {
     const customer = order.customer?.full_name || "Χωρίς πελάτη";
-    const status = ORDER_STATUS_LABEL[order.status] ?? order.status;
+    const status = Object.entries(ORDER_STATUS_LABEL).find(([key]) => key === order.status)?.[1] ?? order.status;
     write(`#${order.order_number}`, { size: 25, weight: 700, color: "#18212b", gap: 4 });
     write(customer, { size: 32, weight: 700, color: "#e5007d", underline: true, gap: 12 });
     write(`Κατάσταση: ${status}`);
@@ -218,7 +218,7 @@ export function openTripReport(trip: TripWithOrders, includeFinance: boolean): v
     const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, "-");
 
     if (!reportWindow) {
-      const pdfBlob = new Blob([pdf], { type: "application/pdf" });
+      const pdfBlob = new Blob([new Uint8Array(pdf)], { type: "application/pdf" });
       const pdfUrl = URL.createObjectURL(pdfBlob);
       const download = document.createElement("a");
       download.href = pdfUrl;
