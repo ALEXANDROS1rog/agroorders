@@ -4,13 +4,14 @@ import { useI18n, type TKey } from "@/lib/i18n";
 import { useEffect, useState, type ReactNode } from "react";
 import { useOrg } from "@/lib/org";
 import { needsPlanSelection } from "@/lib/subscription-rules";
+import { GlassNavigation } from "@/components/GlassNavigation";
 
 const NAV = [
-  { to: "/dashboard", label: "nav.home" as TKey, icon: Home },
-  { to: "/orders", label: "nav.orders" as TKey, icon: ClipboardList },
-  { to: "/deliveries", label: "nav.deliveries" as TKey, icon: Truck },
-  { to: "/customers", label: "nav.customers" as TKey, icon: Users },
-  { to: "/trips", label: "nav.routes" as TKey, icon: RouteIcon },
+  { to: "/dashboard", label: "nav.home" as TKey, icon: Home, tone: "home" },
+  { to: "/orders", label: "nav.orders" as TKey, icon: ClipboardList, tone: "orders" },
+  { to: "/deliveries", label: "nav.deliveries" as TKey, icon: Truck, tone: "deliveries" },
+  { to: "/customers", label: "nav.customers" as TKey, icon: Users, tone: "customers" },
+  { to: "/trips", label: "nav.routes" as TKey, icon: RouteIcon, tone: "routes" },
 ] as const;
 
 type ShellProps = {
@@ -92,9 +93,6 @@ function ShellFrame(props: ShellProps) {
   const permissions = [null, "orders.view", "deliveries.view", "customers.view", "routes.view"];
   const features = [null, "orders", "deliveries", "customers", "routes"];
 
-  // Highlighted tab (also for detail pages such as /orders/123) ...
-  const activeIndex = NAV.findIndex((n) => pathname.startsWith(n.to));
-
   const tone = pathname.startsWith("/orders") || pathname.startsWith("/history") ? "orders"
     : pathname.startsWith("/trips") ? "routes"
     : pathname.startsWith("/deliveries") || pathname.startsWith("/map") ? "deliveries"
@@ -107,32 +105,11 @@ function ShellFrame(props: ShellProps) {
     <div data-tone={tone} className="relative min-h-screen w-full overflow-clip bg-background text-foreground">
       <PageBody {...props} />
 
-      {choosingPlan ? null : <nav className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-1/2 z-40 w-[calc(100%-1.5rem)] max-w-[420px] -translate-x-1/2">
-        <div
-          className="liquid-glass relative isolate flex items-stretch gap-0.5 rounded-full p-1.5"
-        >
-          {NAV.map((item, i) => {
-            const permission = permissions[i];
-            const feature = features[i];
-            if ((permission && !can(permission)) || (feature && !hasFeature(feature))) return null;
-            const active = i === activeIndex;
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                aria-current={active ? "page" : undefined}
-                className="tab-tone press relative flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-full px-0.5 py-2"
-              >
-                <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={active ? 2 : 1.65} />
-                <span className="w-full truncate text-center text-[10px] font-medium leading-tight">
-                  {t(item.label)}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>}
+      {choosingPlan ? null : <GlassNavigation pathname={pathname} items={NAV.filter((_, i) => {
+        const permission = permissions[i];
+        const feature = features[i];
+        return (!permission || can(permission)) && (!feature || hasFeature(feature));
+      }).map((item) => ({ ...item, label: t(item.label) }))} />}
     </div>
   );
 }

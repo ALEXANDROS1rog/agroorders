@@ -1,4 +1,5 @@
 # VoiceOrders roadmap
+- [ ] Add distinct category colors, explicit-selection-only icon colors and finger-following glass navigation with release selection; verify touch, click, cancel and filtered tabs.
 - [x] Refine shared Liquid Glass materials and minimalist bottom navigation; verified signed-in tab navigation, light/dark mobile and desktop views, no horizontal overflow or runtime errors.
 - [x] Apply new annual prices and purchased seat limits for future purchases, preserving existing subscriptions; 28 rule tests passed.
 - [x] Add Business 4–10-user selection with €300/year per additional user; verified 5-user €1500 test checkout and signed reconciliation rules without a charge.
