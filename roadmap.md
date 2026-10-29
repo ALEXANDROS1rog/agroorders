@@ -1,5 +1,5 @@
 # VoiceOrders roadmap
-- [ ] Refine shared Liquid Glass materials and minimalist bottom navigation; verify signed-in navigation in light/dark and mobile/desktop views.
+- [x] Refine shared Liquid Glass materials and minimalist bottom navigation; verified signed-in tab navigation, light/dark mobile and desktop views, no horizontal overflow or runtime errors.
 - [x] Apply new annual prices and purchased seat limits for future purchases, preserving existing subscriptions; 28 rule tests passed.
 - [x] Add Business 4–10-user selection with €300/year per additional user; verified 5-user €1500 test checkout and signed reconciliation rules without a charge.
 - [x] Add one-session AI help desk and expandable FAQs; verified real answer and follow-up, translated all supported languages.
