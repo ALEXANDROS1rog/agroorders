@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import { strict as assert } from "node:assert";
-import { bubblePosition, selectedIcon, tabAtPosition } from "./navigation-gesture";
+import { bubblePosition, liquidBubbleWidth, selectedIcon, tabAtPosition } from "./navigation-gesture";
 
 test("release selects the category under the finger, not the initial category", () => {
   const tabs = [{ left: 6, width: 70 }, { left: 78, width: 70 }, { left: 150, width: 70 }];
@@ -23,4 +23,10 @@ test("icons only gain color after explicit selection of the current category", (
   assert.equal(selectedIcon("/orders", "/orders", "/orders"), true);
   assert.equal(selectedIcon("/orders/123", "/orders", "/orders"), true);
   assert.equal(selectedIcon("/customers", "/orders", "/orders"), false);
+});
+test("liquid bubble stretches with motion in either direction and has a bounded width", () => {
+  assert.equal(liquidBubbleWidth(70, 0, 16), 70);
+  assert.equal(liquidBubbleWidth(70, 8, 16), 75);
+  assert.equal(liquidBubbleWidth(70, -8, 16), 75);
+  assert.equal(liquidBubbleWidth(70, 200, 0), 84);
 });

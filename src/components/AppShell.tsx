@@ -86,7 +86,8 @@ function PageBody({ title, subtitle, back, action, children }: ShellProps) {
  * ------------------------------------------------------------------------------------------ */
 
 function ShellFrame(props: ShellProps) {
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // location changes before loaders finish; matches describe the page actually on screen.
+  const pathname = useRouterState({ select: (s) => s.matches.at(-1)?.pathname ?? s.resolvedLocation?.pathname ?? s.location.pathname });
   const { t } = useI18n();
   const { org, can, hasFeature } = useOrg();
   const choosingPlan = needsPlanSelection(org);

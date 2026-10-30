@@ -21,3 +21,8 @@ export function bubblePosition(x: number, width: number, containerWidth: number,
 export function selectedIcon(pathname: string, explicitlySelected: string | null, destination: string): boolean {
   return explicitlySelected === destination && pathname.startsWith(destination);
 }
+
+export function liquidBubbleWidth(width: number, distance: number, elapsed: number): number {
+  const speed = Math.abs(distance) / Math.max(elapsed, 1);
+  return width + Math.min(speed * 10, 14);
+}
