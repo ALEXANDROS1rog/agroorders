@@ -369,8 +369,27 @@
   background-color: var(--surface-bg-clear);
   border-color: var(--surface-border);
 }
-.tab-tone[data-selected="true"] svg {
+.glass-nav-color-window svg {
   color: var(--category);
+}
+.glass-nav-color-window {
+  transition: clip-path var(--dur-slow) var(--ease-spring);
+}
+.glass-navigation[data-dragging="true"] .glass-nav-color-window {
+  transition: none;
+}
+[data-badge-tone="customers"] { --category: var(--category-customers); }
+[data-badge-tone="routes"] { --category: var(--category-routes); }
+.category-badge {
+  color: var(--category);
+  background-color: color-mix(in oklab, var(--category) 16%, var(--surface-bg-clear));
+  border: 1px solid color-mix(in oklab, var(--category) 25%, var(--surface-border));
+  box-shadow: inset 0 1px 0 var(--surface-highlight), var(--surface-shadow-sm);
+}
+[data-badge-tone="routes"] {
+  color: var(--category-routes);
+  --route-badge-background: oklch(0.22 0.004 255);
+  background-color: var(--route-badge-background);
 }
 .glass-nav-bubble {
   left: 6px;

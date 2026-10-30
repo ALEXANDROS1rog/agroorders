@@ -59,9 +59,9 @@ function PageBody({ title, subtitle, back, action, children }: ShellProps) {
             <Link
               to="/profile"
               aria-label="Το προφίλ μου"
-              className="liquid-glass-clear press grid h-11 w-11 shrink-0 place-items-center rounded-full"
+              className="category-badge liquid-glass-clear press grid h-11 w-11 shrink-0 place-items-center rounded-full"
             >
-              <span className="font-display text-lg font-semibold text-foreground">V</span>
+              <span className="font-display text-lg font-semibold">V</span>
             </Link>
           )}
           <div className="min-w-0">

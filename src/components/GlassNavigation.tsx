@@ -123,6 +123,24 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
             </Link>
           );
         })}
+        <div
+          aria-hidden="true"
+          className="glass-nav-color-window pointer-events-none absolute inset-1.5 z-20 flex items-stretch gap-0.5"
+          style={{
+            clipPath: `inset(0 calc(100% - ${bubble.left - 6 + bubble.width}px) 0 ${bubble.left - 6}px round 999px)`,
+            opacity: bubble.visible && (dragging || (active >= 0 && selectedIcon(pathname, selected, items[active]?.to ?? ""))) ? 1 : 0,
+          }}
+        >
+          {items.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.to} data-nav-tone={item.tone} aria-current={index === active ? "page" : undefined} className="tab-tone flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-full px-0.5 py-2">
+                <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={index === active ? 2 : 1.65} />
+                <span className="w-full truncate text-center text-[10px] font-medium leading-tight">{item.label}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );

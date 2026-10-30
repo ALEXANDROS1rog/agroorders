@@ -51,7 +51,7 @@ function CustomersPage() {
         <div className="space-y-3">
           {list.map((c) => (
             <Link key={c.id} to="/customers/$id" params={{ id: c.id }} className="surface press flex items-center gap-3 rounded-3xl p-4">
-              <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-accent/20 font-bold text-accent">{initialsOf(c.full_name)}</div>
+              <div data-badge-tone="customers" className="category-badge grid h-12 w-12 shrink-0 place-items-center rounded-full font-bold">{initialsOf(c.full_name)}</div>
               <div className="min-w-0">
                 <p className="truncate text-[16px] font-semibold">{c.full_name}</p>
                 <p className="truncate text-sm text-muted-foreground">{c.phone || "—"} · {c.address || "χωρίς διεύθυνση"}</p>
