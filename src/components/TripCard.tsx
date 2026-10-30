@@ -12,8 +12,8 @@ export function TripCard({ trip }: { trip: TripWithOrders }) {
   return (
     <Link to="/trips/$id" params={{ id: trip.id }} className="surface press block rounded-3xl p-4">
       <div className="flex items-center gap-3">
-        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-accent/15">
-          <Truck className="h-6 w-6 text-accent" />
+        <div data-badge-tone="routes" className="category-badge grid h-12 w-12 shrink-0 place-items-center rounded-full">
+          <Truck className="h-6 w-6" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="font-display text-lg font-bold">{formatTripDate(trip.route_date)}</p>
