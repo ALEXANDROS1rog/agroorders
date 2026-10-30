@@ -39,8 +39,10 @@ BEGIN
     RAISE EXCEPTION 'Forbidden';
   END IF;
 
-  IF jsonb_typeof(_input->'items') IS DISTINCT FROM 'array'
-     OR jsonb_array_length(_input->'items') = 0 THEN
+  IF jsonb_typeof(_input->'items') IS DISTINCT FROM 'array' THEN
+    RAISE EXCEPTION 'Order items must be an array';
+  END IF;
+  IF jsonb_array_length(_input->'items') = 0 THEN
     RAISE EXCEPTION 'Order must have items';
   END IF;
 
