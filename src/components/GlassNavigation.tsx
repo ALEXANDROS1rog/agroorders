@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent } 
 import type { LucideIcon } from "lucide-react";
 import { bubblePosition, selectedIcon, tabAtPosition } from "@/lib/navigation-gesture";
 
-type Item = { to: LinkProps["to"]; label: string; icon: LucideIcon; tone: string };
+type Item = { to: NonNullable<LinkProps["to"]>; label: string; icon: LucideIcon; tone: string };
 let explicitSelection: string | null = null;
 const subscribers = new Set<() => void>();
 function subscribe(listener: () => void) {
