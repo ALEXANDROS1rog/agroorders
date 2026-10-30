@@ -388,7 +388,8 @@
 }
 [data-badge-tone="routes"] {
   color: var(--category-routes);
-  background-color: var(--foreground);
+  --route-badge-background: oklch(0.22 0.004 255);
+  background-color: var(--route-badge-background);
 }
 .glass-nav-bubble {
   left: 6px;

@@ -1,5 +1,5 @@
 # VoiceOrders roadmap
-- [ ] Color customer/route badges and top-left profile; reveal navigation icon colors only within the moving bubble; verify partial overlap and release.
+- [x] Color customer/route badges and top-left profile; verified partial orange/red icon overlap within the moving bubble, aligned overlay, release navigation, light/dark views and four passing navigation tests.
 - [x] Add distinct category colors, explicit-selection-only icon colors and finger-following glass navigation with release selection; four rule tests pass, real touch drag/release/cancel plus click/keyboard selection verified, light/dark and desktop checked without runtime errors.
 - [x] Refine shared Liquid Glass materials and minimalist bottom navigation; verified signed-in tab navigation, light/dark mobile and desktop views, no horizontal overflow or runtime errors.
 - [x] Apply new annual prices and purchased seat limits for future purchases, preserving existing subscriptions; 28 rule tests passed.
