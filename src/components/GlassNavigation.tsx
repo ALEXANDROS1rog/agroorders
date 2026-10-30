@@ -1,7 +1,7 @@
 import { Link, useNavigate, type LinkProps } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent } from "react";
 import type { LucideIcon } from "lucide-react";
-import { bubblePosition, selectedIcon, tabAtPosition } from "@/lib/navigation-gesture";
+import { bubblePosition, liquidBubbleWidth, selectedIcon, tabAtPosition } from "@/lib/navigation-gesture";
 
 type Item = { to: NonNullable<LinkProps["to"]>; label: string; icon: LucideIcon; tone: string };
 let explicitSelection: string | null = null;
@@ -19,7 +19,7 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
   const navigate = useNavigate();
   const selected = useSyncExternalStore(subscribe, () => explicitSelection, () => null);
   const bar = useRef<HTMLDivElement>(null);
-  const gesture = useRef<{ id: number; width: number } | null>(null);
+  const gesture = useRef<{ id: number; width: number; x: number; time: number } | null>(null);
   const suppressClickUntil = useRef(0);
   const [dragging, setDragging] = useState(false);
   const [bubble, setBubble] = useState({ left: 6, width: 0, visible: false });
@@ -76,7 +76,7 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
           const tab = tabs[index];
           if (!tab) return;
           event.preventDefault();
-          gesture.current = { id: event.pointerId, width: tab.offsetWidth };
+          gesture.current = { id: event.pointerId, width: tab.offsetWidth, x, time: event.timeStamp };
           element.setPointerCapture(event.pointerId);
           setDragging(true);
           setBubble({ left: bubblePosition(x, tab.offsetWidth, element.clientWidth), width: tab.offsetWidth, visible: true });
@@ -85,7 +85,10 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
           const current = gesture.current;
           if (current?.id !== event.pointerId) return;
           const { x, element } = position(event);
-          setBubble({ left: bubblePosition(x, current.width, element.clientWidth), width: current.width, visible: true });
+          const width = liquidBubbleWidth(current.width, x - current.x, event.timeStamp - current.time);
+          current.x = x;
+          current.time = event.timeStamp;
+          setBubble({ left: bubblePosition(x, width, element.clientWidth), width, visible: true });
         }}
         onPointerUp={(event) => finish(event, false)}
         onPointerCancel={(event) => finish(event, true)}
@@ -127,7 +130,7 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
           aria-hidden="true"
           className="glass-nav-color-window pointer-events-none absolute inset-1.5 z-20 flex items-stretch gap-0.5"
           style={{
-            clipPath: `inset(0 calc(100% - ${bubble.left - 6 + bubble.width}px) 0 ${bubble.left - 6}px round 999px)`,
+            clipPath: `inset(${dragging ? -3 : 0}px calc(100% - ${bubble.left - 6 + bubble.width}px) ${dragging ? -3 : 0}px ${bubble.left - 6}px round 999px)`,
             opacity: bubble.visible && (dragging || (active >= 0 && selectedIcon(pathname, selected, items[active]?.to ?? ""))) ? 1 : 0,
           }}
         >

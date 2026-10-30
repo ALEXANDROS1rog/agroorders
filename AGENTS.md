@@ -21,3 +21,4 @@
 - Company seat limits are snapshotted per subscription and reconciled from signed Stripe price/quantity state; catalog changes must not alter existing purchased limits.
 - Help uses AI Elements and authenticated streaming Responses with request-local gateway helpers; a single session conversation has no persistence unless explicitly requested.
 - Shared appearance and category colors are semantic tokens in src/styles.css; GlassNavigation owns pointer capture, release-only navigation and in-memory explicit selection, with a noninteractive duplicate icon layer clipped to the moving bubble to reveal partial category colors without changing hit targets; navigation-gesture.ts keeps filtered tabs and cancelled gestures safe.
+- AppShell derives category tone and active navigation from committed route matches, not the eagerly updated location; this keeps the displayed page's colors stable during pending navigation.
