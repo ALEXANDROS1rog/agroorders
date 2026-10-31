@@ -1,4 +1,5 @@
 # VoiceOrders roadmap
+- [ ] Remove bubble restart across page changes and add plump jelly motion for taps and drags.
 - [x] Fix manual order creation; authenticated creation reads back items, calculated total and delivery, with regression and existing security tests passing; diagnostic orders removed.
 - [x] Smooth navigation bubble on taps; intermediate animated positions and drag/release verified on mobile without runtime errors; five gesture tests pass.
 - [x] Color customer/route badges and top-left profile; verified partial orange/red icon overlap within the moving bubble, aligned overlay, release navigation, light/dark views and four passing navigation tests.
