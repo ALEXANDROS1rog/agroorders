@@ -19,7 +19,8 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
   const navigate = useNavigate();
   const selected = useSyncExternalStore(subscribe, () => explicitSelection, () => null);
   const bar = useRef<HTMLDivElement>(null);
-  const gesture = useRef<{ id: number; width: number; x: number; time: number } | null>(null);
+  const gesture = useRef<{ id: number; width: number; x: number; startX: number; time: number; moved: boolean } | null>(null);
+  const target = useRef<string | null>(null);
   const suppressClickUntil = useRef(0);
   const [dragging, setDragging] = useState(false);
   const [bubble, setBubble] = useState({ left: 6, width: 0, visible: false });
@@ -29,16 +30,18 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
   useEffect(() => {
     const element = bar.current;
     if (!element) return;
+    target.current = null;
     function measure() {
       if (!element || gesture.current) return;
-      const tab = element.querySelectorAll<HTMLAnchorElement>("a")[active];
+      const targetIndex = items.findIndex((item) => item.to === target.current);
+      const tab = element.querySelectorAll<HTMLAnchorElement>("a")[targetIndex >= 0 ? targetIndex : active];
       setBubble(tab ? { left: tab.offsetLeft, width: tab.offsetWidth, visible: true } : { left: 6, width: 0, visible: false });
     }
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
     return () => observer.disconnect();
-  }, [active, itemKey, dragging]);
+  }, [active, itemKey]);
 
   function position(event: PointerEvent<HTMLDivElement>) {
     const element = event.currentTarget;
@@ -58,9 +61,14 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
     const item = items[index];
     const tab = tabs[index];
     if (!cancelled && item?.to && tab) {
+      target.current = item.to;
       setBubble({ left: tab.offsetLeft, width: tab.offsetWidth, visible: true });
       select(item.to);
       void navigate({ to: item.to });
+    } else {
+      target.current = null;
+      const currentTab = tabs[active];
+      if (currentTab) setBubble({ left: currentTab.offsetLeft, width: currentTab.offsetWidth, visible: true });
     }
   }
 
@@ -76,15 +84,18 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
           const tab = tabs[index];
           if (!tab) return;
           event.preventDefault();
-          gesture.current = { id: event.pointerId, width: tab.offsetWidth, x, time: event.timeStamp };
+          gesture.current = { id: event.pointerId, width: tab.offsetWidth, x, startX: x, time: event.timeStamp, moved: false };
           element.setPointerCapture(event.pointerId);
-          setDragging(true);
-          setBubble({ left: bubblePosition(x, tab.offsetWidth, element.clientWidth), width: tab.offsetWidth, visible: true });
+          target.current = items[index]?.to ?? null;
+          setBubble({ left: tab.offsetLeft, width: tab.offsetWidth, visible: true });
         }}
         onPointerMove={(event) => {
           const current = gesture.current;
           if (current?.id !== event.pointerId) return;
           const { x, element } = position(event);
+          if (!current.moved && Math.abs(x - current.startX) < 5) return;
+          current.moved = true;
+          setDragging(true);
           const width = liquidBubbleWidth(current.width, x - current.x, event.timeStamp - current.time);
           current.x = x;
           current.time = event.timeStamp;
@@ -118,7 +129,13 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
               data-nav-tone={item.tone}
               data-selected={item.to && selectedIcon(pathname, selected, item.to) ? true : undefined}
               aria-current={index === active ? "page" : undefined}
-              onClick={() => { if (item.to) select(item.to); }}
+              onClick={(event) => {
+                if (!item.to) return;
+                target.current = item.to;
+                const tab = event.currentTarget;
+                setBubble({ left: tab.offsetLeft, width: tab.offsetWidth, visible: true });
+                select(item.to);
+              }}
               className="tab-tone relative z-10 flex min-h-[56px] min-w-0 flex-1 flex-col items-center justify-center gap-1.5 rounded-full px-0.5 py-2"
             >
               <Icon className="h-[22px] w-[22px] shrink-0" strokeWidth={index === active ? 2 : 1.65} />

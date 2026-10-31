@@ -64,6 +64,13 @@
       "when": 1793179081741,
       "tag": "0008_help_ai_terminal_access_blocks",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793427920211,
+      "tag": "0009_allow_order_returning_for_company_managers",
+      "breakpoints": true
     }
   ]
 }
