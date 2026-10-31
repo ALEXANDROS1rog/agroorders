@@ -30,6 +30,7 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
   useEffect(() => {
     const element = bar.current;
     if (!element) return;
+    target.current = null;
     function measure() {
       if (!element || gesture.current) return;
       const targetIndex = items.findIndex((item) => item.to === target.current);
