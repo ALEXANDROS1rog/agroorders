@@ -1,6 +1,6 @@
 # VoiceOrders roadmap
-- [ ] Fix manual order creation and verify saved order details with authenticated input.
-- [ ] Smooth navigation bubble on taps without interrupting drag or changing pending page colors.
+- [x] Fix manual order creation; authenticated creation reads back items, calculated total and delivery, with regression and existing security tests passing; diagnostic orders removed.
+- [x] Smooth navigation bubble on taps; intermediate animated positions and drag/release verified on mobile without runtime errors; five gesture tests pass.
 - [x] Color customer/route badges and top-left profile; verified partial orange/red icon overlap within the moving bubble, aligned overlay, release navigation, light/dark views and four passing navigation tests.
 - [x] Add distinct category colors, explicit-selection-only icon colors and finger-following glass navigation with release selection; four rule tests pass, real touch drag/release/cancel plus click/keyboard selection verified, light/dark and desktop checked without runtime errors.
 - [x] Refine shared Liquid Glass materials and minimalist bottom navigation; verified signed-in tab navigation, light/dark mobile and desktop views, no horizontal overflow or runtime errors.
