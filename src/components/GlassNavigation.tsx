@@ -1,10 +1,12 @@
 import { Link, useNavigate, type LinkProps } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent } from "react";
 import type { LucideIcon } from "lucide-react";
-import { bubblePosition, liquidBubbleWidth, selectedIcon, tabAtPosition } from "@/lib/navigation-gesture";
+import { bubblePosition, liquidBubbleWidth, selectedIcon, springStep, tabAtPosition } from "@/lib/navigation-gesture";
 
 type Item = { to: NonNullable<LinkProps["to"]>; label: string; icon: LucideIcon; tone: string };
 let explicitSelection: string | null = null;
+// Route pages each mount their own shell: retain the live frame, not just the destination.
+let retainedFrame = { left: 6, width: 0, visible: false, velocity: 0, widthVelocity: 0 };
 const subscribers = new Set<() => void>();
 function subscribe(listener: () => void) {
   subscribers.add(listener);
@@ -23,9 +25,37 @@ export function GlassNavigation({ items, pathname }: { items: Item[]; pathname: 
   const target = useRef<string | null>(null);
   const suppressClickUntil = useRef(0);
   const [dragging, setDragging] = useState(false);
-  const [bubble, setBubble] = useState({ left: 6, width: 0, visible: false });
+  const [bubble, setBubble] = useState(retainedFrame);
+  const frame = useRef(retainedFrame);
+  const desired = useRef({ left: retainedFrame.left, width: retainedFrame.width, visible: retainedFrame.visible });
+  function setBubble(next: { left: number; width: number; visible: boolean }) {
+    desired.current = next;
+  }
   const active = items.findIndex((item) => item.to && pathname.startsWith(item.to));
   const itemKey = items.map((item) => item.to).join(",");
+
+  useEffect(() => {
+    let animation = 0;
+    let previous = performance.now();
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    function animate(now: number) {
+      const goal = desired.current;
+      const dt = (now - previous) / 1000;
+      previous = now;
+      const current = frame.current;
+      const direct = gesture.current?.moved || reduced.matches || !current.visible;
+      const x = direct ? { position: goal.left, velocity: 0 } : springStep(current.left, current.velocity, goal.left, dt);
+      const w = reduced.matches || !current.visible ? { position: goal.width, velocity: 0 } : springStep(current.width, current.widthVelocity, goal.width, dt);
+      const next = { left: x.position, width: w.position, visible: goal.visible, velocity: x.velocity, widthVelocity: w.velocity };
+      frame.current = next;
+      retainedFrame = next;
+      setBubbleFrame(next);
+      animation = requestAnimationFrame(animate);
+    }
+    animation = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animation);
+  }, []);
+  const setBubbleFrame = setBubbleState;
 
   useEffect(() => {
     const element = bar.current;

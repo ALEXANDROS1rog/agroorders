@@ -26,3 +26,12 @@ export function liquidBubbleWidth(width: number, distance: number, elapsed: numb
   const speed = Math.abs(distance) / Math.max(elapsed, 1);
   return width + Math.min(speed * 10, 14);
 }
+
+export function springStep(position: number, velocity: number, target: number, seconds: number) {
+  const dt = Math.min(Math.max(seconds, 0), 1 / 30);
+  const nextVelocity = velocity + ((target - position) * 230 - velocity * 23) * dt;
+  const nextPosition = position + nextVelocity * dt;
+  return Math.abs(target - nextPosition) < 0.05 && Math.abs(nextVelocity) < 0.5
+    ? { position: target, velocity: 0 }
+    : { position: nextPosition, velocity: nextVelocity };
+}
